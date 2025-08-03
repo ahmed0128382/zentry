@@ -1,0 +1,10 @@
+flutter_native_splash:
+  color: "#121212" # نفس AppColors.darkBackground
+  image: assets/images/splash_logo.png
+  android: true
+  ios: true
+  web: false
+  branding: null
+  fullscreen: true
+  android_gravity: center
+  ios_content_mode: scaleAspectFit

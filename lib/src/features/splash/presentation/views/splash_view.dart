@@ -3,11 +3,12 @@ import 'package:zentry/src/features/splash/presentation/views/widgets/splash_vie
 
 class SplashView extends StatelessWidget {
   const SplashView({super.key});
-  static const String splashRouteName = 'splash';
+  static const String routeName = '/splash';
+
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: SplashViewBody(),
+    return Scaffold(
+      body: const SplashViewBody(),
     );
   }
 }
