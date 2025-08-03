@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:zentry/src/core/utils/app_colors.dart';
-import 'package:zentry/src/core/utils/app_styles.dart';
 import 'package:zentry/src/features/on_boarding/presentation/views/on_boarding_view.dart';
 
 class SplashViewBody extends StatefulWidget {
