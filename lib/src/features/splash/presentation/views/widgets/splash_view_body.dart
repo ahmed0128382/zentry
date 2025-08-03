@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:zentry/src/core/utils/app_colors.dart';
 import 'package:zentry/src/core/utils/app_styles.dart';
-import 'package:zentry/src/features/on_boarding/presentation/views/on_boarding_view.dart/widgets/on_boarding_view.dart';
+import 'package:zentry/src/features/on_boarding/presentation/views/on_boarding_view.dart';
 
 class SplashViewBody extends StatefulWidget {
   const SplashViewBody({super.key});
@@ -57,19 +57,10 @@ class _SplashViewBodyState extends State<SplashViewBody>
             children: [
               // ✅ Logo
               Image.asset(
-                'assets/icons/splash_logo.png',
-                height: 120,
-                width: 120,
+                'assets/images/splash_logo.png',
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
                 fit: BoxFit.contain,
-              ),
-
-              const SizedBox(height: 24),
-
-              // ✅ Tagline
-              Text(
-                "Productivity. Rewarded.",
-                style: AppStyles.splashTagline,
-                textAlign: TextAlign.center,
               ),
             ],
           ),

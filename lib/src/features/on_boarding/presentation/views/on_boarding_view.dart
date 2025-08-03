@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:zentry/src/features/on_boarding/presentation/views/on_boarding_view.dart/widgets/on_boarding_view_body.dart';
+import 'package:zentry/src/features/on_boarding/presentation/views/widgets/on_boarding_view_body.dart';
 
 class OnBoardingView extends StatelessWidget {
   const OnBoardingView({super.key});
