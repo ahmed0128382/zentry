@@ -1,6 +1,6 @@
 # Zentry 🧠📅
 
-Zentry is a task management and productivity app inspired by **TickTick**, with additional gamification elements like points, badges, and premium features.  
+Zentry is a task management and productivity app , with additional gamification elements like points, badges, and premium features.  
 The app is currently under active development using Flutter and follows professional software engineering practices.
 
 ---
