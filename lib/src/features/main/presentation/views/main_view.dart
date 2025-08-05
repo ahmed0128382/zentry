@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:zentry/src/features/main/presentation/views/widgets/main_view_body.dart';
 
 class MainView extends StatelessWidget {

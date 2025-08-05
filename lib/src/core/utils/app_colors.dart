@@ -16,4 +16,5 @@ class AppColors {
   static const Color text = Color(0xFF2D3436); // رمادي غامق للنصوص
   static const Color accent = Color(0xFFFFC312); // أصفر مشرق للنقاط المهمة
   static const Color error = Color(0xFFEB4D4B); // أحمر للأخطاء
+  static const Color peacefulSeaBlue = Color(0xFF00B4D8);
 }

@@ -1,11 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class MainNavigationController extends Notifier<int> {
-  @override
-  int build() => 0;
+final mainNavProvider =
+    StateNotifierProvider<MainNavigationController, int>((ref) {
+  return MainNavigationController();
+});
 
-  void setIndex(int newIndex) => state = newIndex;
+class MainNavigationController extends StateNotifier<int> {
+  MainNavigationController() : super(0);
+
+  void updateIndex(int index) {
+    if (index != state) state = index;
+  }
 }
-
-final mainNavProvider = NotifierProvider<MainNavigationController, int>(
-    () => MainNavigationController());

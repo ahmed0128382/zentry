@@ -9,7 +9,7 @@ import 'package:zentry/src/features/splash/presentation/views/splash_view.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
-    initialLocation: MainView.routeName,
+    initialLocation: MainView.routeName, // /main
     routes: [
       GoRoute(
         path: SplashView.routeName,
@@ -20,9 +20,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const OnBoardingView(),
       ),
       GoRoute(
-          path: MainView.routeName,
-          builder: (context, state) => const MainView()),
-      // GoRoute(...), وهكذا لبقية الشاشات
+        path: MainView.routeName,
+        name: 'main',
+        builder: (context, state) => const MainView(),
+      ),
     ],
   );
 });
