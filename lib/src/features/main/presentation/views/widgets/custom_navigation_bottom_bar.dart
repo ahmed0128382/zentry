@@ -1,93 +1,14 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:zentry/src/core/utils/app_colors.dart';
 import 'package:zentry/src/core/utils/app_decorations.dart';
 import 'package:zentry/src/features/main/presentation/views/widgets/bottom_bar_item.dart';
-
-// class CustomNavigationBottomBar extends StatefulWidget {
-//   final int currentIndex;
-//   final List<IconData> icons;
-//   final ValueChanged<int> onTap;
-
-//   const CustomNavigationBottomBar({
-//     super.key,
-//     required this.currentIndex,
-//     required this.icons,
-//     required this.onTap,
-//   });
-
-//   @override
-//   State<CustomNavigationBottomBar> createState() =>
-//       _CustomNavigationBottomBarState();
-// }
-
-// class _CustomNavigationBottomBarState extends State<CustomNavigationBottomBar> {
-//   @override
-//   Widget build(BuildContext context) {
-//     final screenWidth = MediaQuery.of(context).size.width;
-//     final itemWidth = screenWidth / widget.icons.length;
-
-//     return Stack(
-//       alignment: Alignment.bottomCenter,
-//       children: [
-//         Container(
-//           height: 70,
-//           decoration: AppDecorations.navBarBox,
-//         ),
-
-//         // Animated Glow Indicator
-//         AnimatedPositioned(
-//           duration: const Duration(milliseconds: 300),
-//           curve: Curves.easeOutQuint,
-//           left: widget.currentIndex * itemWidth + itemWidth / 2 - 25,
-//           bottom: 10,
-//           child: Container(
-//             width: 50,
-//             height: 50,
-//             decoration: BoxDecoration(
-//               shape: BoxShape.circle,
-//               boxShadow: [
-//                 BoxShadow(
-//                   color: AppColors.primary.withValues(alpha: 0.6),
-//                   blurRadius: 20,
-//                   spreadRadius: 2,
-//                 ),
-//               ],
-//             ),
-//           ),
-//         ),
-
-//         // Icons Row
-//         Positioned(
-//           bottom: 0,
-//           left: 0,
-//           right: 0,
-//           child: Row(
-//             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//             children: List.generate(
-//               widget.icons.length,
-//               (index) => GestureDetector(
-//                 onTap: () => widget.onTap(index),
-//                 child: SizedBox(
-//                   width: itemWidth,
-//                   height: 70,
-//                   child: Icon(
-//                     widget.icons[index],
-//                     color: index == widget.currentIndex
-//                         ? Colors.white
-//                         : Colors.grey,
-//                     size: 28,
-//                   ),
-//                 ),
-//               ),
-//             ),
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-// }
+import 'package:zentry/src/features/main/presentation/views/widgets/quarter_circle_menu.dart';
+import 'package:zentry/src/shared/enums/menu_types.dart';
 
 class CustomNavigationBottomBar extends StatelessWidget {
+  final MoreMenuType moreMenuType;
   final int currentIndex;
   final List<BottomBarItem> allItems;
   final ValueChanged<int> onTap;
@@ -99,6 +20,7 @@ class CustomNavigationBottomBar extends StatelessWidget {
     required this.currentIndex,
     required this.allItems,
     required this.onTap,
+    this.moreMenuType = MoreMenuType.expandableOverlay,
   });
 
   @override
@@ -152,7 +74,19 @@ class CustomNavigationBottomBar extends StatelessWidget {
 
               // More Icon
               GestureDetector(
-                onTap: () => _showMoreItems(context, hiddenItems),
+                onTap: () {
+                  switch (moreMenuType) {
+                    case MoreMenuType.modalBottomSheet:
+                      _showMoreItems(context, hiddenItems);
+                      break;
+                    case MoreMenuType.expandableOverlay:
+                      _showExpandableMenu(context, hiddenItems);
+                      break;
+                    case MoreMenuType.quarterCircleFab:
+                      _showQuarterCircleFab(context, hiddenItems);
+                      break;
+                  }
+                },
                 child: SizedBox(
                   width: itemWidth,
                   height: 70,
@@ -218,5 +152,104 @@ class CustomNavigationBottomBar extends StatelessWidget {
         );
       },
     );
+  }
+
+  void _showExpandableMenu(BuildContext context, List<BottomBarItem> items) {
+    final overlay = Overlay.of(context);
+
+    late OverlayEntry overlayEntry; // <-- Declare before using
+
+    overlayEntry = OverlayEntry(
+      builder: (context) {
+        return Stack(
+          children: [
+            // Dismissible background
+            GestureDetector(
+              onTap: () => overlayEntry.remove(),
+              child: Container(
+                color: Colors.black.withOpacity(0.4),
+              ),
+            ),
+            // Expandable Menu
+            Positioned(
+              bottom: 80,
+              right: 20,
+              child: Material(
+                color: Colors.white,
+                elevation: 8,
+                borderRadius: BorderRadius.circular(16),
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: List.generate(items.length, (index) {
+                      final item = items[index];
+                      final overallIndex =
+                          index + CustomNavigationBottomBar.visibleCount;
+                      return GestureDetector(
+                        onTap: () {
+                          overlayEntry.remove();
+                          onTap(overallIndex);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Row(
+                            children: [
+                              Icon(item.icon, color: Colors.grey, size: 24),
+                              const SizedBox(width: 8),
+                              Text(item.label,
+                                  style: const TextStyle(fontSize: 14)),
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    overlay.insert(overlayEntry);
+  }
+
+  void _showQuarterCircleFab(BuildContext context, List<BottomBarItem> items) {
+    final overlay = Overlay.of(context, rootOverlay: true);
+    if (overlay == null) return;
+
+    late final OverlayEntry entry;
+    late final AnimationController controller;
+
+    controller = AnimationController(
+      vsync: Navigator.of(context),
+      duration: const Duration(milliseconds: 250),
+    );
+
+    entry = OverlayEntry(
+      builder: (_) => QuarterCircleMenu(
+        icons: items.map((item) => item.icon).toList(),
+        animation: controller,
+        onClose: () {
+          if (entry.mounted) {
+            controller.reverse().then((_) {
+              entry.remove();
+              controller.dispose();
+            });
+          }
+        },
+        // Pass correct global index
+        onIconTap: (indexInHidden) {
+          final globalIndex =
+              CustomNavigationBottomBar.visibleCount + indexInHidden;
+          onTap(globalIndex); // This updates your UI
+        },
+      ),
+    );
+
+    overlay.insert(entry);
+    controller.forward();
   }
 }
