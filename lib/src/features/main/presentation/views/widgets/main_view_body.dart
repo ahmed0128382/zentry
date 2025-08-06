@@ -27,50 +27,17 @@ class MainViewBody extends ConsumerWidget {
         currentIndex: currentIndex,
         onTap: controller.updateIndex,
         allItems: const [
-          BottomBarItem(icon: Icons.check_circle, label: 'Today'),
-          BottomBarItem(icon: Icons.calendar_today, label: 'Calendar'),
-          BottomBarItem(icon: Icons.view_quilt, label: 'Matrix'),
-          BottomBarItem(icon: Icons.timer, label: 'Pomodoro'),
-          BottomBarItem(icon: Icons.hourglass_bottom, label: 'Countdown'),
-          BottomBarItem(icon: Icons.track_changes, label: 'Habits'),
-          BottomBarItem(icon: Icons.settings, label: 'Settings'),
-          BottomBarItem(icon: Icons.person, label: 'Profile'),
+          BottomBarItem(icon: Icons.check_circle, label: 'Today'), //0
+          BottomBarItem(icon: Icons.calendar_today, label: 'Calendar'), //1
+          BottomBarItem(icon: Icons.view_quilt, label: 'Matrix'), //2
+          BottomBarItem(icon: Icons.timer, label: 'Pomodoro'), //3
+          BottomBarItem(icon: Icons.manage_search_rounded, label: 'Search'), //4
+          BottomBarItem(icon: Icons.track_changes, label: 'Habits'), //5
+          BottomBarItem(icon: Icons.hourglass_bottom, label: 'Countdown'), //6
+          BottomBarItem(icon: Icons.settings, label: 'Settings'), //7
+          BottomBarItem(icon: Icons.person, label: 'Profile'), //8
         ],
       ),
     );
   }
-
-//   Widget _buildSettingsView(WidgetRef ref) {
-//     final selectedType = ref.watch(moreMenuTypeProvider);
-
-//     return SafeArea(
-//       child: Padding(
-//         padding: const EdgeInsets.all(20),
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             const Text(
-//               'Choose Menu Type:',
-//               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-//             ),
-//             const SizedBox(height: 16),
-//             DropdownButton<MoreMenuType>(
-//               value: selectedType,
-//               items: MoreMenuType.values.map((type) {
-//                 return DropdownMenuItem(
-//                   value: type,
-//                   child: Text(type.toString().split('.').last),
-//                 );
-//               }).toList(),
-//               onChanged: (newType) {
-//                 if (newType != null) {
-//                   ref.read(moreMenuTypeProvider.notifier).state = newType;
-//                 }
-//               },
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
 }
