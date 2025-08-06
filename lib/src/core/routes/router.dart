@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:zentry/src/features/edit_bottom_nav_bar/presentation/views/edit_bottom_nav_bar_view.dart';
 import 'package:zentry/src/features/main/presentation/views/main_view.dart';
 import 'package:zentry/src/features/on_boarding/presentation/views/on_boarding_view.dart';
 
@@ -24,6 +25,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: 'main',
         builder: (context, state) => const MainView(),
       ),
+      GoRoute(
+          path: EditBottomNavBarView.routeName,
+          builder: (context, state) => const EditBottomNavBarView()),
     ],
   );
 });
