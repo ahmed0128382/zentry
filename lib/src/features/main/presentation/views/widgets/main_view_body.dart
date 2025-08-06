@@ -4,12 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zentry/src/features/main/presentation/controllers/main_navigation_controller.dart';
 import 'package:zentry/src/features/main/presentation/views/widgets/bottom_bar_item.dart';
 import 'package:zentry/src/features/main/presentation/views/widgets/custom_navigation_bottom_bar.dart';
-import 'package:zentry/src/shared/enums/menu_types.dart';
-
-/// Provider to hold the selected [MoreMenuType]
-final moreMenuTypeProvider = StateProvider<MoreMenuType>((ref) {
-  return MoreMenuType.quarterCircleFab;
-});
+import 'package:zentry/src/features/main/presentation/views/widgets/main_view_pages.dart';
 
 class MainViewBody extends ConsumerWidget {
   const MainViewBody({super.key});
@@ -20,22 +15,11 @@ class MainViewBody extends ConsumerWidget {
     final controller = ref.read(mainNavProvider.notifier);
     final moreMenuType = ref.watch(moreMenuTypeProvider);
 
-    final views = [
-      const Center(child: Text('Tasks')), // 0
-      const Center(child: Text('Calendar')), // 1
-      const Center(child: Text('Matrix')), // 2
-      const Center(child: Text('Pomodoro')), // 3
-      const Center(child: Text('Countdown')), // 4
-      const Center(child: Text('Habits')), // 5
-      _buildSettingsView(ref), // 6
-      const Center(child: Text('Profile')), // 7
-    ];
-
     return Scaffold(
       body: IndexedStack(
         index: currentIndex,
-        children: views.length > currentIndex
-            ? views
+        children: mainViewPages.length > currentIndex
+            ? mainViewPages
             : List.generate(currentIndex + 1, (i) => const SizedBox()),
       ),
       bottomNavigationBar: CustomNavigationBottomBar(
@@ -56,37 +40,37 @@ class MainViewBody extends ConsumerWidget {
     );
   }
 
-  Widget _buildSettingsView(WidgetRef ref) {
-    final selectedType = ref.watch(moreMenuTypeProvider);
+//   Widget _buildSettingsView(WidgetRef ref) {
+//     final selectedType = ref.watch(moreMenuTypeProvider);
 
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Choose Menu Type:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            DropdownButton<MoreMenuType>(
-              value: selectedType,
-              items: MoreMenuType.values.map((type) {
-                return DropdownMenuItem(
-                  value: type,
-                  child: Text(type.toString().split('.').last),
-                );
-              }).toList(),
-              onChanged: (newType) {
-                if (newType != null) {
-                  ref.read(moreMenuTypeProvider.notifier).state = newType;
-                }
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+//     return SafeArea(
+//       child: Padding(
+//         padding: const EdgeInsets.all(20),
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             const Text(
+//               'Choose Menu Type:',
+//               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+//             ),
+//             const SizedBox(height: 16),
+//             DropdownButton<MoreMenuType>(
+//               value: selectedType,
+//               items: MoreMenuType.values.map((type) {
+//                 return DropdownMenuItem(
+//                   value: type,
+//                   child: Text(type.toString().split('.').last),
+//                 );
+//               }).toList(),
+//               onChanged: (newType) {
+//                 if (newType != null) {
+//                   ref.read(moreMenuTypeProvider.notifier).state = newType;
+//                 }
+//               },
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
 }

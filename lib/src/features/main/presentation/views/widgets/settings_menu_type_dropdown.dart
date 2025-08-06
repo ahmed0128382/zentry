@@ -1,0 +1,43 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zentry/src/features/main/presentation/controllers/main_navigation_controller.dart';
+import 'package:zentry/src/shared/enums/menu_types.dart';
+
+class SettingsMenuTypeDropdown extends ConsumerWidget {
+  const SettingsMenuTypeDropdown({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedType = ref.watch(moreMenuTypeProvider);
+
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Choose Menu Type:',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            DropdownButton<MoreMenuType>(
+              value: selectedType,
+              items: MoreMenuType.values.map((type) {
+                return DropdownMenuItem(
+                  value: type,
+                  child: Text(type.name), // or .toString().split('.').last
+                );
+              }).toList(),
+              onChanged: (newType) {
+                if (newType != null) {
+                  ref.read(moreMenuTypeProvider.notifier).state = newType;
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
