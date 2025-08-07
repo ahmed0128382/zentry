@@ -60,6 +60,17 @@ void printButton(Employee employee) {
   }
 }
 
+abstract class UseCase<T> {
+  T call();
+}
+
+class CreateToDo extends UseCase<String> {
+  @override
+  String call() {
+    return 'ToDo Created';
+  }
+}
+
 void main() {
   printButton(Developer('ahmed', 25, 2500, '1', 'cairo', 'developer'));
   printButton(Engineer('ahmed', 25, 2500, '1', 'cairo', 'Engineer'));

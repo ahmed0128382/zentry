@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zentry/src/features/edit_bottom_nav_bar/presentation/views/widgets/edit_bottom_nav_bar_item.dart';
 
 class EditBottomNavBarView extends StatelessWidget {
   const EditBottomNavBarView({super.key});
@@ -9,9 +10,7 @@ class EditBottomNavBarView extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Edit Bar'),
       ),
-      body: const Center(
-        child: Text('Edit Bottom Nav Bar'),
-      ),
+      body: const TabBarSettingsPage(),
     );
   }
 }
