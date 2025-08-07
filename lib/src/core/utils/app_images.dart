@@ -5,5 +5,8 @@ class AppImages {
   static const String onboarding2 = 'assets/images/onboarding_2.svg';
   static const String onboarding3 = 'assets/images/onboarding_3.svg';
   static const String profileImage = 'assets/images/profileImage.png';
+  static const String searchLogo = 'assets/images/searchLogo.jpg';
+  static const String imagesCustomSearch = "assets/images/custom_search.svg";
+  static const String imagesFilterIcon = "assets/images/filter_icon.svg";
   // أضف المزيد حسب الحاجة
 }

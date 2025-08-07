@@ -5,6 +5,7 @@ import 'package:zentry/src/features/main/presentation/controllers/main_navigatio
 import 'package:zentry/src/features/main/presentation/views/widgets/bottom_bar_item.dart';
 import 'package:zentry/src/features/main/presentation/views/widgets/custom_navigation_bottom_bar.dart';
 import 'package:zentry/src/features/main/presentation/views/widgets/main_view_pages.dart';
+import 'package:zentry/src/shared/enums/main_view_pages_indexes.dart';
 
 class MainViewBody extends ConsumerWidget {
   const MainViewBody({super.key});
@@ -18,8 +19,8 @@ class MainViewBody extends ConsumerWidget {
     return Scaffold(
       body: IndexedStack(
         index: currentIndex,
-        children: mainViewPages.length > currentIndex
-            ? mainViewPages
+        children: mainViewPagesMap.length > currentIndex
+            ? mainViewPagesMap.values.toList()
             : List.generate(currentIndex + 1, (i) => const SizedBox()),
       ),
       bottomNavigationBar: CustomNavigationBottomBar(
