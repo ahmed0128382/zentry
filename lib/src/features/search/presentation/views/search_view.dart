@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:zentry/src/core/utils/app_images.dart';
-import 'package:zentry/src/core/utils/app_styles.dart';
-import 'package:zentry/src/core/widgets/search_text_field.dart';
 
 class SearchView extends StatelessWidget {
   const SearchView({super.key});
@@ -9,57 +7,97 @@ class SearchView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Column(
-        children: [
-          _buildHeader(context),
-          const SizedBox(height: 20),
-          SearchTextField(),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.15),
-          Expanded(
-            child: Column(
-              children: [
-                CircleAvatar(
-                  backgroundColor: Colors.transparent,
-                  radius: MediaQuery.of(context).size.width *
-                      0.2, // Adjusted radius based on screen width
-                  // Placeholder image, replace with your own image asset
-                  backgroundImage:
-                      AssetImage(AppImages.searchLogo), // Placeholder image
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Search',
+              style: TextStyle(
+                fontSize: 32.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 16.0),
+            TextField(
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                hintText: 'Search tasks, tags, lists and filters',
+                hintStyle: const TextStyle(color: Colors.grey),
+                filled: true,
+                fillColor: Colors.grey[200],
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                  borderSide: BorderSide.none,
                 ),
-                Text(
-                  'What do u want to search',
-                  style: AppStyles.bold16,
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 16.0,
+                  horizontal: 20.0,
                 ),
-                const SizedBox(height: 10),
-                Text(
-                  'Tap the input box to search',
-                  style: AppStyles.regular13.copyWith(
-                    color: const Color(0xff949d9e),
+              ),
+            ),
+            const Spacer(),
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Placeholder for the binoculars image.
+                  // You would use an Image.asset or Image.network here
+                  // if you had the image file.
+                  Image.asset(
+                    AppImages.searchLogo, // Replace with your image path
+                    height: 150,
                   ),
-                ),
-              ],
+                  const SizedBox(height: 24.0),
+                  const Text(
+                    'What do you want to search',
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8.0),
+                  Text(
+                    'Tap the input box to search',
+                    style: TextStyle(
+                      fontSize: 14.0,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 8.0, left: 16.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            'Search',
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
+            const Spacer(),
+          ],
+        ),
       ),
     );
   }
 }
+
+// Expanded(
+//             child: Column(
+//               children: [
+//                 CircleAvatar(
+//                   backgroundColor: Colors.transparent,
+//                   radius: MediaQuery.of(context).size.width *
+//                       0.2, // Adjusted radius based on screen width
+//                   // Placeholder image, replace with your own image asset
+//                   backgroundImage:
+//                       AssetImage(AppImages.searchLogo), // Placeholder image
+//                 ),
+//                 Text(
+//                   'What do u want to search',
+//                   style: AppStyles.bold16,
+//                 ),
+//                 const SizedBox(height: 10),
+//                 Text(
+//                   'Tap the input box to search',
+//                   style: AppStyles.regular13.copyWith(
+//                     color: const Color(0xff949d9e),
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ),

@@ -13,29 +13,6 @@ class PomodoroView extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            const SizedBox(height: 10),
-            // Tab bar for Pomo and Stopwatch
-            Row(
-              children: [
-                Text(
-                  'Pomo',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black.withOpacity(0.8),
-                  ),
-                ),
-                const SizedBox(width: 20),
-                Text(
-                  'Stopwatch',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.normal,
-                    color: Colors.black.withOpacity(0.4),
-                  ),
-                ),
-              ],
-            ),
             const SizedBox(height: 80),
             // "Focus" text with arrow icon
             Row(

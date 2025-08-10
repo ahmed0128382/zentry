@@ -1,43 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import 'package:zentry/src/features/main/domain/entities/main_view_page_index.dart';
+import 'package:zentry/src/features/main/presentation/controllers/current_tab_index_provider.dart';
 import 'package:zentry/src/features/main/presentation/controllers/main_navigation_controller.dart';
-import 'package:zentry/src/features/main/presentation/views/widgets/bottom_bar_item.dart';
-import 'package:zentry/src/features/main/presentation/views/widgets/custom_navigation_bottom_bar.dart';
+import 'package:zentry/src/features/main/presentation/views/widgets/main_bottom_navigation_bar.dart';
 import 'package:zentry/src/features/main/presentation/views/widgets/main_view_pages.dart';
-import 'package:zentry/src/shared/enums/main_view_pages_indexes.dart';
+import 'package:zentry/src/shared/enums/main_view_pages_index.dart';
 
 class MainViewBody extends ConsumerWidget {
-  const MainViewBody({super.key});
+  final Widget child;
+  final String location;
+
+  const MainViewBody({
+    super.key,
+    required this.child,
+    required this.location,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentIndex = ref.watch(mainNavProvider);
-    final controller = ref.read(mainNavProvider.notifier);
+    // Current index derived solely from location string
+    final currentIndex = ref.watch(currentTabIndexProvider(location));
+    // You can remove the controller reference as it's no longer needed for manual update
     final moreMenuType = ref.watch(moreMenuTypeProvider);
 
-    return Scaffold(
-      body: IndexedStack(
-        index: currentIndex,
-        children: mainViewPagesMap.length > currentIndex
-            ? mainViewPagesMap.values.toList()
-            : List.generate(currentIndex + 1, (i) => const SizedBox()),
-      ),
-      bottomNavigationBar: CustomNavigationBottomBar(
-        moreMenuType: moreMenuType,
-        currentIndex: currentIndex,
-        onTap: controller.updateIndex,
-        allItems: const [
-          BottomBarItem(icon: Icons.check_circle, label: 'Today'), //0
-          BottomBarItem(icon: Icons.calendar_today, label: 'Calendar'), //1
-          BottomBarItem(icon: Icons.view_quilt, label: 'Matrix'), //2
-          BottomBarItem(icon: Icons.timer, label: 'Pomodoro'), //3
-          BottomBarItem(icon: Icons.manage_search_rounded, label: 'Search'), //4
-          BottomBarItem(icon: Icons.track_changes, label: 'Habits'), //5
-          BottomBarItem(icon: Icons.hourglass_bottom, label: 'Countdown'), //6
-          BottomBarItem(icon: Icons.settings, label: 'Settings'), //7
-          BottomBarItem(icon: Icons.person, label: 'Profile'), //8
-        ],
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop && currentIndex > 0) {
+          // Navigate back to default tab route when pressing back button and not on first tab
+          context.go(MainViewPageIndex.toDoToday.route);
+        }
+      },
+      child: Scaffold(
+        body: IndexedStack(
+          index: currentIndex,
+          children: mainViewPagesMap.values.toList(),
+        ),
+        bottomNavigationBar: MainBottomNavigationBar(
+          currentIndex: currentIndex,
+          moreMenuType: moreMenuType,
+          onTap: (index) {
+            // Navigate by route only; no manual state update needed
+            context.go(MainViewPageIndex.values[index].route);
+          },
+        ),
       ),
     );
   }
