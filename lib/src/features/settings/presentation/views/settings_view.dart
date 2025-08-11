@@ -39,9 +39,6 @@ class SettingsView extends ConsumerWidget {
                   ref.read(moreMenuTypeProvider.notifier).state = newType;
                 }
               },
-              onEditTabBarTap: () {
-                context.push(EditBottomNavBarView.routeName);
-              },
             ),
             const SizedBox(height: 20),
             const SettingsIntegrationSection(),

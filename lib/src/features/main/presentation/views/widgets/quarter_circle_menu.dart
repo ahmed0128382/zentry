@@ -272,7 +272,7 @@ class QuarterCircleMenu extends StatelessWidget {
       // Regular half split
       final int innerCount =
           total % 2 == 0 ? ((total) / 2).toInt() - 1 : (total / 2).toInt();
-      final int outerCount = total - innerCount;
+      //final int outerCount = total - innerCount;
 
       final List<IconData> innerIcons = icons.sublist(0, innerCount);
       final List<IconData> outerIcons = icons.sublist(innerCount);
@@ -288,7 +288,7 @@ class QuarterCircleMenu extends StatelessWidget {
             child: AnimatedBuilder(
               animation: animation,
               builder: (context, child) => Container(
-                color: Colors.black.withOpacity(0.3 * animation.value),
+                color: Colors.black.withValues(alpha: 0.3 * animation.value),
               ),
             ),
           ),
@@ -337,7 +337,8 @@ class QuarterCircleMenu extends StatelessWidget {
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: AppColors.peacefulSeaBlue.withOpacity(0.2),
+                              color: AppColors.peacefulSeaBlue
+                                  .withValues(alpha: 0.2),
                               blurRadius: 6,
                               offset: Offset(0, 3),
                             ),

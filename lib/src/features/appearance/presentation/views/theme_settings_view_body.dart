@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class ThemeSettingsPage extends StatelessWidget {
-  const ThemeSettingsPage({super.key});
+class ThemeSettingsViewBody extends StatelessWidget {
+  const ThemeSettingsViewBody({super.key});
 
   @override
   Widget build(BuildContext context) {

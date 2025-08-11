@@ -10,7 +10,7 @@ class EditBottomNavBarView extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Edit Bar'),
       ),
-      body: const TabBarSettingsPage(),
+      body: const EditBottomNavBarViewBody(),
     );
   }
 }

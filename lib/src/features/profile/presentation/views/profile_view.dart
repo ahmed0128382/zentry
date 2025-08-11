@@ -118,7 +118,7 @@ class ProfileView extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 1,
             blurRadius: 5,
             offset: const Offset(0, 3),
@@ -172,7 +172,7 @@ class ProfileView extends StatelessWidget {
           width: 50,
           height: 50,
           decoration: BoxDecoration(
-            color: Colors.yellow.withOpacity(0.2),
+            color: Colors.yellow.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(10),
             border: Border.all(color: Colors.yellow, width: 2),
           ),
@@ -273,7 +273,7 @@ class ProfileView extends StatelessWidget {
                   dotData: FlDotData(show: false),
                   belowBarData: BarAreaData(
                     show: true,
-                    color: Colors.blue.withOpacity(0.3),
+                    color: Colors.blue.withValues(alpha: 0.3),
                   ),
                 ),
               ],
@@ -357,7 +357,7 @@ class ProfileView extends StatelessWidget {
                   dotData: FlDotData(show: false),
                   belowBarData: BarAreaData(
                     show: true,
-                    color: Colors.blue.withOpacity(0.3),
+                    color: Colors.blue.withValues(alpha: 0.3),
                   ),
                 ),
               ],

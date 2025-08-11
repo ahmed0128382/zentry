@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
 
-import 'package:flutter/material.dart';
-import 'app_colors.dart'; // تأكد أنك تستورد AppColors
-
 class AppDecorations {
   // ✅ Splash Gradient Background
   static const BoxDecoration splashBackground = BoxDecoration(
@@ -33,7 +30,7 @@ class AppDecorations {
     borderRadius: BorderRadius.circular(24),
     boxShadow: [
       BoxShadow(
-        color: AppColors.primary.withOpacity(0.2),
+        color: AppColors.primary.withValues(alpha: 0.2),
         blurRadius: 20,
         offset: const Offset(0, -2),
       ),
@@ -45,7 +42,7 @@ class AppDecorations {
     color: Colors.white,
     shadows: [
       BoxShadow(
-        color: AppColors.primary.withOpacity(0.1),
+        color: AppColors.primary.withValues(alpha: 0.1),
         blurRadius: 12,
         offset: const Offset(0, 2),
       ),
@@ -58,10 +55,10 @@ class AppDecorations {
   // ✅ Circle / Oval Decoration (مثلاً للبروفايل أو أي عنصر دائري)
   static final BoxDecoration circleDecoration = BoxDecoration(
     shape: BoxShape.circle,
-    color: AppColors.primary.withOpacity(0.1),
+    color: AppColors.primary.withValues(alpha: 0.1),
     boxShadow: [
       BoxShadow(
-        color: AppColors.primary.withOpacity(0.2),
+        color: AppColors.primary.withValues(alpha: 0.2),
         blurRadius: 8,
         offset: const Offset(0, 3),
       ),

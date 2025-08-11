@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:zentry/src/config/app_routes.dart';
+import 'package:zentry/src/features/appearance/presentation/views/them_settings_view.dart';
 import 'package:zentry/src/features/main/presentation/views/main_view.dart';
 import 'package:zentry/src/features/main/presentation/views/widgets/main_view_pages.dart';
 import 'package:zentry/src/features/splash/presentation/views/splash_view.dart';
@@ -77,6 +78,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: EditBottomNavBarView.routeName,
         builder: (_, __) => const EditBottomNavBarView(),
       ),
+      GoRoute(
+          path: ThemeSettingsView.routeName,
+          builder: (_, __) => const ThemeSettingsView()),
     ],
     errorBuilder: (_, state) => const Scaffold(
       body: Center(child: Text('Page not found')),

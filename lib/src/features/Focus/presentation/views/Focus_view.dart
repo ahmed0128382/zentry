@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:zentry/src/core/utils/app_colors.dart';
 import 'package:zentry/src/features/Focus/presentation/views/pomodoro_view.dart';
 import 'package:zentry/src/features/Focus/presentation/views/stop_watch_view.dart';
 
@@ -90,7 +89,7 @@ class _FocusViewState extends State<FocusView> {
         style: TextStyle(
           fontSize: 18,
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          color: Colors.black.withOpacity(isSelected ? 0.8 : 0.4),
+          color: Colors.black.withValues(alpha: isSelected ? 0.8 : 0.4),
         ),
       ),
     );

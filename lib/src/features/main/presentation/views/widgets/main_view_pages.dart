@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:zentry/src/features/Focus/presentation/views/Focus_view.dart';
+import 'package:zentry/src/features/Focus/presentation/views/focus_view.dart';
 import 'package:zentry/src/features/calender/presentation/views/calender_view.dart';
 import 'package:zentry/src/features/countdown/presentation/views/countdown_view.dart';
 import 'package:zentry/src/features/eisen_hower_matrix.dart/presentation/views/eisen_hower_matrix_view.dart';

@@ -28,7 +28,7 @@ class SettingsPremiumAccountSection extends StatelessWidget {
             onPressed: () {},
             style: ElevatedButton.styleFrom(
               foregroundColor: Colors.orange,
-              backgroundColor: Colors.orange.withOpacity(0.1),
+              backgroundColor: Colors.orange.withValues(alpha: 0.1),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
                 side: const BorderSide(color: Colors.orange),

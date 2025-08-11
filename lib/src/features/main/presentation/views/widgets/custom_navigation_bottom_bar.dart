@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:zentry/src/core/utils/app_colors.dart';
 import 'package:zentry/src/core/utils/app_decorations.dart';
@@ -53,7 +51,7 @@ class CustomNavigationBottomBar extends StatelessWidget {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.primary.withOpacity(0.6),
+                    color: AppColors.primary.withValues(alpha: 0.6),
                     blurRadius: 20,
                     spreadRadius: 2,
                   ),
@@ -167,7 +165,7 @@ class CustomNavigationBottomBar extends StatelessWidget {
             GestureDetector(
               onTap: () => overlayEntry.remove(),
               child: Container(
-                color: Colors.black.withOpacity(0.4),
+                color: Colors.black.withValues(alpha: 0.4),
               ),
             ),
             // Expandable Menu
