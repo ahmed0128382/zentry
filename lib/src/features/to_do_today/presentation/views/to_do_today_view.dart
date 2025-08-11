@@ -45,6 +45,7 @@ class ToDoTodayView extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'add_task_to_Do_today',
         onPressed: () {},
         child: const Icon(Icons.add),
       ),

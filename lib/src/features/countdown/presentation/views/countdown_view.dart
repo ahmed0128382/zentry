@@ -44,6 +44,7 @@ class CountdownView extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(24.0),
               child: FloatingActionButton(
+                heroTag: 'add_count_down',
                 onPressed: () {
                   // Handle floating action button press
                 },

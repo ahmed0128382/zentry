@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:zentry/src/features/appearance/presentation/views/them_settings_view.dart';
 import 'package:zentry/src/features/edit_bottom_nav_bar/presentation/views/edit_bottom_nav_bar_view.dart';
 import 'package:zentry/src/features/main/presentation/controllers/main_navigation_controller.dart';
 import 'package:zentry/src/features/settings/presentation/views/widgets/settings_header.dart';
@@ -38,6 +39,12 @@ class SettingsView extends ConsumerWidget {
                 if (newType != null) {
                   ref.read(moreMenuTypeProvider.notifier).state = newType;
                 }
+              },
+              onEditTabBarTap: () {
+                context.push(EditBottomNavBarView.routeName);
+              },
+              onAppearanceTap: () {
+                context.push(ThemeSettingsView.routeName);
               },
             ),
             const SizedBox(height: 20),

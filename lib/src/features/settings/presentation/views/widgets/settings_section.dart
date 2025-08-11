@@ -2,18 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:zentry/src/core/widgets/custom_card.dart';
 import 'package:zentry/src/features/appearance/presentation/views/them_settings_view.dart';
-import 'package:zentry/src/features/edit_bottom_nav_bar/presentation/views/edit_bottom_nav_bar_view.dart';
 import 'package:zentry/src/features/settings/presentation/views/widgets/settings_item.dart';
 import 'package:zentry/src/shared/enums/menu_types.dart';
 
 class SettingsSection extends StatelessWidget {
   final MoreMenuType selectedType;
   final ValueChanged<MoreMenuType?> onMoreMenuTypeChanged;
+  final VoidCallback onEditTabBarTap;
+  final VoidCallback onAppearanceTap;
 
   const SettingsSection({
     super.key,
     required this.selectedType,
     required this.onMoreMenuTypeChanged,
+    required this.onEditTabBarTap,
+    required this.onAppearanceTap,
   });
 
   @override
@@ -24,9 +27,7 @@ class SettingsSection extends StatelessWidget {
           SettingsItem(
             icon: Icons.widgets,
             title: 'Tab Bar',
-            onTap: () {
-              context.push(EditBottomNavBarView.routeName);
-            },
+            onTap: onEditTabBarTap,
           ),
           const Divider(),
           SettingsItem(
@@ -47,11 +48,7 @@ class SettingsSection extends StatelessWidget {
           ),
           const Divider(),
           SettingsItem(
-              icon: Icons.palette,
-              title: 'Appearance',
-              onTap: () {
-                context.push(ThemeSettingsView.routeName);
-              }),
+              icon: Icons.palette, title: 'Appearance', onTap: onAppearanceTap),
           const Divider(),
           SettingsItem(icon: Icons.access_time, title: 'Date & Time'),
           const Divider(),

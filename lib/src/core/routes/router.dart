@@ -73,14 +73,15 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         ],
       ),
 
-      // Edit Bottom Nav Bar
+      // Outside Shell — full-screen routes
       GoRoute(
         path: EditBottomNavBarView.routeName,
         builder: (_, __) => const EditBottomNavBarView(),
       ),
       GoRoute(
-          path: ThemeSettingsView.routeName,
-          builder: (_, __) => const ThemeSettingsView()),
+        path: ThemeSettingsView.routeName,
+        builder: (_, __) => const ThemeSettingsView(),
+      ),
     ],
     errorBuilder: (_, state) => const Scaffold(
       body: Center(child: Text('Page not found')),

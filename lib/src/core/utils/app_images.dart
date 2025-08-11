@@ -8,5 +8,7 @@ class AppImages {
   static const String searchLogo = 'assets/images/searchLogo.jpg';
   static const String imagesCustomSearch = "assets/images/custom_search.svg";
   static const String imagesFilterIcon = "assets/images/filter_icon.svg";
+  static const String imagesSpring = "assets/images/spring.jpeg";
+  static const String imagesWinter = "assets/images/winter.jpeg";
   // أضف المزيد حسب الحاجة
 }
