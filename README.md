@@ -31,14 +31,20 @@ Zentry is built using a combination of:
 
 ## 🔨 Technologies Used (So far)
 
-| Category             | Tools / Libraries                                                |
-| -------------------- | ---------------------------------------------------------------- |
-| UI Toolkit           | Flutter                                                          |
-| State Management     | Riverpod                                                         |
-| Architecture Pattern | Clean Architecture + DDD                                         |
-| Theming / Styling    | Custom `AppTheme`, `AppColors`, `AppFonts`, etc.                 |
-| Routing              | [GoRouter](https://pub.dev/packages/go_router)                   |
-| Git                  | Git + GitHub (private main branch, public showcase branch later) |
+| Category                | Tools / Libraries / Approaches                                 |
+| ----------------------- | -------------------------------------------------------------- |
+| UI Toolkit              | [Flutter](https://flutter.dev)                                 |
+| State Management        | [Riverpod](https://riverpod.dev)                               |
+| Architecture Pattern    | Clean Architecture + Domain-Driven Design (DDD)                |
+| Routing                 | [GoRouter](https://pub.dev/packages/go_router)                 |
+| Theming / Styling       | Custom `AppTheme`, `AppColors`, `AppFonts` in `core/theme`      |
+| Reusable Components     | Shared widgets in `core/widgets`                               |
+| Utilities & Helpers     | Common functions in `core/utils`                               |
+| Feature Modularization  | Isolated feature folders in `features/` (e.g., `habits`, `focus`, `calendar`) |
+| Shared Enums            | Centralized enums in `shared/enums`                            |
+| Domain Layer Entities   | Defined in `main/domain/entities`                              |
+| Version Control         | Git + GitHub (private main branch, public showcase branch later) |
+
 
 ---
 
