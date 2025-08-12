@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zentry/src/core/routes/router.dart';
 
 import 'package:zentry/src/core/theme/app_theme.dart';
-import 'package:zentry/src/core/utils/app_images.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

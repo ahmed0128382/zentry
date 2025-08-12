@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zentry/src/features/main/presentation/controllers/main_navigation_controller.dart';
+import 'package:zentry/src/features/main/application/providers/more_menu_type_provider.dart';
 import 'package:zentry/src/shared/enums/menu_types.dart';
 
 class SettingsMenuTypeDropdown extends ConsumerWidget {

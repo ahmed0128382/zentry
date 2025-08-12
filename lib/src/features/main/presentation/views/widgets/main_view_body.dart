@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:zentry/src/features/main/application/providers/more_menu_type_provider.dart';
 
 import 'package:zentry/src/features/main/domain/entities/main_view_page_index.dart';
-import 'package:zentry/src/features/main/presentation/controllers/current_tab_index_provider.dart';
-import 'package:zentry/src/features/main/presentation/controllers/main_navigation_controller.dart';
+import 'package:zentry/src/features/main/application/providers/current_tab_index_provider.dart';
+import 'package:zentry/src/features/main/application/controllers/main_navigation_controller.dart';
 import 'package:zentry/src/features/main/presentation/views/widgets/main_bottom_navigation_bar.dart';
 import 'package:zentry/src/features/main/presentation/views/widgets/main_view_pages.dart';
 import 'package:zentry/src/shared/enums/main_view_pages_index.dart';
