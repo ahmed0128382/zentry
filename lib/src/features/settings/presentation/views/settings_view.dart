@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:zentry/src/features/appearance/presentation/views/them_settings_view.dart';
 import 'package:zentry/src/features/edit_bottom_nav_bar/presentation/views/edit_bottom_nav_bar_view.dart';
 import 'package:zentry/src/features/main/presentation/controllers/main_navigation_controller.dart';
+import 'package:zentry/src/features/profile/presentation/views/profile_view.dart';
 import 'package:zentry/src/features/settings/presentation/views/widgets/settings_header.dart';
 import 'package:zentry/src/features/settings/presentation/views/widgets/settings_integration_section.dart';
 import 'package:zentry/src/features/settings/presentation/views/widgets/settings_premium_section.dart';
@@ -28,7 +29,7 @@ class SettingsView extends ConsumerWidget {
           children: [
             const SettingsHeader(),
             SettingsUserProfile(onTap: () {
-              context.go(MainViewPageIndex.profile.route);
+              context.push(ProfileView.routeName);
             }),
             const SizedBox(height: 20),
             const SettingsPremiumAccountSection(),

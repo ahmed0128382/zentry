@@ -5,7 +5,6 @@ import 'package:zentry/src/features/countdown/presentation/views/countdown_view.
 import 'package:zentry/src/features/eisen_hower_matrix.dart/presentation/views/eisen_hower_matrix_view.dart';
 import 'package:zentry/src/features/habits/presentation/views/habits_view.dart';
 
-import 'package:zentry/src/features/profile/presentation/views/profile_view.dart';
 import 'package:zentry/src/features/search/presentation/views/search_view.dart';
 import 'package:zentry/src/features/settings/presentation/views/settings_view.dart';
 import 'package:zentry/src/features/to_do_today/presentation/views/to_do_today_view.dart';
@@ -22,5 +21,5 @@ final Map<MainViewPageIndex, Widget> mainViewPagesMap = {
   MainViewPageIndex.habits: const HabitsView(),
   MainViewPageIndex.countdown: const CountdownView(),
   MainViewPageIndex.settings: const SettingsView(),
-  MainViewPageIndex.profile: const ProfileView(),
+  //MainViewPageIndex.profile: const ProfileView(),
 };

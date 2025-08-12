@@ -7,5 +7,5 @@ enum MainViewPageIndex {
   habits,
   countdown,
   settings,
-  profile,
+  // profile,
 }

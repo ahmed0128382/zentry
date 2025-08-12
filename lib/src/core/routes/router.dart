@@ -5,6 +5,7 @@ import 'package:zentry/src/config/app_routes.dart';
 import 'package:zentry/src/features/appearance/presentation/views/them_settings_view.dart';
 import 'package:zentry/src/features/main/presentation/views/main_view.dart';
 import 'package:zentry/src/features/main/presentation/views/widgets/main_view_pages.dart';
+import 'package:zentry/src/features/profile/presentation/views/profile_view.dart';
 import 'package:zentry/src/features/splash/presentation/views/splash_view.dart';
 import 'package:zentry/src/features/on_boarding/presentation/views/on_boarding_view.dart';
 import 'package:zentry/src/features/edit_bottom_nav_bar/presentation/views/edit_bottom_nav_bar_view.dart';
@@ -66,10 +67,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             path: AppRoutes.settings,
             builder: (_, __) => mainViewPagesMap[MainViewPageIndex.settings]!,
           ),
-          GoRoute(
-            path: AppRoutes.profile,
-            builder: (_, __) => mainViewPagesMap[MainViewPageIndex.profile]!,
-          ),
         ],
       ),
 
@@ -81,6 +78,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: ThemeSettingsView.routeName,
         builder: (_, __) => const ThemeSettingsView(),
+      ),
+      GoRoute(
+        path: AppRoutes.profile,
+        builder: (_, __) => const ProfileView(),
       ),
     ],
     errorBuilder: (_, state) => const Scaffold(

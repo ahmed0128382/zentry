@@ -21,8 +21,6 @@ extension MainViewPageIndexExtension on MainViewPageIndex {
         return AppRoutes.countdown;
       case MainViewPageIndex.settings:
         return AppRoutes.settings;
-      case MainViewPageIndex.profile:
-        return AppRoutes.profile;
     }
   }
 

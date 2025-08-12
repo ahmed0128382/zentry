@@ -24,7 +24,7 @@ class MainBottomNavigationBar extends StatelessWidget {
     BottomBarItem(icon: Icons.track_changes, label: 'Habits'),
     BottomBarItem(icon: Icons.hourglass_bottom, label: 'Countdown'),
     BottomBarItem(icon: Icons.settings, label: 'Settings'),
-    BottomBarItem(icon: Icons.person, label: 'Profile'),
+    // BottomBarItem(icon: Icons.person, label: 'Profile'),
   ];
 
   @override
