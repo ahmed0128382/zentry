@@ -5,6 +5,7 @@ class AppFonts {
   static const String inter = 'Inter';
   static const String montserrat = 'Montserrat';
   static const String poppins = 'Poppins';
+  static const String roboto = 'PlusJakartaSans';
 
   // الخط الأساسي للتطبيق
   static const String primaryFont = cairo; // اختر واحد فقط كافتراضي

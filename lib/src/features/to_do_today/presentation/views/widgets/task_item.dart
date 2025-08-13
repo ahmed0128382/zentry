@@ -5,6 +5,7 @@ class TaskItem extends StatelessWidget {
   final String time;
   final bool isCompleted;
   final bool showRefresh;
+  final void Function(bool?)? onChanged;
 
   const TaskItem({
     super.key,
@@ -12,6 +13,7 @@ class TaskItem extends StatelessWidget {
     required this.time,
     required this.isCompleted,
     required this.showRefresh,
+    this.onChanged,
   });
 
   @override
@@ -22,9 +24,7 @@ class TaskItem extends StatelessWidget {
         children: [
           Checkbox(
             value: isCompleted,
-            onChanged: (bool? newValue) {
-              // Handle checkbox state change here
-            },
+            onChanged: onChanged,
           ),
           const SizedBox(width: 8.0),
           Expanded(

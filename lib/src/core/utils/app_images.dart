@@ -11,4 +11,12 @@ class AppImages {
   static const String imagesSpring = "assets/images/spring.jpeg";
   static const String imagesWinter = "assets/images/winter.jpeg";
   // أضف المزيد حسب الحاجة
+
+  /////////////NTI IMAGES////////////////
+  static const String imagesBox = 'assets/images/box.svg';
+  static const String imagesCard = 'assets/images/card.svg';
+  static const String imgaesProfile = 'assets/images/profile_image.png';
+  static const String imagesSettings = 'assets/images/settings.svg';
+  static const String imagesInfoQuestion = 'assets/images/infoQuestion.svg';
+  static const String imagesAdd = 'assets/images/add.svg';
 }
