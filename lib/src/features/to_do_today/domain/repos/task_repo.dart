@@ -1,7 +1,8 @@
 import '../entities/task.dart';
 
-abstract class ITaskRepository {
+abstract class TaskRepository {
   Future<List<Task>> getAllTasks();
+  Future<Task?> getTaskById(String id);
   Future<List<Task>> getCompletedTasks();
   Future<List<Task>> getIncompleteTasks();
 

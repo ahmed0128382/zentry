@@ -18,6 +18,11 @@ class AppDatabase extends _$AppDatabase {
   Future<List<TasksTableData>> getAllTasks() => select(tasksTable).get();
   Stream<List<TasksTableData>> watchAllTasks() => select(tasksTable).watch();
 
+  Future<TasksTableData?> getTaskById(String id) {
+    return (select(tasksTable)..where((t) => t.id.equals(id)))
+        .getSingleOrNull();
+  }
+
   // Fetch only incomplete tasks
   Future<List<TasksTableData>> getIncompleteTasks() {
     return (select(tasksTable)..where((t) => t.isCompleted.equals(false)))

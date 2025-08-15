@@ -9,6 +9,7 @@ import 'package:zentry/src/features/profile/presentation/views/profile_view.dart
 import 'package:zentry/src/features/splash/presentation/views/splash_view.dart';
 import 'package:zentry/src/features/on_boarding/presentation/views/on_boarding_view.dart';
 import 'package:zentry/src/features/edit_bottom_nav_bar/presentation/views/edit_bottom_nav_bar_view.dart';
+import 'package:zentry/src/features/to_do_today/presentation/views/task_details_view.dart';
 import 'package:zentry/src/shared/enums/main_view_pages_index.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
@@ -37,6 +38,16 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: AppRoutes.today,
             builder: (_, __) => mainViewPagesMap[MainViewPageIndex.toDoToday]!,
+            routes: [
+              GoRoute(
+                path: 'task/:id',
+                name: 'taskDetails',
+                builder: (context, state) {
+                  final taskId = state.pathParameters['id']!;
+                  return TaskDetailsView(taskId: taskId);
+                },
+              ),
+            ],
           ),
           GoRoute(
             path: AppRoutes.calendar,

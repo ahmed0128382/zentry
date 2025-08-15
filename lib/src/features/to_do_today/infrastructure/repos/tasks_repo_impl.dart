@@ -1,0 +1,70 @@
+import 'package:zentry/src/core/infrastucture/drift/app_database.dart';
+import 'package:zentry/src/features/to_do_today/domain/entities/task.dart';
+import 'package:zentry/src/features/to_do_today/domain/repos/task_repo.dart';
+import 'package:drift/drift.dart';
+
+class TaskRepositoryImpl implements TaskRepository {
+  final AppDatabase db;
+
+  TaskRepositoryImpl(this.db);
+
+  @override
+  Future<List<Task>> getAllTasks() async {
+    final raw = await db.getAllTasks();
+    return raw.map<Task>((row) => Task.fromDb(row)).toList();
+  }
+
+  @override
+  Future<Task?> getTaskById(String id) async {
+    final taskRow = await db.getTaskById(id);
+    return taskRow != null ? Task.fromDb(taskRow) : null;
+  }
+
+  @override
+  Future<List<Task>> getCompletedTasks() async {
+    final raw = await db.getCompletedTasks();
+    return raw.map(Task.fromDb).toList();
+  }
+
+  @override
+  Future<List<Task>> getIncompleteTasks() async {
+    final raw = await db.getIncompleteTasks();
+    return raw.map(Task.fromDb).toList();
+  }
+
+  @override
+  Future<void> addTask(Task task) async {
+    await db.insertTask(
+      TasksTableCompanion(
+        id: Value(task.id),
+        title: Value(task.title),
+        description: Value(task.description),
+        createdAt: Value(task.createdAt),
+        isCompleted: Value(task.isCompleted),
+      ),
+    );
+  }
+
+  @override
+  Future<void> updateTaskCompletion(String id, bool isCompleted) async {
+    await db.updateTaskCompletion(id, isCompleted);
+  }
+
+  @override
+  Future<void> deleteTask(String id) async {
+    await db.deleteTask(id);
+  }
+
+  @override
+  Future<void> updateTask(Task task) async {
+    await db.updateTask(
+      TasksTableCompanion(
+        id: Value(task.id),
+        title: Value(task.title),
+        description: Value(task.description),
+        createdAt: Value(task.createdAt),
+        isCompleted: Value(task.isCompleted),
+      ),
+    );
+  }
+}
