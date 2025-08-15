@@ -21,6 +21,10 @@ class SearchView extends StatelessWidget {
             ),
             const SizedBox(height: 16.0),
             TextField(
+              onTapOutside: (PointerDownEvent event) {
+                // Dismiss the keyboard when tapping outside the text field.
+                FocusManager.instance.primaryFocus?.unfocus();
+              },
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.search, color: Colors.grey),
                 hintText: 'Search tasks, tags, lists and filters',
@@ -75,29 +79,3 @@ class SearchView extends StatelessWidget {
     );
   }
 }
-
-// Expanded(
-//             child: Column(
-//               children: [
-//                 CircleAvatar(
-//                   backgroundColor: Colors.transparent,
-//                   radius: MediaQuery.of(context).size.width *
-//                       0.2, // Adjusted radius based on screen width
-//                   // Placeholder image, replace with your own image asset
-//                   backgroundImage:
-//                       AssetImage(AppImages.searchLogo), // Placeholder image
-//                 ),
-//                 Text(
-//                   'What do u want to search',
-//                   style: AppStyles.bold16,
-//                 ),
-//                 const SizedBox(height: 10),
-//                 Text(
-//                   'Tap the input box to search',
-//                   style: AppStyles.regular13.copyWith(
-//                     color: const Color(0xff949d9e),
-//                   ),
-//                 ),
-//               ],
-//             ),
-//           ),
