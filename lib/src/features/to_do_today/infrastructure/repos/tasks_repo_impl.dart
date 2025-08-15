@@ -46,6 +46,11 @@ class TaskRepositoryImpl implements TaskRepository {
   }
 
   @override
+  Stream<List<Task>> watchAllTasks() {
+    return db.watchAllTasks().map((rows) => rows.map(Task.fromDb).toList());
+  }
+
+  @override
   Future<void> updateTaskCompletion(String id, bool isCompleted) async {
     await db.updateTaskCompletion(id, isCompleted);
   }

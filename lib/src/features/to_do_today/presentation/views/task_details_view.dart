@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zentry/src/features/to_do_today/application/controllers/task_details_controller.dart';
+import 'package:zentry/src/features/to_do_today/application/providers/task_details_controller_provider.dart';
 import '../../../to_do_today/domain/entities/task.dart';
 
 class TaskDetailsView extends ConsumerStatefulWidget {
@@ -44,7 +44,7 @@ class _TaskDetailsViewState extends ConsumerState<TaskDetailsView> {
         final ui = asyncUi.valueOrNull;
         if (ui == null || !ui.hasUnsavedChanges || ui.isSaving) return true;
 
-        final leave = await _confirmDiscard(context);
+        final leave = await _confirmDiscard(context); // dialog shows here only
         return leave ?? false;
       },
       child: Scaffold(
@@ -54,13 +54,9 @@ class _TaskDetailsViewState extends ConsumerState<TaskDetailsView> {
           leading: IconButton(
             tooltip: 'Back',
             icon: const Icon(Icons.arrow_back_rounded),
-            onPressed: () async {
-              final ui = asyncUi.valueOrNull;
-              if (ui != null && ui.hasUnsavedChanges && !ui.isSaving) {
-                final leave = await _confirmDiscard(context);
-                if (leave != true) return;
-              }
-              if (mounted) Navigator.of(context).maybePop();
+            onPressed: () {
+              // Let WillPopScope handle unsaved changes
+              Navigator.of(context).maybePop();
             },
           ),
           actions: [
@@ -204,18 +200,36 @@ class _TaskDetailsViewState extends ConsumerState<TaskDetailsView> {
   }
 
   Future<bool?> _confirmDiscard(BuildContext context) {
+    final controller =
+        ref.read(taskDetailsControllerProvider(widget.taskId).notifier);
+
     return showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Discard changes?'),
-        content: const Text('You have unsaved edits. Leave without saving?'),
+        title: const Text('Unsaved changes'),
+        content:
+            const Text('You have unsaved edits. What would you like to do?'),
         actions: [
+          // Cancel: stay on page
           TextButton(
-              onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Stay')),
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+
+          // Save: save changes and leave
+          TextButton(
+            onPressed: () async {
+              await controller.saveEdits();
+              if (mounted) Navigator.pop(ctx, true);
+            },
+            child: const Text('Save'),
+          ),
+
+          // Discard: leave without saving
           FilledButton.tonal(
-              onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('Discard')),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Discard'),
+          ),
         ],
       ),
     );

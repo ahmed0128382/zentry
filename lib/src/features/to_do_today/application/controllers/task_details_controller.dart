@@ -30,42 +30,60 @@ class TaskDetailsController
 
   Future<void> toggleCompleted(bool value) async {
     final repo = ref.read(taskRepoProvider);
+    final taskListCtrl = ref.read(taskListControllerProvider.notifier);
     final current = state.value;
     if (current == null) return;
 
-    // optimistic UI
+    // 1️⃣ Optimistic UI update in both places
+    // Update TaskDetails UI
     state = AsyncData(
-      current.copyWith(task: current.task.copyWith(isCompleted: value)),
+      current.copyWith(
+        isCompletedDraft: value,
+        task: current.task.copyWith(isCompleted: value),
+      ),
     );
-    await repo.updateTaskCompletion(current.task.id, value);
 
-    // ensure we end in sync with persistence
-    final fresh = await repo.getTaskById(current.task.id) ?? current.task;
-    state = AsyncData(state.value!.copyWith(task: fresh));
+    // Update main task list (ToDoTodayView)
+    taskListCtrl.state = taskListCtrl.state.whenData((tasks) {
+      return tasks.map((t) {
+        if (t.id == current.task.id) {
+          return t.copyWith(isCompleted: value);
+        }
+        return t;
+      }).toList();
+    });
+
+    try {
+      // 2️⃣ Persist in DB
+      await repo.updateTaskCompletion(current.task.id, value);
+
+      // 3️⃣ Refresh both TaskDetails & main list with fresh DB data
+      final freshTask = await repo.getTaskById(current.task.id);
+      if (freshTask != null) {
+        // Update TaskDetails
+        state = AsyncData(
+          state.value!.copyWith(
+            task: freshTask,
+            isCompletedDraft: freshTask.isCompleted,
+          ),
+        );
+
+        // Update main list
+        taskListCtrl.state = taskListCtrl.state.whenData((tasks) {
+          return tasks
+              .map((t) => t.id == freshTask.id ? freshTask : t)
+              .toList();
+        });
+      }
+    } catch (e, st) {
+      // Rollback TaskDetails UI if DB fails
+      state = AsyncError(e, st);
+
+      // Optionally rollback main list
+      await taskListCtrl.loadTasks();
+    }
   }
 
-  // Future<void> saveEdits() async {
-  //   final repo = ref.read(taskRepoProvider);
-  //   final current = state.value;
-  //   if (current == null) return;
-
-  //   state = AsyncData(current.copyWith(isSaving: true));
-
-  //   final updated = current.task.copyWith(
-  //     title: current.titleDraft.trim(),
-  //     description: current.descriptionDraft.trim().isEmpty
-  //         ? null
-  //         : current.descriptionDraft.trim(),
-  //   );
-
-  //   await repo.updateTask(updated);
-
-  //   // refresh snapshot from repo if needed
-  //   final fresh = await repo.getTaskById(updated.id) ?? updated;
-  //   state = AsyncData(
-  //     current.copyWith(task: fresh, isSaving: false),
-  //   );
-  // }
   Future<void> saveEdits() async {
     final repo = ref.read(taskRepoProvider);
     final current = state.value;
@@ -81,6 +99,7 @@ class TaskDetailsController
       return;
     }
 
+    // Nothing changed — no need to update
     if (newTitle == current.task.title &&
         newDescription == current.task.description) {
       return;
@@ -94,27 +113,31 @@ class TaskDetailsController
         description: newDescription,
       );
 
-      await repo.updateTask(updatedTask);
+      // Use the controller’s optimistic edit
+      await ref.read(taskListControllerProvider.notifier).editTask(updatedTask);
 
-      // ✅ REFRESH the to-do list provider so ToDoTodayView updates instantly
-      ref.invalidate(taskListControllerProvider);
-
+      // Get fresh copy from DB (in case repo adds timestamps, etc.)
       final freshTask = await repo.getTaskById(updatedTask.id) ?? updatedTask;
-      state = AsyncData(
-        current.copyWith(task: freshTask, isSaving: false),
-      );
+      state = AsyncData(current.copyWith(task: freshTask, isSaving: false));
     } catch (e, st) {
       state = AsyncError(e, st);
     }
   }
 
   Future<void> deleteTask() async {
-    final repo = ref.read(taskRepoProvider);
     final current = state.value;
     if (current == null) return;
 
     state = AsyncData(current.copyWith(isDeleting: true));
-    await repo.deleteTask(current.task.id);
+
+    try {
+      await ref
+          .read(taskListControllerProvider.notifier)
+          .deleteTask(current.task.id);
+      // The details screen can listen for removal and pop itself
+    } catch (e, st) {
+      state = AsyncError(e, st);
+    }
   }
 
   /// Optional explicit refresh (e.g., pull-to-refresh).
@@ -128,9 +151,3 @@ class TaskDetailsController
     }
   }
 }
-
-/// Provider family you use from the UI: ref.watch(taskDetailsControllerProvider(taskId))
-final taskDetailsControllerProvider = AutoDisposeAsyncNotifierProviderFamily<
-    TaskDetailsController, TaskDetailsUiState, String>(
-  TaskDetailsController.new,
-);

@@ -1,50 +1,3 @@
-// import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:zentry/src/features/to_do_today/domain/entities/task.dart';
-// import 'package:zentry/src/features/to_do_today/domain/repos/task_repo.dart';
-
-// class TaskListController extends StateNotifier<AsyncValue<List<Task>>> {
-//   final TaskRepository _repository;
-
-//   TaskListController(this._repository) : super(const AsyncValue.loading()) {
-//     loadTasks();
-//   }
-
-//   /// Fetch all tasks from DB
-//   Future<void> loadTasks() async {
-//     state = const AsyncValue.loading();
-//     try {
-//       final tasks = await _repository.getAllTasks();
-//       state = AsyncValue.data(tasks);
-//     } catch (e, st) {
-//       state = AsyncValue.error(e, st);
-//     }
-//   }
-
-//   /// Add task
-//   Future<void> addTask(Task task) async {
-//     await _repository.addTask(task);
-//     await loadTasks();
-//   }
-
-//   /// Edit entire task
-//   Future<void> editTask(Task updatedTask) async {
-//     await _repository.updateTask(updatedTask);
-//     await loadTasks();
-//   }
-
-//   /// Toggle completion only
-//   Future<void> toggleTaskCompletion(String taskId, bool isCompleted) async {
-//     await _repository.updateTaskCompletion(taskId, isCompleted);
-//     await loadTasks();
-//   }
-
-//   /// Delete task
-//   Future<void> removeTask(String taskId) async {
-//     await _repository.deleteTask(taskId);
-//     await loadTasks();
-//   }
-// }
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zentry/src/features/to_do_today/domain/entities/task.dart';
 import 'package:zentry/src/features/to_do_today/domain/repos/task_repo.dart';
@@ -53,7 +6,17 @@ class TaskListController extends StateNotifier<AsyncValue<List<Task>>> {
   final TaskRepository _repo;
 
   TaskListController(this._repo) : super(const AsyncValue.loading()) {
-    loadTasks();
+    _init();
+  }
+
+  Future<void> _init() async {
+    await loadTasks();
+    // If your repo supports streaming:
+    // _repo.watchAllTasks().listen((tasks) {
+    //   state = AsyncValue.data(tasks);
+    // }, onError: (err, st) {
+    //   state = AsyncValue.error(err, st);
+    // });
   }
 
   Future<void> loadTasks() async {
@@ -67,33 +30,61 @@ class TaskListController extends StateNotifier<AsyncValue<List<Task>>> {
   }
 
   Future<void> addTask(Task task) async {
+    final prev = state.value ?? [];
+    state = AsyncValue.data([...prev, task]); // optimistic
     try {
       await _repo.addTask(task);
       await loadTasks();
     } catch (e, st) {
+      state = AsyncValue.data(prev); // rollback
       state = AsyncValue.error(e, st);
     }
   }
 
-  Future<void> toggleTaskCompletion(String taskId, bool isCompleted) async {
-    try {
-      await _repo.updateTaskCompletion(taskId, isCompleted);
+  Future<void> toggleCompletion(String taskId) async {
+    bool? newValue;
 
-      // Update local state
-      state.whenData((tasks) {
-        final updated = tasks
-            .map((t) =>
-                t.id == taskId ? t.copyWith(isCompleted: isCompleted) : t)
-            .toList();
-        state = AsyncValue.data(updated);
-      });
+    // 1️⃣ Optimistic UI update
+    state = state.whenData((tasks) {
+      return tasks.map((task) {
+        if (task.id == taskId) {
+          newValue = !task.isCompleted;
+          return task.copyWith(isCompleted: newValue);
+        }
+        return task;
+      }).toList();
+    });
+
+    if (newValue == null) return; // task not found
+
+    // 2️⃣ Persist the change
+    await _repo.updateTaskCompletion(taskId, newValue!);
+  }
+
+  Future<void> editTask(Task updatedTask) async {
+    final prev = state.value ?? [];
+    final updated =
+        prev.map((t) => t.id == updatedTask.id ? updatedTask : t).toList();
+
+    state = AsyncValue.data(updated); // optimistic
+    try {
+      await _repo.updateTask(updatedTask);
     } catch (e, st) {
+      state = AsyncValue.data(prev); // rollback
       state = AsyncValue.error(e, st);
     }
   }
 
   Future<void> deleteTask(String id) async {
-    await _repo.deleteTask(id);
-    await loadTasks();
+    final prev = state.value ?? [];
+    final updated = prev.where((t) => t.id != id).toList();
+
+    state = AsyncValue.data(updated); // optimistic
+    try {
+      await _repo.deleteTask(id);
+    } catch (e, st) {
+      state = AsyncValue.data(prev); // rollback
+      state = AsyncValue.error(e, st);
+    }
   }
 }
