@@ -38,16 +38,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: AppRoutes.today,
             builder: (_, __) => mainViewPagesMap[MainViewPageIndex.toDoToday]!,
-            routes: [
-              GoRoute(
-                path: 'task/:id',
-                name: 'taskDetails',
-                builder: (context, state) {
-                  final taskId = state.pathParameters['id']!;
-                  return TaskDetailsView(taskId: taskId);
-                },
-              ),
-            ],
           ),
           GoRoute(
             path: AppRoutes.calendar,
@@ -80,7 +70,15 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           ),
         ],
       ),
-
+      // 🔹 Global Task Details Route — accessible from anywhere
+      GoRoute(
+        path: '/task/:id',
+        name: 'taskDetails',
+        builder: (context, state) {
+          final taskId = state.pathParameters['id']!;
+          return TaskDetailsView(taskId: taskId);
+        },
+      ),
       // Outside Shell — full-screen routes
       GoRoute(
         path: EditBottomNavBarView.routeName,
