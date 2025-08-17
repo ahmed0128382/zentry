@@ -10,6 +10,8 @@ class AppImages {
   static const String imagesFilterIcon = "assets/images/filter_icon.svg";
   static const String imagesSpring = "assets/images/spring.jpeg";
   static const String imagesWinter = "assets/images/winter.jpeg";
+  static const String imagesSummer = "assets/images/summer.png";
+  static const String imagesAutumn = "assets/images/automn.jpg";
   // أضف المزيد حسب الحاجة
 
   /////////////NTI IMAGES////////////////

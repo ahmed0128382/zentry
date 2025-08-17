@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:zentry/src/features/to_do_today/presentation/views/add_section_view.dart';
+import 'package:zentry/src/features/to_do_today/presentation/views/widgets/more_overlay.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   const CustomAppBar({super.key});
@@ -17,10 +19,36 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ),
       actions: [
-        IconButton(
-          icon: const Icon(Icons.more_vert),
-          onPressed: () {},
-        ),
+        MoreOverlay(
+          options: [
+            MoreOverlayOption(
+              icon: Icons.settings,
+              label: 'Settings',
+              onTap: () {},
+            ),
+            MoreOverlayOption(
+              icon: Icons.analytics,
+              label: 'Analytics',
+              onTap: () {},
+            ),
+            MoreOverlayOption(
+              icon: Icons.archive,
+              label: 'Archive',
+              onTap: () {},
+            ),
+            MoreOverlayOption(
+              icon: Icons.note_add,
+              label: 'Add Section',
+              onTap: () => Navigator.push(
+                  context, MaterialPageRoute(builder: (_) => AddSectionView())),
+            ),
+            MoreOverlayOption(
+              icon: Icons.help_outline,
+              label: 'Help',
+              onTap: () {},
+            ),
+          ],
+        )
       ],
     );
   }

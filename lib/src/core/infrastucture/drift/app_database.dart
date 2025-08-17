@@ -3,17 +3,61 @@ import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+import 'package:zentry/constants.dart';
+import 'package:zentry/src/core/infrastucture/drift/tables/appearance_table.dart';
 import 'tables/tasks_table.dart';
 
 part 'app_database.g.dart';
 
-@DriftDatabase(tables: [TasksTable])
+@DriftDatabase(tables: [
+  TasksTable,
+  AppearanceTable,
+])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
   int get schemaVersion => 1;
 
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+        onCreate: (Migrator m) async {
+          await m.createAll();
+        },
+        // No onUpgrade needed if schemaVersion = 1
+      );
+
+  // @override
+  // MigrationStrategy get migration => MigrationStrategy(
+  //       onCreate: (Migrator m) async {
+  //         // For new installs, create all tables with current schema
+  //         await m.createAll();
+  //       },
+  //       onUpgrade: (Migrator m, int from, int to) async {
+  //         // Upgrade from version 1 → 2: add seedColor column safely
+  //         if (from < 2) {
+  //           try {
+  //             await m.addColumn(appearanceTable, appearanceTable.seedColor);
+  //           } catch (_) {
+  //             // Table might not exist yet, ignore error
+  //           }
+  //         }
+
+  //         if (from < 3) {
+  //           try {
+  //             await m.addColumn(appearanceTable, appearanceTable.fontFamily);
+  //           } catch (_) {}
+  //         }
+
+  //         if (from < 4) {
+  //           try {
+  //             await m.addColumn(appearanceTable, appearanceTable.textScale);
+  //           } catch (_) {}
+  //         }
+  //       },
+  //     );
+
+  // ----------------- TASKS -----------------
   // --- CRUD operations (optional helper methods) ---
   Future<List<TasksTableData>> getAllTasks() => select(tasksTable).get();
   Stream<List<TasksTableData>> watchAllTasks() => select(tasksTable).watch();
@@ -59,6 +103,19 @@ class AppDatabase extends _$AppDatabase {
 
   Future<void> deleteTask(String id) =>
       (delete(tasksTable)..where((t) => t.id.equals(id))).go();
+
+  // ----------------- APPEARANCE -----------------
+  Future<AppearanceTableData?> getAppearanceSettings() {
+    return (select(appearanceTable)
+          ..where((t) => t.id.equals(kRowAppearanceId)))
+        .getSingleOrNull();
+  }
+
+  Stream<AppearanceTableData?> watchAppearanceSettings() {
+    return (select(appearanceTable)
+          ..where((t) => t.id.equals(kRowAppearanceId)))
+        .watchSingleOrNull();
+  }
 }
 
 LazyDatabase _openConnection() {

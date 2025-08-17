@@ -34,7 +34,10 @@ class EditableTextField extends StatelessWidget {
           focusNode: focusNode,
           onChanged: onChanged,
           style: style,
-          decoration: InputDecoration(hintText: hint, border: InputBorder.none),
+          decoration: InputDecoration(
+              hintText: hint,
+              hintStyle: TextStyle(color: Colors.grey.withOpacity(0.6)),
+              border: InputBorder.none),
           minLines: minLines ?? 1,
           maxLines: effectiveMaxLines ?? 1,
           textInputAction: TextInputAction.next,

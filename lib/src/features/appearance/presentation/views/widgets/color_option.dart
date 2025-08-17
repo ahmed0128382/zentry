@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ColorOption extends StatelessWidget {
-  final Color color;
+  final int color;
   final String label;
   final bool isSelected;
   final bool hasBadge;
@@ -25,7 +25,7 @@ class ColorOption extends StatelessWidget {
               width: 60,
               height: 60,
               decoration: BoxDecoration(
-                color: color,
+                color: Color(color),
                 borderRadius: BorderRadius.circular(12.0),
                 border: Border.all(
                   color: isSelected ? Colors.blue : Colors.transparent,

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:zentry/src/core/widgets/custom_card.dart';
-import 'package:zentry/src/features/appearance/presentation/views/them_settings_view.dart';
 import 'package:zentry/src/features/settings/presentation/views/widgets/settings_item.dart';
 import 'package:zentry/src/shared/enums/menu_types.dart';
 

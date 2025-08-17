@@ -1,11 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:zentry/src/core/utils/app_images.dart';
+import 'package:zentry/src/features/appearance/domain/enums/season.dart';
 
 class SeasonsGrid extends StatelessWidget {
-  const SeasonsGrid({super.key});
+  final Season selectedSeason;
+  final ValueChanged<Season> onSeasonSelected;
+
+  const SeasonsGrid({
+    super.key,
+    required this.selectedSeason,
+    required this.onSeasonSelected,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final options = [
+      {'season': Season.spring, 'image': AppImages.imagesSpring},
+      {'season': Season.summer, 'image': AppImages.imagesSummer},
+      {'season': Season.autumn, 'image': AppImages.imagesAutumn},
+      {'season': Season.winter, 'image': AppImages.imagesWinter},
+    ];
+
     return GridView.count(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -13,17 +28,19 @@ class SeasonsGrid extends StatelessWidget {
       crossAxisSpacing: 16.0,
       mainAxisSpacing: 16.0,
       childAspectRatio: 1.2,
-      children: [
-        SeasonOption(
-          image: AppImages.imagesSpring, // Replace with your image asset path
-          label: 'Spring',
-          hasBadge: true,
-        ),
-        SeasonOption(
-          image: AppImages.imagesWinter, // Replace with your image asset path
-          label: 'winter',
-        ),
-      ],
+      children: options.map((opt) {
+        final season = opt['season']! as Season;
+        final image = opt['image']! as String;
+
+        return GestureDetector(
+          onTap: () => onSeasonSelected(season),
+          child: SeasonOption(
+            image: image,
+            label: season.name[0].toUpperCase() + season.name.substring(1),
+            hasBadge: selectedSeason == season,
+          ),
+        );
+      }).toList(),
     );
   }
 }
@@ -49,17 +66,11 @@ class SeasonOption extends StatelessWidget {
             Expanded(
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12.0),
-                child: Image.asset(
-                  image,
-                  fit: BoxFit.cover,
-                ),
+                child: Image.asset(image, fit: BoxFit.cover),
               ),
             ),
             const SizedBox(height: 8.0),
-            Text(
-              label,
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
+            Text(label, style: Theme.of(context).textTheme.bodyLarge),
           ],
         ),
         if (hasBadge)
@@ -72,11 +83,7 @@ class SeasonOption extends StatelessWidget {
                 color: Colors.orange.withOpacity(0.8),
                 borderRadius: BorderRadius.circular(8.0),
               ),
-              child: const Icon(
-                Icons.star,
-                color: Colors.white,
-                size: 20,
-              ),
+              child: const Icon(Icons.check, color: Colors.white, size: 20),
             ),
           ),
       ],
