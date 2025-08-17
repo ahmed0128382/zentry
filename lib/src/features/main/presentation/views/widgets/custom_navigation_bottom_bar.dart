@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zentry/src/core/application/providers/app_palette_provider.dart';
 import 'package:zentry/src/core/utils/app_colors.dart';
 import 'package:zentry/src/core/utils/app_decorations.dart';
+import 'package:zentry/src/core/utils/palette.dart';
 import 'package:zentry/src/features/appearance/application/providers/appearance_controller_provider.dart';
 import 'package:zentry/src/features/main/presentation/views/widgets/bottom_bar_item.dart';
 import 'package:zentry/src/features/main/presentation/views/widgets/quarter_circle_menu.dart';
@@ -80,20 +81,20 @@ class CustomNavigationBottomBar extends ConsumerWidget {
           child: Row(
             children: [
               for (int i = 0; i < visibleItems.length; i++)
-                _buildNavItem(context, visibleItems[i], i, itemWidth),
+                _buildNavItem(context, visibleItems[i], i, itemWidth, palette),
 
               // More Icon
               GestureDetector(
                 onTap: () {
                   switch (moreMenuType) {
                     case MoreMenuType.modalBottomSheet:
-                      _showMoreItems(context, hiddenItems);
+                      _showMoreItems(context, hiddenItems, palette);
                       break;
                     case MoreMenuType.expandableOverlay:
-                      _showExpandableMenu(context, hiddenItems);
+                      _showExpandableMenu(context, hiddenItems, palette);
                       break;
                     case MoreMenuType.quarterCircleFab:
-                      _showQuarterCircleFab(context, hiddenItems);
+                      _showQuarterCircleFab(context, hiddenItems, palette);
                       break;
                   }
                 },
@@ -111,8 +112,8 @@ class CustomNavigationBottomBar extends ConsumerWidget {
     );
   }
 
-  Widget _buildNavItem(
-      BuildContext context, BottomBarItem item, int index, double width) {
+  Widget _buildNavItem(BuildContext context, BottomBarItem item, int index,
+      double width, Palette palette) {
     final isSelected = currentIndex == index;
 
     return GestureDetector(
@@ -122,17 +123,19 @@ class CustomNavigationBottomBar extends ConsumerWidget {
         height: 70,
         child: Icon(
           item.icon,
-          color: isSelected ? Colors.white : Colors.grey,
+          color:
+              isSelected ? palette.text : palette.icon.withValues(alpha: 0.3),
           size: 28,
         ),
       ),
     );
   }
 
-  void _showMoreItems(BuildContext context, List<BottomBarItem> items) {
+  void _showMoreItems(
+      BuildContext context, List<BottomBarItem> items, Palette palette) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppColors.background,
+      backgroundColor: palette.primary.withValues(alpha: 0.5),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
@@ -152,9 +155,10 @@ class CustomNavigationBottomBar extends ConsumerWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(item.icon, color: Colors.grey, size: 28),
+                  Icon(item.icon, color: palette.text, size: 28),
                   const SizedBox(height: 4),
-                  Text(item.label, style: const TextStyle(fontSize: 12)),
+                  Text(item.label,
+                      style: TextStyle(fontSize: 12, color: palette.text)),
                 ],
               ),
             );
@@ -164,7 +168,8 @@ class CustomNavigationBottomBar extends ConsumerWidget {
     );
   }
 
-  void _showExpandableMenu(BuildContext context, List<BottomBarItem> items) {
+  void _showExpandableMenu(
+      BuildContext context, List<BottomBarItem> items, Palette palette) {
     final overlay = Overlay.of(context);
 
     late OverlayEntry overlayEntry; // <-- Declare before using
@@ -185,12 +190,13 @@ class CustomNavigationBottomBar extends ConsumerWidget {
               bottom: 80,
               right: 20,
               child: Material(
-                color: Colors.white,
+                color: palette.primary.withValues(alpha: 0.5),
                 elevation: 8,
                 borderRadius: BorderRadius.circular(16),
                 child: Padding(
                   padding: const EdgeInsets.all(12),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: List.generate(items.length, (index) {
                       final item = items[index];
@@ -204,11 +210,16 @@ class CustomNavigationBottomBar extends ConsumerWidget {
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                           child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Icon(item.icon, color: Colors.grey, size: 24),
+                              Icon(item.icon, color: palette.text, size: 24),
                               const SizedBox(width: 8),
-                              Text(item.label,
-                                  style: const TextStyle(fontSize: 14)),
+                              Text(
+                                item.label,
+                                style: TextStyle(
+                                    fontSize: 14, color: palette.text),
+                                selectionColor: palette.text,
+                              ),
                             ],
                           ),
                         ),
@@ -226,7 +237,8 @@ class CustomNavigationBottomBar extends ConsumerWidget {
     overlay.insert(overlayEntry);
   }
 
-  void _showQuarterCircleFab(BuildContext context, List<BottomBarItem> items) {
+  void _showQuarterCircleFab(
+      BuildContext context, List<BottomBarItem> items, Palette palette) {
     final overlay = Overlay.of(context, rootOverlay: true);
     if (overlay == null) return;
 

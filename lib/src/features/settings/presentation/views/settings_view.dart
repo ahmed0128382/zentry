@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:zentry/src/core/application/providers/app_palette_provider.dart';
 import 'package:zentry/src/features/appearance/presentation/views/them_settings_view.dart';
 import 'package:zentry/src/features/edit_bottom_nav_bar/presentation/views/edit_bottom_nav_bar_view.dart';
 import 'package:zentry/src/features/main/application/providers/more_menu_type_provider.dart';
@@ -16,6 +17,7 @@ class SettingsView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final palette = ref.watch(appPaletteProvider);
     final selectedType = ref.watch(moreMenuTypeProvider);
 
     return SafeArea(

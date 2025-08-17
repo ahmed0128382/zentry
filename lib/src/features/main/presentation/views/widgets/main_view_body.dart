@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:zentry/src/core/application/providers/app_palette_provider.dart';
 import 'package:zentry/src/features/main/application/providers/more_menu_type_provider.dart';
 
 import 'package:zentry/src/features/main/domain/entities/main_view_page_index.dart';
@@ -21,6 +22,7 @@ class MainViewBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final palette = ref.watch(appPaletteProvider);
     // Current index derived solely from location string
     final currentIndex = ref.watch(currentTabIndexProvider(location));
     // You can remove the controller reference as it's no longer needed for manual update
@@ -34,6 +36,7 @@ class MainViewBody extends ConsumerWidget {
         }
       },
       child: Scaffold(
+        backgroundColor: palette.background,
         body: IndexedStack(
           index: currentIndex,
           children: mainViewPagesMap.values.toList(),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zentry/src/core/application/providers/app_palette_provider.dart';
 
-class TaskItem extends StatelessWidget {
+class TaskItem extends ConsumerWidget {
   final String title;
   final String time;
   final bool isCompleted;
@@ -17,7 +19,8 @@ class TaskItem extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final palette = ref.watch(appPaletteProvider);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -38,7 +41,7 @@ class TaskItem extends StatelessWidget {
           ),
           Text(
             time,
-            style: const TextStyle(color: Colors.grey),
+            style: TextStyle(color: palette.text),
           ),
         ],
       ),

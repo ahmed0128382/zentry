@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zentry/src/core/application/providers/app_palette_provider.dart';
 
-class CustomCard extends StatelessWidget {
+class CustomCard extends ConsumerWidget {
   final Widget child;
   final EdgeInsetsGeometry padding;
 
@@ -11,11 +13,12 @@ class CustomCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final palette = ref.watch(appPaletteProvider);
     return Container(
       padding: padding,
       decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
+        color: palette.primary.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(

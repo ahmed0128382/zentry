@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zentry/src/core/application/providers/app_palette_provider.dart';
 import 'package:zentry/src/core/utils/app_date_utils.dart';
+import 'package:zentry/src/features/appearance/application/providers/appearance_controller_provider.dart';
+import 'package:zentry/src/features/appearance/application/providers/appearance_repo_provider.dart';
 import 'package:zentry/src/features/to_do_today/application/providers/task_details_controller_provider.dart';
 import 'package:zentry/src/features/to_do_today/presentation/views/widgets/centered_progress.dart';
 import 'package:zentry/src/features/to_do_today/presentation/views/widgets/confirm_dialogs.dart';
@@ -42,6 +45,9 @@ class _TaskDetailsViewState extends ConsumerState<TaskDetailsView> {
 
   @override
   Widget build(BuildContext context) {
+    final palette = ref.watch(appPaletteProvider);
+    final appearance = ref.watch(appearanceControllerProvider);
+
     final asyncUi = ref.watch(taskDetailsControllerProvider(widget.taskId));
     final controller =
         ref.read(taskDetailsControllerProvider(widget.taskId).notifier);
@@ -54,6 +60,7 @@ class _TaskDetailsViewState extends ConsumerState<TaskDetailsView> {
         return leave ?? false;
       },
       child: Scaffold(
+        backgroundColor: palette.background,
         appBar: AppBar(
           title: const Text('Task'),
           centerTitle: false,

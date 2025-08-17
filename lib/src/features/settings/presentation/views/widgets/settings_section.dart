@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zentry/src/core/application/providers/app_palette_provider.dart';
 import 'package:zentry/src/core/widgets/custom_card.dart';
 import 'package:zentry/src/features/settings/presentation/views/widgets/settings_item.dart';
 import 'package:zentry/src/shared/enums/menu_types.dart';
 
-class SettingsSection extends StatelessWidget {
+class SettingsSection extends ConsumerWidget {
   final MoreMenuType selectedType;
   final ValueChanged<MoreMenuType?> onMoreMenuTypeChanged;
   final VoidCallback onEditTabBarTap;
@@ -18,7 +20,8 @@ class SettingsSection extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final palette = ref.watch(appPaletteProvider);
     return CustomCard(
       child: Column(
         children: [
@@ -33,12 +36,19 @@ class SettingsSection extends StatelessWidget {
             title: '',
             trailing: DropdownButtonHideUnderline(
               child: DropdownButton<MoreMenuType>(
+                dropdownColor:
+                    palette.primary.withValues(alpha: 0.2), // menu background
+                iconEnabledColor: palette.primary, // arrow icon color
                 value: selectedType,
                 onChanged: onMoreMenuTypeChanged,
                 items: MoreMenuType.values
                     .map((type) => DropdownMenuItem(
                           value: type,
-                          child: Text(type.name),
+                          child: Text(
+                            type.name,
+                            style: TextStyle(
+                                color: palette.icon.withValues(alpha: 0.8)),
+                          ),
                         ))
                     .toList(),
               ),

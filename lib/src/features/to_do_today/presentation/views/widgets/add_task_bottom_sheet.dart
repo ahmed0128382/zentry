@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zentry/src/core/application/providers/app_palette_provider.dart';
 import 'package:zentry/src/features/to_do_today/application/providers/task_list_controller_provider.dart';
 import 'package:zentry/src/features/to_do_today/application/providers/to_do_today_controller_provider.dart';
 import 'package:zentry/src/features/to_do_today/domain/entities/task.dart';
@@ -19,6 +20,7 @@ class AddTaskBottomSheet extends ConsumerWidget {
     final double maxHeight = MediaQuery.of(context).size.height * 0.45;
     final titleController = TextEditingController();
     final descriptionController = TextEditingController();
+    final palette = ref.watch(appPaletteProvider);
 
     return Align(
       alignment: Alignment.bottomCenter,
@@ -28,8 +30,8 @@ class AddTaskBottomSheet extends ConsumerWidget {
           constraints: BoxConstraints(maxHeight: maxHeight),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            decoration: const BoxDecoration(
-              color: Colors.white,
+            decoration: BoxDecoration(
+              color: palette.primary.withValues(alpha: 0.8),
               borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
             ),
             child: Column(
@@ -48,9 +50,10 @@ class AddTaskBottomSheet extends ConsumerWidget {
                   focusNode: titleFocusNode,
                   controller: titleController,
                   decoration: InputDecoration(
+                    fillColor: Colors.transparent,
                     hintText: 'What would you like to do?',
                     border: InputBorder.none,
-                    hintStyle: TextStyle(color: Colors.grey.withOpacity(0.6)),
+                    hintStyle: TextStyle(color: palette.text),
                     isDense: true,
                     contentPadding: EdgeInsets.zero,
                   ),
@@ -64,7 +67,7 @@ class AddTaskBottomSheet extends ConsumerWidget {
                   decoration: InputDecoration(
                     hintText: 'Description (optional)',
                     border: InputBorder.none,
-                    hintStyle: TextStyle(color: Colors.grey.withOpacity(0.6)),
+                    hintStyle: TextStyle(color: palette.text),
                     isDense: true,
                     contentPadding: EdgeInsets.zero,
                   ),
@@ -76,33 +79,33 @@ class AddTaskBottomSheet extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     IconButton(
+                      color: palette.primary.withValues(alpha: 0.6),
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
                       onPressed: () {},
-                      icon: const Icon(Icons.calendar_today_outlined,
-                          color: Colors.grey),
+                      icon: Icon(Icons.calendar_today_outlined,
+                          color: palette.text),
                     ),
                     const SizedBox(width: 12),
                     IconButton(
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
                       onPressed: () {},
-                      icon: const Icon(Icons.bookmark_outline,
-                          color: Colors.grey),
+                      icon: Icon(Icons.bookmark_outline, color: palette.text),
                     ),
                     const SizedBox(width: 12),
                     IconButton(
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
                       onPressed: () {},
-                      icon: const Icon(Icons.label_outline, color: Colors.grey),
+                      icon: Icon(Icons.label_outline, color: palette.text),
                     ),
                     const SizedBox(width: 12),
                     IconButton(
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
                       onPressed: () {},
-                      icon: const Icon(Icons.more_horiz, color: Colors.grey),
+                      icon: Icon(Icons.more_horiz, color: palette.text),
                     ),
                     ElevatedButton(
                       onPressed: () {

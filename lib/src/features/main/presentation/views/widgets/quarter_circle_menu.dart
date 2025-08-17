@@ -294,7 +294,8 @@ class QuarterCircleMenu extends ConsumerWidget {
             child: AnimatedBuilder(
               animation: animation,
               builder: (context, child) => Container(
-                color: Colors.black.withValues(alpha: 0.3 * animation.value),
+                color:
+                    palette.secondary.withValues(alpha: 0.3 * animation.value),
               ),
             ),
           ),
@@ -339,11 +340,11 @@ class QuarterCircleMenu extends ConsumerWidget {
                         width: 48,
                         height: 48,
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: palette.primary.withValues(alpha: 0.05),
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: palette.primary.withValues(alpha: 0.2),
+                              color: palette.primary.withValues(alpha: 0.7),
                               blurRadius: 6,
                               offset: Offset(0, 3),
                             ),
@@ -351,7 +352,8 @@ class QuarterCircleMenu extends ConsumerWidget {
                         ),
                         child: Icon(
                           iconsInLayer[index],
-                          color: Colors.grey,
+                          color: palette.text.withValues(alpha: 0.8),
+                          size: 26,
                         ),
                       ),
                     ),

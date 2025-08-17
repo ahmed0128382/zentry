@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zentry/src/core/application/providers/app_palette_provider.dart';
 import 'package:zentry/src/core/utils/app_images.dart';
 import 'package:zentry/src/core/widgets/custom_card.dart';
 import 'package:zentry/src/core/widgets/custom_tag.dart';
 
-class SettingsUserProfile extends StatelessWidget {
+class SettingsUserProfile extends ConsumerWidget {
   final VoidCallback onTap;
 
   const SettingsUserProfile({super.key, required this.onTap});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final palette = ref.watch(appPaletteProvider);
     return GestureDetector(
       onTap: onTap,
       child: CustomCard(
@@ -27,8 +30,8 @@ class SettingsUserProfile extends StatelessWidget {
                   right: 0,
                   child: Container(
                     padding: const EdgeInsets.all(2),
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
+                    decoration: BoxDecoration(
+                      color: palette.background.withValues(alpha: 0.2),
                       shape: BoxShape.circle,
                     ),
                     child:
@@ -42,9 +45,12 @@ class SettingsUserProfile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'أحمد إبراهيم أبوموسي',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: palette.icon),
                   ),
                   const SizedBox(height: 4),
                   Row(
