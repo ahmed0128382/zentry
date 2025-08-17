@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'app_colors.dart';
 
 class AppDecorations {
-  // ✅ Splash Gradient Background
-  static const BoxDecoration splashBackground = BoxDecoration(
+  AppDecorations._();
+
+  // Splash Gradient Background
+  static final BoxDecoration splashBackground = BoxDecoration(
     gradient: LinearGradient(
       colors: [AppColors.primary, AppColors.secondary],
       begin: Alignment.topLeft,
@@ -11,21 +13,21 @@ class AppDecorations {
     ),
   );
 
-  // ✅ Card with Shadow
-  static final BoxDecoration cardDecoration = BoxDecoration(
+  // Card Decoration with Shadow
+  static final BoxDecoration card = BoxDecoration(
     color: Colors.white,
     borderRadius: BorderRadius.circular(16),
     boxShadow: [
       BoxShadow(
         color: Colors.black12,
         blurRadius: 10,
-        offset: Offset(0, 4),
+        offset: const Offset(0, 4),
       ),
     ],
   );
 
-  // ✅ Navigation Bar Decoration
-  static final BoxDecoration navBarBox = BoxDecoration(
+  // Navigation Bar Decoration
+  static final BoxDecoration navBar = BoxDecoration(
     color: Colors.white,
     borderRadius: BorderRadius.circular(24),
     boxShadow: [
@@ -37,12 +39,12 @@ class AppDecorations {
     ],
   );
 
-  // ✅ ShapeDecoration (مثلاً لأزرار أو BottomBar items)
-  static final ShapeDecoration navBarShapeDecoration = ShapeDecoration(
+  // ShapeDecoration for buttons / BottomBar items
+  static final ShapeDecoration navBarShape = ShapeDecoration(
     color: Colors.white,
     shadows: [
       BoxShadow(
-        color: AppColors.primary.withValues(alpha: 0.1),
+        color: AppColors.primary.withOpacity(0.1),
         blurRadius: 12,
         offset: const Offset(0, 2),
       ),
@@ -52,8 +54,8 @@ class AppDecorations {
     ),
   );
 
-  // ✅ Circle / Oval Decoration (مثلاً للبروفايل أو أي عنصر دائري)
-  static final BoxDecoration circleDecoration = BoxDecoration(
+  // Circular / Oval Decoration (Profile pictures, avatars, etc.)
+  static final BoxDecoration circle = BoxDecoration(
     shape: BoxShape.circle,
     color: AppColors.primary.withValues(alpha: 0.1),
     boxShadow: [
@@ -64,9 +66,12 @@ class AppDecorations {
       ),
     ],
   );
-  static var greyShapeDecoration = ShapeDecoration(
-      color: Color(0x7ff2f3f3),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(4),
-      ));
+
+  // Grey Shape Decoration (e.g., cards, containers)
+  static final ShapeDecoration greyShape = ShapeDecoration(
+    color: const Color(0xfff2f3f3),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(4),
+    ),
+  );
 }

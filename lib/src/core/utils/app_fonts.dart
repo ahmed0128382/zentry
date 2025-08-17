@@ -1,17 +1,32 @@
 import 'package:flutter/material.dart';
+import '../../features/appearance/domain/entities/appearance_settings.dart';
 
 class AppFonts {
-  static const String cairo = 'Cairo';
-  static const String inter = 'Inter';
-  static const String montserrat = 'Montserrat';
-  static const String poppins = 'Poppins';
-  static const String roboto = 'PlusJakartaSans';
+  AppFonts._();
 
-  // الخط الأساسي للتطبيق
-  static const String primaryFont = cairo; // اختر واحد فقط كافتراضي
+  static String primaryFont = 'Cairo';
+
+  /// Call this whenever AppearanceSettings changes
+  static void updateFromAppearance(AppearanceSettings appearance) {
+    primaryFont = appearance.fontFamily;
+  }
+
+  static TextStyle getPrimaryStyle({
+    required AppearanceSettings appearance,
+    double size = 14,
+    FontWeight weight = FontWeight.w400,
+  }) {
+    return TextStyle(
+      fontFamily: appearance.fontFamily,
+      fontSize: size,
+      fontWeight: weight,
+      color: Color(appearance.seedColor),
+    );
+  }
 }
 
 class AppFontWeights {
+  AppFontWeights._();
   static const FontWeight extraLight = FontWeight.w200;
   static const FontWeight light = FontWeight.w300;
   static const FontWeight regular = FontWeight.w400;

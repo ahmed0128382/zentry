@@ -33,7 +33,7 @@ class DayCell extends StatelessWidget {
                 margin: const EdgeInsets.only(top: 2),
                 width: 4,
                 height: 4,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   color: AppColors.primary,
                   shape: BoxShape.circle,
                 ),

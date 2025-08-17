@@ -3,120 +3,133 @@ import 'app_colors.dart';
 import 'app_fonts.dart';
 
 class AppStyles {
-  static const TextStyle bold13 = TextStyle(
-      fontFamily: AppFonts.primaryFont,
-      fontWeight: FontWeight.bold,
-      fontSize: 13,
-      color: Color(0xff0c0d0d));
-  static const TextStyle bold23 = TextStyle(
-      fontFamily: AppFonts.primaryFont,
-      fontWeight: FontWeight.bold,
-      fontSize: 23,
-      color: Color(0xff0c0d0d));
-  static const TextStyle semiBold13 = TextStyle(
-    fontFamily: AppFonts.primaryFont,
-    fontWeight: FontWeight.w600,
-    fontSize: 13,
-    color: Color(0xff0c0d0d),
-  );
-  static const TextStyle regular13 = TextStyle(
-    fontFamily: AppFonts.primaryFont,
-    fontWeight: FontWeight.normal,
-    fontSize: 13,
-    color: Color(0xff0c0d0d),
-  );
-  static const TextStyle regular16 = TextStyle(
-    fontFamily: AppFonts.primaryFont,
-    fontWeight: FontWeight.normal,
-    fontSize: 16,
-    color: Color(0xff0c0d0d),
-  );
-  static const TextStyle bold16 = TextStyle(
-    fontFamily: AppFonts.primaryFont,
-    fontWeight: FontWeight.bold,
-    fontSize: 16,
-    color: Color(0xff0c0d0d),
-  );
-  static const TextStyle semiBold16 = TextStyle(
-    fontFamily: AppFonts.primaryFont,
-    fontWeight: FontWeight.w600,
-    fontSize: 16,
-    color: Color(0xff0c0d0d),
-  );
-  static const TextStyle regular23 = TextStyle(
-    fontFamily: 'SF Pro Text',
-    fontWeight: FontWeight.normal,
-    fontSize: 23,
-    color: Color(0xff0c0d0d),
-  );
-  static const TextStyle regular22 = TextStyle(
-    fontFamily: 'SF Pro Display',
-    fontWeight: FontWeight.normal,
-    fontSize: 23,
-    color: Color(0xff0c0d0d),
-  );
-  static const TextStyle bold19 = TextStyle(
-    fontFamily: AppFonts.primaryFont,
-    fontWeight: FontWeight.bold,
-    fontSize: 19,
-    color: Color(0xff0c0d0d),
-  );
-  static const TextStyle semiBold11 = TextStyle(
-    fontFamily: AppFonts.primaryFont,
-    fontWeight: FontWeight.w600,
-    fontSize: 11,
-    color: Color(0xff0c0d0d),
-  );
-  static const TextStyle semiBold19 = TextStyle(
-    fontFamily: AppFonts.primaryFont,
-    fontWeight: FontWeight.w600,
-    fontSize: 19,
-    color: Color(0xff0c0d0d),
-  );
-  static const TextStyle regular11 = TextStyle(
-    fontFamily: AppFonts.primaryFont,
-    fontWeight: FontWeight.w600,
-    fontSize: 11,
-    color: Color(0xff0c0d0d),
-  );
-  static const TextStyle regular26 = TextStyle(
-    fontFamily: AppFonts.primaryFont,
-    fontWeight: FontWeight.normal,
-    fontSize: 26,
-    color: Color(0xff0c0d0d),
-  );
+  AppStyles._();
 
-  static const TextStyle heading1 = TextStyle(
+  // Text Styles
+
+  // Small
+  static final TextStyle semiBold11 = TextStyle(
     fontFamily: AppFonts.primaryFont,
-    fontSize: 32,
-    fontWeight: FontWeight.bold,
+    fontWeight: AppFontWeights.semiBold,
+    fontSize: 11,
     color: AppColors.text,
   );
+
+  static final TextStyle regular11 = TextStyle(
+    fontFamily: AppFonts.primaryFont,
+    fontWeight: AppFontWeights.regular,
+    fontSize: 11,
+    color: AppColors.text,
+  );
+
+  // Medium
+  static final TextStyle regular13 = TextStyle(
+    fontFamily: AppFonts.primaryFont,
+    fontWeight: AppFontWeights.regular,
+    fontSize: 13,
+    color: AppColors.text,
+  );
+
+  static final TextStyle semiBold13 = TextStyle(
+    fontFamily: AppFonts.primaryFont,
+    fontWeight: AppFontWeights.semiBold,
+    fontSize: 13,
+    color: AppColors.text,
+  );
+
+  static final TextStyle bold13 = TextStyle(
+    fontFamily: AppFonts.primaryFont,
+    fontWeight: AppFontWeights.bold,
+    fontSize: 13,
+    color: AppColors.text,
+  );
+
+  // Larger
+  static final TextStyle regular16 = TextStyle(
+    fontFamily: AppFonts.primaryFont,
+    fontWeight: AppFontWeights.regular,
+    fontSize: 16,
+    color: AppColors.text,
+  );
+
+  static final TextStyle semiBold16 = TextStyle(
+    fontFamily: AppFonts.primaryFont,
+    fontWeight: AppFontWeights.semiBold,
+    fontSize: 16,
+    color: AppColors.text,
+  );
+
+  static final TextStyle bold16 = TextStyle(
+    fontFamily: AppFonts.primaryFont,
+    fontWeight: AppFontWeights.bold,
+    fontSize: 16,
+    color: AppColors.text,
+  );
+
+  static final TextStyle semiBold19 = TextStyle(
+    fontFamily: AppFonts.primaryFont,
+    fontWeight: AppFontWeights.semiBold,
+    fontSize: 19,
+    color: AppColors.text,
+  );
+
+  static final TextStyle bold19 = TextStyle(
+    fontFamily: AppFonts.primaryFont,
+    fontWeight: AppFontWeights.bold,
+    fontSize: 19,
+    color: AppColors.text,
+  );
+
+  static final TextStyle regular26 = TextStyle(
+    fontFamily: AppFonts.primaryFont,
+    fontWeight: AppFontWeights.regular,
+    fontSize: 26,
+    color: AppColors.text,
+  );
+
+  static final TextStyle bold23 = TextStyle(
+    fontFamily: AppFonts.primaryFont,
+    fontWeight: AppFontWeights.bold,
+    fontSize: 23,
+    color: AppColors.text,
+  );
+
+  // Headings
+  static final TextStyle heading1 = TextStyle(
+    fontFamily: AppFonts.primaryFont,
+    fontSize: 32,
+    fontWeight: AppFontWeights.bold,
+    color: AppColors.text,
+  );
+
+  static final TextStyle heading2 = TextStyle(
+    fontFamily: AppFonts.primaryFont,
+    fontSize: 24,
+    fontWeight: AppFontWeights.semiBold,
+    color: AppColors.text,
+  );
+
+  // Body & subtitle
+  static final TextStyle body = TextStyle(
+    fontFamily: AppFonts.primaryFont,
+    fontSize: 16,
+    fontWeight: AppFontWeights.regular,
+    color: AppColors.text,
+  );
+
+  static final TextStyle subtitle = TextStyle(
+    fontFamily: AppFonts.primaryFont,
+    fontSize: 14,
+    fontWeight: AppFontWeights.regular,
+    color: AppColors.secondary,
+  );
+
+  // Splash-specific
   static const TextStyle splashTagline = TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.w400,
     color: Colors.white70,
     letterSpacing: 1.2,
     fontFamily: 'Inter',
-  );
-
-  static const TextStyle heading2 = TextStyle(
-    fontFamily: AppFonts.primaryFont,
-    fontSize: 24,
-    fontWeight: FontWeight.w600,
-    color: AppColors.text,
-  );
-
-  static const TextStyle body = TextStyle(
-    fontFamily: AppFonts.primaryFont,
-    fontSize: 16,
-    fontWeight: FontWeight.normal,
-    color: AppColors.text,
-  );
-
-  static const TextStyle subtitle = TextStyle(
-    fontFamily: AppFonts.primaryFont,
-    fontSize: 14,
-    color: AppColors.secondary,
   );
 }

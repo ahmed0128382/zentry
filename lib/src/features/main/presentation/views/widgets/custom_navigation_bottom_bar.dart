@@ -34,7 +34,7 @@ class CustomNavigationBottomBar extends StatelessWidget {
       children: [
         Container(
           height: 70,
-          decoration: AppDecorations.navBarBox,
+          decoration: AppDecorations.navBar,
         ),
 
         // Glow Indicator
