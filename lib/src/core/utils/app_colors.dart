@@ -19,9 +19,12 @@ class AppColors {
   static Color peacefulSeaBlue = const Color(0xFF00B4D8);
 
   /// Call this whenever AppearanceSettings changes
-  static void updateFromAppearance(AppearanceSettings appearance) {
+  static void updateFromAppearance(AppearanceSettings? appearance) {
     // Only seedColor can affect colors for now
-    primary = Color(appearance.seedColor);
+    final seedColor =
+        appearance?.seedColor ?? primary.toARGB32(); // fallback emerald green
+
+    primary = Color(seedColor);
 
     // Optionally, you can compute shades of the seedColor for other fields:
     background = primary.withValues(alpha: 0.05);

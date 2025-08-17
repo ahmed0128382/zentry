@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zentry/src/core/application/providers/app_palette_provider.dart';
 import 'package:zentry/src/core/utils/app_colors.dart';
 import 'package:zentry/src/core/utils/app_decorations.dart';
+import 'package:zentry/src/features/appearance/application/providers/appearance_controller_provider.dart';
 import 'package:zentry/src/features/main/presentation/views/widgets/bottom_bar_item.dart';
 import 'package:zentry/src/features/main/presentation/views/widgets/quarter_circle_menu.dart';
 import 'package:zentry/src/shared/enums/menu_types.dart';
 
-class CustomNavigationBottomBar extends StatelessWidget {
+class CustomNavigationBottomBar extends ConsumerWidget {
   final MoreMenuType moreMenuType;
   final int currentIndex;
   final List<BottomBarItem> allItems;
@@ -22,7 +25,14 @@ class CustomNavigationBottomBar extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Watch appearance changes reactively
+    //final appearance = ref.watch(appearanceControllerProvider);
+    final palette = ref.watch(appPaletteProvider);
+
+// Update AppColors dynamically
+    //AppColors.updateFromAppearance(appearance);
+
     final visibleItems = allItems.take(visibleCount).toList();
     final hiddenItems = allItems.skip(visibleCount).toList();
 
@@ -34,7 +44,9 @@ class CustomNavigationBottomBar extends StatelessWidget {
       children: [
         Container(
           height: 70,
-          decoration: AppDecorations.navBar,
+          decoration: AppDecorations.navBarFor(
+            palette,
+          ),
         ),
 
         // Glow Indicator
@@ -51,7 +63,7 @@ class CustomNavigationBottomBar extends StatelessWidget {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.6),
+                    color: palette.primary.withValues(alpha: 0.6),
                     blurRadius: 20,
                     spreadRadius: 2,
                   ),
@@ -120,7 +132,7 @@ class CustomNavigationBottomBar extends StatelessWidget {
   void _showMoreItems(BuildContext context, List<BottomBarItem> items) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),

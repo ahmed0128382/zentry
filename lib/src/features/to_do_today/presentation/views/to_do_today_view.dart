@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zentry/src/core/application/providers/app_palette_provider.dart';
 import 'package:zentry/src/features/to_do_today/application/providers/to_do_today_controller_provider.dart';
 import 'package:zentry/src/features/to_do_today/presentation/views/widgets/add_task_bottom_sheet.dart';
 import 'package:zentry/src/features/to_do_today/presentation/views/widgets/custom_app_bar.dart';
@@ -42,6 +43,7 @@ class _ToDoTodayViewState extends ConsumerState<ToDoTodayView>
 
   @override
   Widget build(BuildContext context) {
+    final palette = ref.watch(appPaletteProvider);
     final showSheet = ref.watch(toDoTodayControllerProvider);
     final controller = ref.read(toDoTodayControllerProvider.notifier);
 
@@ -49,25 +51,32 @@ class _ToDoTodayViewState extends ConsumerState<ToDoTodayView>
     controller.animationController = _animationController;
 
     return Scaffold(
+      backgroundColor: palette.background,
       appBar: const CustomAppBar(),
-      body: Stack(
-        children: [
-          const TaskContent(),
-          if (showSheet) const OverlayDismiss(),
-          if (showSheet)
-            SlideTransition(
-              position: _offsetAnimation,
-              child: AddTaskBottomSheet(
-                titleFocusNode: controller.titleFocusNode,
-                descriptionFocusNode: controller.descriptionFocusNode,
+      body: Container(
+        //color: palette.background,
+        child: Stack(
+          children: [
+            const TaskContent(),
+            if (showSheet) const OverlayDismiss(),
+            if (showSheet)
+              SlideTransition(
+                position: _offsetAnimation,
+                child: AddTaskBottomSheet(
+                  titleFocusNode: controller.titleFocusNode,
+                  descriptionFocusNode: controller.descriptionFocusNode,
+                ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         heroTag: 'add_task_to_do_today',
         onPressed: () => controller.openSheet(vsync: this),
-        child: const Icon(Icons.add),
+        child: Icon(
+          Icons.add,
+          color: palette.icon,
+        ),
       ),
     );
   }

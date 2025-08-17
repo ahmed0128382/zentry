@@ -1,15 +1,114 @@
+// import 'package:flutter/material.dart';
+// import 'package:zentry/src/features/Focus/presentation/views/pomodoro_view.dart';
+// import 'package:zentry/src/features/Focus/presentation/views/stop_watch_view.dart';
+
+// class FocusView extends StatefulWidget {
+//   const FocusView({super.key});
+
+//   @override
+//   State<FocusView> createState() => _FocusViewState();
+// }
+
+// class _FocusViewState extends State<FocusView> {
+//   bool showPomodoro = true; // true = Pomodoro, false = Stopwatch
+
+//   void toggleView(bool showPomodoroSelected) {
+//     if (showPomodoro != showPomodoroSelected) {
+//       setState(() {
+//         showPomodoro = showPomodoroSelected;
+//       });
+//     }
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return SafeArea(
+//       child: Column(
+//         children: [
+//           // Tab headers
+//           Padding(
+//             padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
+//             child: Row(
+//               children: [
+//                 // Tabs section
+//                 Expanded(
+//                   child: Row(
+//                     children: [
+//                       Flexible(
+//                         child: _buildHeaderTab('Pomo', isSelected: showPomodoro,
+//                             onTap: () {
+//                           toggleView(true);
+//                         }),
+//                       ),
+//                       const SizedBox(width: 20),
+//                       Flexible(
+//                         child: _buildHeaderTab('Stopwatch',
+//                             isSelected: !showPomodoro, onTap: () {
+//                           toggleView(false);
+//                         }),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//                 // Icon buttons section
+//                 Row(
+//                   mainAxisSize: MainAxisSize.min,
+//                   children: [
+//                     IconButton(
+//                       icon:
+//                           const Icon(Icons.timer_outlined, color: Colors.black),
+//                       onPressed: () {},
+//                     ),
+//                     IconButton(
+//                       icon: const Icon(Icons.add, color: Colors.black),
+//                       onPressed: () {},
+//                     ),
+//                     IconButton(
+//                       icon: const Icon(Icons.more_vert, color: Colors.black),
+//                       onPressed: () {},
+//                     ),
+//                   ],
+//                 ),
+//               ],
+//             ),
+//           ),
+//           Expanded(
+//             child: showPomodoro ? const PomodoroView() : const StopWatchView(),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+
+//   Widget _buildHeaderTab(String title,
+//       {required bool isSelected, required VoidCallback onTap}) {
+//     return GestureDetector(
+//       onTap: onTap,
+//       child: Text(
+//         title,
+//         style: TextStyle(
+//           fontSize: 18,
+//           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+//           color: Colors.black.withValues(alpha: isSelected ? 0.8 : 0.4),
+//         ),
+//       ),
+//     );
+//   }
+// }
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zentry/src/core/application/providers/app_palette_provider.dart';
 import 'package:zentry/src/features/Focus/presentation/views/pomodoro_view.dart';
 import 'package:zentry/src/features/Focus/presentation/views/stop_watch_view.dart';
 
-class FocusView extends StatefulWidget {
+class FocusView extends ConsumerStatefulWidget {
   const FocusView({super.key});
 
   @override
-  State<FocusView> createState() => _FocusViewState();
+  ConsumerState<FocusView> createState() => _FocusViewState();
 }
 
-class _FocusViewState extends State<FocusView> {
+class _FocusViewState extends ConsumerState<FocusView> {
   bool showPomodoro = true; // true = Pomodoro, false = Stopwatch
 
   void toggleView(bool showPomodoroSelected) {
@@ -22,12 +121,19 @@ class _FocusViewState extends State<FocusView> {
 
   @override
   Widget build(BuildContext context) {
+    final palette =
+        ref.watch(appPaletteProvider); // ✅ هنا استخدمنا WidgetRef ref
+
     return SafeArea(
       child: Column(
         children: [
           // Tab headers
-          Padding(
+          Container(
             padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
+            decoration: BoxDecoration(
+              color: palette.primary, // ✅ background from palette
+              // borderRadius: BorderRadius.circular(12), // optional
+            ),
             child: Row(
               children: [
                 // Tabs section
@@ -35,17 +141,21 @@ class _FocusViewState extends State<FocusView> {
                   child: Row(
                     children: [
                       Flexible(
-                        child: _buildHeaderTab('Pomo', isSelected: showPomodoro,
-                            onTap: () {
-                          toggleView(true);
-                        }),
+                        child: _buildHeaderTab(
+                          'Pomo',
+                          isSelected: showPomodoro,
+                          color: palette.text, // ✅ استخدام ألوان من الـ palette
+                          onTap: () => toggleView(true),
+                        ),
                       ),
                       const SizedBox(width: 20),
                       Flexible(
-                        child: _buildHeaderTab('Stopwatch',
-                            isSelected: !showPomodoro, onTap: () {
-                          toggleView(false);
-                        }),
+                        child: _buildHeaderTab(
+                          'Stopwatch',
+                          isSelected: !showPomodoro,
+                          color: palette.text,
+                          onTap: () => toggleView(false),
+                        ),
                       ),
                     ],
                   ),
@@ -55,16 +165,15 @@ class _FocusViewState extends State<FocusView> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
-                      icon:
-                          const Icon(Icons.timer_outlined, color: Colors.black),
+                      icon: Icon(Icons.timer_outlined, color: palette.icon),
                       onPressed: () {},
                     ),
                     IconButton(
-                      icon: const Icon(Icons.add, color: Colors.black),
+                      icon: Icon(Icons.add, color: palette.icon),
                       onPressed: () {},
                     ),
                     IconButton(
-                      icon: const Icon(Icons.more_vert, color: Colors.black),
+                      icon: Icon(Icons.more_vert, color: palette.icon),
                       onPressed: () {},
                     ),
                   ],
@@ -80,8 +189,12 @@ class _FocusViewState extends State<FocusView> {
     );
   }
 
-  Widget _buildHeaderTab(String title,
-      {required bool isSelected, required VoidCallback onTap}) {
+  Widget _buildHeaderTab(
+    String title, {
+    required bool isSelected,
+    required VoidCallback onTap,
+    required Color color,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: Text(
@@ -89,11 +202,9 @@ class _FocusViewState extends State<FocusView> {
         style: TextStyle(
           fontSize: 18,
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          color: Colors.black.withValues(alpha: isSelected ? 0.8 : 0.4),
+          color: color.withValues(alpha: isSelected ? 0.8 : 0.4),
         ),
       ),
     );
   }
 }
-
-// Your PomodoroView and StopWatchView widgets go here as-is (unchanged).

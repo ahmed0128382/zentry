@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zentry/src/core/utils/palette.dart';
 import 'app_colors.dart';
 import 'app_fonts.dart';
 
@@ -7,6 +8,51 @@ class AppStyles {
 
   // Text Styles
 
+  static TextStyle heading1(Palette p) => TextStyle(
+        fontFamily: AppFonts.primaryFont,
+        fontSize: 32,
+        fontWeight: FontWeight.bold,
+        color: p.text,
+      );
+
+  static TextStyle heading2(Palette p) => TextStyle(
+        fontFamily: AppFonts.primaryFont,
+        fontSize: 24,
+        fontWeight: FontWeight.w600,
+        color: p.text,
+      );
+
+  static TextStyle body(Palette p) => TextStyle(
+        fontFamily: AppFonts.primaryFont,
+        fontSize: 16,
+        fontWeight: FontWeight.normal,
+        color: p.text,
+      );
+
+  static TextStyle subtitle(Palette p) => TextStyle(
+        fontFamily: AppFonts.primaryFont,
+        fontSize: 14,
+        color: p.secondary,
+      );
+
+  // A generic helper
+  static TextStyle getPrimaryStyle(Palette p,
+          {double size = 14, FontWeight weight = FontWeight.w400}) =>
+      TextStyle(
+        fontFamily: AppFonts.primaryFont,
+        fontSize: size,
+        fontWeight: weight,
+        color: p.text,
+      );
+
+  static TextStyle getAccentStyle(Palette p,
+          {double size = 14, FontWeight weight = FontWeight.w400}) =>
+      TextStyle(
+        fontFamily: AppFonts.primaryFont,
+        fontSize: size,
+        fontWeight: weight,
+        color: p.accent,
+      );
   // Small
   static final TextStyle semiBold11 = TextStyle(
     fontFamily: AppFonts.primaryFont,
@@ -95,34 +141,6 @@ class AppStyles {
   );
 
   // Headings
-  static final TextStyle heading1 = TextStyle(
-    fontFamily: AppFonts.primaryFont,
-    fontSize: 32,
-    fontWeight: AppFontWeights.bold,
-    color: AppColors.text,
-  );
-
-  static final TextStyle heading2 = TextStyle(
-    fontFamily: AppFonts.primaryFont,
-    fontSize: 24,
-    fontWeight: AppFontWeights.semiBold,
-    color: AppColors.text,
-  );
-
-  // Body & subtitle
-  static final TextStyle body = TextStyle(
-    fontFamily: AppFonts.primaryFont,
-    fontSize: 16,
-    fontWeight: AppFontWeights.regular,
-    color: AppColors.text,
-  );
-
-  static final TextStyle subtitle = TextStyle(
-    fontFamily: AppFonts.primaryFont,
-    fontSize: 14,
-    fontWeight: AppFontWeights.regular,
-    color: AppColors.secondary,
-  );
 
   // Splash-specific
   static const TextStyle splashTagline = TextStyle(

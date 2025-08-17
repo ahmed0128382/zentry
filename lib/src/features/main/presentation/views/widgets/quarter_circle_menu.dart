@@ -235,24 +235,30 @@
 // }
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zentry/src/core/application/providers/app_palette_provider.dart';
 import 'package:zentry/src/core/utils/app_colors.dart';
+// import 'package:zentry/src/features/appearance/domain/entities/appearance_settings.dart';
 
-class QuarterCircleMenu extends StatelessWidget {
+class QuarterCircleMenu extends ConsumerWidget {
   final List<IconData> icons;
   final VoidCallback onClose;
   final Animation<double> animation;
   final void Function(int index)? onIconTap;
+  //final AppearanceSettings appearance;
 
   const QuarterCircleMenu({
     super.key,
     required this.icons,
     required this.onClose,
     required this.animation,
+    // required this.appearance,
     this.onIconTap,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final palette = ref.watch(appPaletteProvider);
     final int total = icons.length;
 
     // Dynamic layer assignment
@@ -337,8 +343,7 @@ class QuarterCircleMenu extends StatelessWidget {
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: AppColors.peacefulSeaBlue
-                                  .withValues(alpha: 0.2),
+                              color: palette.primary.withValues(alpha: 0.2),
                               blurRadius: 6,
                               offset: Offset(0, 3),
                             ),
