@@ -12,6 +12,9 @@ class AppImages {
   static const String imagesWinter = "assets/images/winter.jpeg";
   static const String imagesSummer = "assets/images/summer.png";
   static const String imagesAutumn = "assets/images/automn.jpg";
+
+  static const String imagesSearchLogo = "assets/images/searchLogo.svg";
+
   // أضف المزيد حسب الحاجة
 
   /////////////NTI IMAGES////////////////

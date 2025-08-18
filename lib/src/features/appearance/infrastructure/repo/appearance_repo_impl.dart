@@ -72,6 +72,7 @@ class AppearanceRepoImpl implements AppearanceRepo {
   Stream<AppearanceSettings?> watchAppearanceSettings() {
     return db.select(db.appearanceTable).watchSingleOrNull().map((data) {
       if (data == null) return null;
+
       return AppearanceSettings(
         themeMode: AppThemeMode.values.firstWhere(
           (mode) => mode.name == data.themeMode,
@@ -80,7 +81,10 @@ class AppearanceRepoImpl implements AppearanceRepo {
         seedColor: data.seedColor,
         fontFamily: data.fontFamily,
         textScale: data.textScale,
-        season: Season.winter,
+        season: Season.values.firstWhere(
+          (s) => s.name == data.season,
+          orElse: () => Season.winter, // fallback if DB is empty or invalid
+        ),
       );
     });
   }
@@ -94,6 +98,7 @@ class AppearanceRepoImpl implements AppearanceRepo {
             seedColor: Value(settings.seedColor),
             fontFamily: Value(settings.fontFamily),
             textScale: Value(settings.textScale),
+            season: Value(settings.season.name),
           ),
         );
   }

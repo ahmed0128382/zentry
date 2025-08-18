@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:zentry/src/core/application/providers/app_palette_provider.dart';
 import 'package:zentry/src/core/utils/app_images.dart';
+import 'package:flutter/services.dart';
 
 class SearchView extends ConsumerWidget {
   const SearchView({super.key});
@@ -58,11 +60,10 @@ class SearchView extends ConsumerWidget {
                     // Placeholder for the binoculars image.
                     // You would use an Image.asset or Image.network here
                     // if you had the image file.
-                    Image.asset(
-                      AppImages.searchLogo,
-                      colorBlendMode:
-                          BlendMode.modulate, // Replace with your image path
-                      height: 150,
+                    SvgPicture.asset(
+                      AppImages.imagesSearchLogo,
+                      width: 100,
+                      height: 100,
                     ),
                     const SizedBox(height: 24.0),
                     Text(
@@ -92,3 +93,18 @@ class SearchView extends ConsumerWidget {
     );
   }
 }
+
+/// Provider that loads & recolors the SVG string based on [Color]
+final recoloredSvgProvider =
+    FutureProvider.family<String, Color>((ref, color) async {
+  String rawSvg = await rootBundle.loadString(AppImages.imagesSearchLogo);
+
+  // Regex to match hex colors in the SVG
+  final colorRegex = RegExp(r'#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})');
+
+  // Replace all matched colors with target color
+  final hex = '#${color.value.toRadixString(16).substring(2)}';
+  rawSvg = rawSvg.replaceAllMapped(colorRegex, (_) => hex);
+
+  return rawSvg;
+});
