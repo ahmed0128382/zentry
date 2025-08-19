@@ -1,8 +1,8 @@
 import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zentry/src/features/to_do_today/domain/entities/task.dart';
-import 'package:zentry/src/features/to_do_today/domain/repos/task_repo.dart';
+import 'package:zentry/src/shared/domain/entities/task.dart';
+import 'package:zentry/src/shared/domain/repos/task_repo.dart';
 
 class TaskListController extends StateNotifier<AsyncValue<List<Task>>> {
   final TaskRepository _repo;

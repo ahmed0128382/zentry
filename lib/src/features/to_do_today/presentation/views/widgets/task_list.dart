@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:zentry/src/core/utils/app_date_utils.dart';
-import 'package:zentry/src/features/to_do_today/domain/entities/task.dart';
+import 'package:zentry/src/shared/domain/entities/task.dart';
 import 'package:zentry/src/features/to_do_today/presentation/views/widgets/task_item.dart';
 
 class TaskList extends ConsumerWidget {

@@ -1,8 +1,8 @@
 import 'dart:developer';
 
 import 'package:zentry/src/core/infrastucture/drift/app_database.dart';
-import 'package:zentry/src/features/to_do_today/domain/entities/task.dart';
-import 'package:zentry/src/features/to_do_today/domain/repos/task_repo.dart';
+import 'package:zentry/src/shared/domain/entities/task.dart';
+import 'package:zentry/src/shared/domain/repos/task_repo.dart';
 import 'package:drift/drift.dart';
 
 class TaskRepositoryImpl implements TaskRepository {

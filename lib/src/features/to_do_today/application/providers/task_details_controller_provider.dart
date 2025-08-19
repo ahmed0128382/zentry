@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zentry/src/features/to_do_today/application/controllers/task_details_controller.dart';
 
-import '../../domain/entities/task.dart';
+import '../../../../shared/domain/entities/task.dart';
 import 'task_repo_provider.dart';
 
 /// Provider family you use from the UI: ref.watch(taskDetailsControllerProvider(taskId))

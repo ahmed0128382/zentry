@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zentry/src/features/to_do_today/domain/entities/task.dart';
+import 'package:zentry/src/shared/domain/entities/task.dart';
 import '../controllers/task_list_controller.dart';
 import 'task_repo_provider.dart';
 

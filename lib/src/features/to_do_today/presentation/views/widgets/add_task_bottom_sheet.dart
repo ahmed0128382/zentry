@@ -4,7 +4,7 @@ import 'package:zentry/src/core/application/providers/app_palette_provider.dart'
 import 'package:zentry/src/features/to_do_today/application/providers/priority_overlay_controller_provider.dart';
 import 'package:zentry/src/features/to_do_today/application/providers/task_list_controller_provider.dart';
 import 'package:zentry/src/features/to_do_today/application/providers/to_do_today_controller_provider.dart';
-import 'package:zentry/src/features/to_do_today/domain/entities/task.dart';
+import 'package:zentry/src/shared/domain/entities/task.dart';
 import 'package:zentry/src/features/to_do_today/presentation/views/widgets/priority_overlay.dart';
 import 'package:zentry/src/shared/enums/tasks_priority.dart';
 

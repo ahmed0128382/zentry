@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../domain/entities/task.dart';
+import '../../../../../shared/domain/entities/task.dart';
 
 class TaskHeader extends StatelessWidget {
   final Task task;
