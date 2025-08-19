@@ -83,6 +83,8 @@ class QuadrantWidget extends ConsumerWidget {
                   children: quadrant.tasks
                       .map(
                         (task) => TaskTile(
+                          key: ValueKey(task.id),
+                          priority: task.priority,
                           task: task,
                           onChanged: (value) {
                             if (onToggleCompletion != null) {

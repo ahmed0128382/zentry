@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zentry/src/core/application/providers/app_palette_provider.dart';
@@ -22,7 +20,7 @@ class TaskItem extends ConsumerWidget {
   });
 
   Color _priorityColor(TaskPriority priority) {
-    log(' Priority in TaskItem is $priority');
+    // log(' Priority in TaskItem is $priority');
     switch (priority) {
       case TaskPriority.noPriority:
         return Colors.grey;
@@ -59,7 +57,7 @@ class TaskItem extends ConsumerWidget {
               title,
               style: TextStyle(
                 decoration: isCompleted ? TextDecoration.lineThrough : null,
-                color: isCompleted ? Colors.grey : palette.text,
+                color: isCompleted ? Colors.grey : palette.icon,
               ),
             ),
           ),
