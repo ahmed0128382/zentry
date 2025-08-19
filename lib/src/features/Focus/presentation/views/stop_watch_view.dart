@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zentry/src/core/application/providers/app_palette_provider.dart';
-import 'package:zentry/src/core/utils/app_colors.dart';
 
 class StopWatchView extends ConsumerWidget {
   const StopWatchView({super.key});

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zentry/src/core/application/providers/app_palette_provider.dart';
 import 'package:zentry/src/core/widgets/custom_card.dart';
 import 'package:zentry/src/features/to_do_today/application/providers/task_list_controller_provider.dart';
 import 'package:zentry/src/features/to_do_today/presentation/views/widgets/task_list.dart';
