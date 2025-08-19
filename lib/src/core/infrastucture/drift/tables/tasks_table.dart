@@ -6,6 +6,7 @@ class TasksTable extends Table {
   TextColumn get description => text().nullable()();
   DateTimeColumn get createdAt => dateTime()();
   BoolColumn get isCompleted => boolean().withDefault(const Constant(false))();
+  TextColumn get priority => text().withDefault(const Constant('medium'))();
 
   @override
   Set<Column> get primaryKey => {id};

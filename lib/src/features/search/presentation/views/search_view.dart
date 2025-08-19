@@ -94,17 +94,17 @@ class SearchView extends ConsumerWidget {
   }
 }
 
-/// Provider that loads & recolors the SVG string based on [Color]
-final recoloredSvgProvider =
-    FutureProvider.family<String, Color>((ref, color) async {
-  String rawSvg = await rootBundle.loadString(AppImages.imagesSearchLogo);
+// /// Provider that loads & recolors the SVG string based on [Color]
+// final recoloredSvgProvider =
+//     FutureProvider.family<String, Color>((ref, color) async {
+//   String rawSvg = await rootBundle.loadString(AppImages.imagesSearchLogo);
 
-  // Regex to match hex colors in the SVG
-  final colorRegex = RegExp(r'#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})');
+//   // Regex to match hex colors in the SVG
+//   final colorRegex = RegExp(r'#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})');
 
-  // Replace all matched colors with target color
-  final hex = '#${color.value.toRadixString(16).substring(2)}';
-  rawSvg = rawSvg.replaceAllMapped(colorRegex, (_) => hex);
+//   // Replace all matched colors with target color
+//   final hex = '#${color.value.toRadixString(16).substring(2)}';
+//   rawSvg = rawSvg.replaceAllMapped(colorRegex, (_) => hex);
 
-  return rawSvg;
-});
+//   return rawSvg;
+// });

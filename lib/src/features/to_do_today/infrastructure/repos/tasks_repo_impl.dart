@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:zentry/src/core/infrastucture/drift/app_database.dart';
 import 'package:zentry/src/features/to_do_today/domain/entities/task.dart';
 import 'package:zentry/src/features/to_do_today/domain/repos/task_repo.dart';
@@ -23,17 +25,44 @@ class TaskRepositoryImpl implements TaskRepository {
   @override
   Future<List<Task>> getCompletedTasks() async {
     final raw = await db.getCompletedTasks();
-    return raw.map(Task.fromDb).toList();
+
+    // Log raw DB rows
+    for (var r in raw) {
+      log('DEBUG: Raw DB completed task -> id: ${r.id}, title: ${r.title}, priority: ${r.priority}');
+    }
+
+    final tasks = raw.map(Task.fromDb).toList();
+
+    // Log after converting to Task entity
+    for (var t in tasks) {
+      log('DEBUG: Converted completed Task -> id: ${t.id}, title: ${t.title}, priority: ${t.priority}');
+    }
+
+    return tasks;
   }
 
   @override
   Future<List<Task>> getIncompleteTasks() async {
     final raw = await db.getIncompleteTasks();
-    return raw.map(Task.fromDb).toList();
+
+    // Log raw DB rows
+    for (var r in raw) {
+      log('DEBUG: Raw DB incomplete task -> id: ${r.id}, title: ${r.title}, priority: ${r.priority}');
+    }
+
+    final tasks = raw.map(Task.fromDb).toList();
+
+    // Log after converting to Task entity
+    for (var t in tasks) {
+      log('DEBUG: Converted incomplete Task -> id: ${t.id}, title: ${t.title}, priority: ${t.priority}');
+    }
+
+    return tasks;
   }
 
   @override
   Future<void> addTask(Task task) async {
+    log('DEBUG: Adding Task in TaskRepositoryImpl with priority: ${task.priority}');
     await db.insertTask(
       TasksTableCompanion(
         id: Value(task.id),
@@ -41,6 +70,7 @@ class TaskRepositoryImpl implements TaskRepository {
         description: Value(task.description),
         createdAt: Value(task.createdAt),
         isCompleted: Value(task.isCompleted),
+        priority: Value(task.priority.name),
       ),
     );
   }
@@ -69,6 +99,7 @@ class TaskRepositoryImpl implements TaskRepository {
         description: Value(task.description),
         createdAt: Value(task.createdAt),
         isCompleted: Value(task.isCompleted),
+        priority: Value(task.priority.name),
       ),
     );
   }

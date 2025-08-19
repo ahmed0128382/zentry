@@ -1,6 +1,5 @@
 // Today section listing tasks
 import 'package:flutter/material.dart';
-import 'package:zentry/src/features/to_do_today/presentation/views/widgets/task_item.dart';
 
 class TodaySection extends StatelessWidget {
   const TodaySection({super.key});
@@ -17,18 +16,18 @@ class TodaySection extends StatelessWidget {
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 8),
-          TaskItem(
-            title: 'صلاة الفجر',
-            time: '4:40am',
-            isCompleted: false,
-            showRefresh: true,
-          ),
-          TaskItem(
-            title: 'Memory quran',
-            time: '10:00am',
-            isCompleted: false,
-            showRefresh: false,
-          ),
+          // TaskItem(
+          //   title: 'صلاة الفجر',
+          //   time: '4:40am',
+          //   isCompleted: false,
+          //   showRefresh: true,
+          // ),
+          // TaskItem(
+          //   title: 'Memory quran',
+          //   time: '10:00am',
+          //   isCompleted: false,
+          //   showRefresh: false,
+          // ),
         ],
       ),
     );

@@ -16,46 +16,22 @@ part 'app_database.g.dart';
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
+  /// bump version because we added `priority` to TasksTable
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
         onCreate: (Migrator m) async {
           await m.createAll();
         },
-        // No onUpgrade needed if schemaVersion = 1
+        onUpgrade: (Migrator m, int from, int to) async {
+          if (from == 1) {
+            // Add the new column safely
+            await m.addColumn(tasksTable, tasksTable.priority);
+          }
+        },
       );
-
-  // @override
-  // MigrationStrategy get migration => MigrationStrategy(
-  //       onCreate: (Migrator m) async {
-  //         // For new installs, create all tables with current schema
-  //         await m.createAll();
-  //       },
-  //       onUpgrade: (Migrator m, int from, int to) async {
-  //         // Upgrade from version 1 → 2: add seedColor column safely
-  //         if (from < 2) {
-  //           try {
-  //             await m.addColumn(appearanceTable, appearanceTable.seedColor);
-  //           } catch (_) {
-  //             // Table might not exist yet, ignore error
-  //           }
-  //         }
-
-  //         if (from < 3) {
-  //           try {
-  //             await m.addColumn(appearanceTable, appearanceTable.fontFamily);
-  //           } catch (_) {}
-  //         }
-
-  //         if (from < 4) {
-  //           try {
-  //             await m.addColumn(appearanceTable, appearanceTable.textScale);
-  //           } catch (_) {}
-  //         }
-  //       },
-  //     );
 
   // ----------------- TASKS -----------------
   // --- CRUD operations (optional helper methods) ---

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zentry/src/features/to_do_today/domain/entities/task.dart';
 import 'package:zentry/src/features/to_do_today/domain/repos/task_repo.dart';
@@ -32,6 +34,7 @@ class TaskListController extends StateNotifier<AsyncValue<List<Task>>> {
   Future<void> addTask(Task task) async {
     final prev = state.value ?? [];
     state = AsyncValue.data([...prev, task]); // optimistic
+    log("DEBUG: Adding Task in TaskListController with priority: ${task.priority}");
     try {
       await _repo.addTask(task);
       await loadTasks();

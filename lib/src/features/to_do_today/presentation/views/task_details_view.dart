@@ -140,6 +140,17 @@ class _TaskDetailsViewState extends ConsumerState<TaskDetailsView> {
                   const SliverToBoxAdapter(child: SizedBox(height: 12)),
                   const SliverToBoxAdapter(child: Divider(height: 1)),
 
+                  const SliverToBoxAdapter(child: SizedBox(height: 12)),
+
+                  SliverToBoxAdapter(
+                    child: Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                        child: Text(
+                          'Priority is set to ${ui.task.priority.name}',
+                          style: Theme.of(context).textTheme.titleLarge,
+                        )),
+                  ),
+
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
