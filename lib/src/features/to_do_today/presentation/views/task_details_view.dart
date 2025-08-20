@@ -62,7 +62,7 @@ class _TaskDetailsViewState extends ConsumerState<TaskDetailsView> {
         backgroundColor: palette.background,
         appBar: AppBar(
           backgroundColor: palette.primary,
-          title: Text('Task', style: TextStyle(color: palette.icon)),
+          title: Text('Task', style: TextStyle(color: palette.text)),
           centerTitle: false,
           leading: IconButton(
             tooltip: 'Back',
@@ -80,9 +80,9 @@ class _TaskDetailsViewState extends ConsumerState<TaskDetailsView> {
             // ),
             IconButton(
               tooltip: 'Delete',
-              icon: const Icon(
+              icon: Icon(
                 Icons.delete_outline,
-                color: Colors.red,
+                color: palette.text,
               ),
               onPressed: asyncUi.hasValue
                   ? () async {

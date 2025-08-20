@@ -38,10 +38,8 @@ class TaskHeader extends ConsumerWidget {
         Checkbox(
           value: task.isCompleted,
           onChanged: (v) => onToggle(v ?? false),
-          shape: RoundedRectangleBorder(
-            side: BorderSide(color: _getPriorityColor(priority), width: 1.5),
-            borderRadius: BorderRadius.circular(4),
-          ),
+          activeColor: statusColor,
+          side: BorderSide(color: _getPriorityColor(priority), width: 1.5),
         ),
         const SizedBox(width: 8),
         Expanded(

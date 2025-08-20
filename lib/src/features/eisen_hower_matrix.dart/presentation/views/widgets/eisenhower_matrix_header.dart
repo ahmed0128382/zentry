@@ -7,11 +7,12 @@ class EisenhowerMatrixHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: const [
-        Text(
+      children: [
+        const Text(
           'Eisenhower Matrix',
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
+        IconButton(onPressed: () {}, icon: Icon(Icons.more_vert))
       ],
     );
   }

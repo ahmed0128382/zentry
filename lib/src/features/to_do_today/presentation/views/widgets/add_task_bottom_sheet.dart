@@ -112,9 +112,9 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                         color: palette.text,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 8),
                     PriorityOverlay(),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 8),
                     IconButton(
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),

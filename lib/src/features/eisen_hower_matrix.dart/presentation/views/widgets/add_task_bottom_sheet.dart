@@ -113,7 +113,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                 Row(
                   children: [
                     const QuadrantOverlay(),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 2),
                     IconButton(
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
@@ -121,7 +121,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                       icon: Icon(Icons.more_horiz, color: palette.text),
                     ),
                     const SizedBox(
-                      width: 8,
+                      width: 2,
                     ),
                     ElevatedButton(
                       onPressed: () {
