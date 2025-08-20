@@ -46,7 +46,6 @@ class _TaskDetailsViewState extends ConsumerState<TaskDetailsView> {
   @override
   Widget build(BuildContext context) {
     final palette = ref.watch(appPaletteProvider);
-    final appearance = ref.watch(appearanceControllerProvider);
 
     final asyncUi = ref.watch(taskDetailsControllerProvider(widget.taskId));
     final controller =
@@ -62,25 +61,29 @@ class _TaskDetailsViewState extends ConsumerState<TaskDetailsView> {
       child: Scaffold(
         backgroundColor: palette.background,
         appBar: AppBar(
-          title: const Text('Task'),
+          backgroundColor: palette.primary,
+          title: Text('Task', style: TextStyle(color: palette.icon)),
           centerTitle: false,
           leading: IconButton(
             tooltip: 'Back',
-            icon: const Icon(Icons.arrow_back_rounded),
+            icon: Icon(Icons.arrow_back_rounded, color: palette.icon),
             onPressed: () {
               // Let WillPopScope handle discard confirmation
               Navigator.of(context).maybePop();
             },
           ),
           actions: [
-            IconButton(
-              tooltip: 'Refresh',
-              icon: const Icon(Icons.refresh),
-              onPressed: asyncUi.isLoading ? null : controller.refresh,
-            ),
+            // IconButton(
+            //   tooltip: 'Refresh',
+            //   icon: const Icon(Icons.refresh),
+            //   onPressed: asyncUi.isLoading ? null : controller.refresh,
+            // ),
             IconButton(
               tooltip: 'Delete',
-              icon: const Icon(Icons.delete_outline),
+              icon: const Icon(
+                Icons.delete_outline,
+                color: Colors.red,
+              ),
               onPressed: asyncUi.hasValue
                   ? () async {
                       final ok = await showDeleteDialog(context);
@@ -139,17 +142,6 @@ class _TaskDetailsViewState extends ConsumerState<TaskDetailsView> {
 
                   const SliverToBoxAdapter(child: SizedBox(height: 12)),
                   const SliverToBoxAdapter(child: Divider(height: 1)),
-
-                  const SliverToBoxAdapter(child: SizedBox(height: 12)),
-
-                  SliverToBoxAdapter(
-                    child: Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-                        child: Text(
-                          'Priority is set to ${ui.task.priority.name}',
-                          style: Theme.of(context).textTheme.titleLarge,
-                        )),
-                  ),
 
                   SliverToBoxAdapter(
                     child: Padding(

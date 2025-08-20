@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zentry/src/features/to_do_today/application/controllers/task_details_controller.dart';
+import 'package:zentry/src/shared/enums/tasks_priority.dart';
 
 import '../../../../shared/domain/entities/task.dart';
 import 'task_repo_provider.dart';
@@ -10,21 +11,17 @@ final taskDetailsControllerProvider = AutoDisposeAsyncNotifierProviderFamily<
   TaskDetailsController.new,
 );
 
-/// Loads a task by id — simple, reusable elsewhere if needed.
-final taskByIdProvider =
-    FutureProvider.family<Task?, String>((ref, taskId) async {
-  final repo = ref.watch(taskRepoProvider);
-  return repo.getTaskById(taskId);
-});
-
 /// UI state for the details screen (keeps local drafts & flags)
 class TaskDetailsUiState {
   final Task task; // persisted snapshot
   final bool isSaving;
   final bool isDeleting;
-  final String titleDraft; // local draft
+
+  // Local drafts
+  final String titleDraft;
   final String descriptionDraft;
   final bool isCompletedDraft;
+  final TaskPriority priorityDraft; // <-- NEW
 
   TaskDetailsUiState({
     required this.task,
@@ -33,9 +30,12 @@ class TaskDetailsUiState {
     String? titleDraft,
     String? descriptionDraft,
     bool? isCompletedDraft,
+    TaskPriority? priorityDraft,
   })  : titleDraft = titleDraft ?? task.title,
         descriptionDraft = descriptionDraft ?? (task.description ?? ''),
-        isCompletedDraft = isCompletedDraft ?? task.isCompleted;
+        isCompletedDraft = isCompletedDraft ?? task.isCompleted,
+        priorityDraft = priorityDraft ?? task.priority; // <-- NEW
+
   TaskDetailsUiState copyWith({
     Task? task,
     bool? isSaving,
@@ -43,6 +43,7 @@ class TaskDetailsUiState {
     String? titleDraft,
     String? descriptionDraft,
     bool? isCompletedDraft,
+    TaskPriority? priorityDraft, // <-- NEW
   }) {
     return TaskDetailsUiState(
       task: task ?? this.task,
@@ -51,11 +52,13 @@ class TaskDetailsUiState {
       titleDraft: titleDraft ?? this.titleDraft,
       descriptionDraft: descriptionDraft ?? this.descriptionDraft,
       isCompletedDraft: isCompletedDraft ?? this.isCompletedDraft,
+      priorityDraft: priorityDraft ?? this.priorityDraft, // <-- NEW
     );
   }
 
   bool get hasUnsavedChanges =>
       titleDraft.trim() != task.title.trim() ||
       descriptionDraft.trim() != (task.description ?? '').trim() ||
-      isCompletedDraft != task.isCompleted;
+      isCompletedDraft != task.isCompleted ||
+      priorityDraft != task.priority; // <-- NEW
 }
