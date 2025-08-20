@@ -18,6 +18,25 @@ class TaskContent extends ConsumerWidget {
       data: (tasks) {
         final inboxTasks = tasks.where((t) => !t.isCompleted).toList();
         final completedTasks = tasks.where((t) => t.isCompleted).toList();
+        if (inboxTasks.isEmpty && completedTasks.isEmpty) {
+          final onBg =
+              ThemeData.estimateBrightnessForColor(palette.background) ==
+                      Brightness.dark
+                  ? Colors.white70
+                  : Colors.black54;
+
+          return Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.inbox, size: 48, color: onBg),
+                const SizedBox(height: 12),
+                Text('No tasks yet',
+                    style: TextStyle(color: onBg, fontSize: 16)),
+              ],
+            ),
+          );
+        }
 
         return SingleChildScrollView(
           child: Padding(
@@ -36,12 +55,7 @@ class TaskContent extends ConsumerWidget {
                       },
                     ),
                   ),
-                  if (completedTasks.isNotEmpty)
-                    Center(
-                        child: Text(
-                      'No Tasks',
-                      style: TextStyle(color: palette.icon),
-                    )),
+                  if (completedTasks.isNotEmpty) SizedBox(height: 8),
                 ],
                 if (completedTasks.isNotEmpty)
                   CustomCard(

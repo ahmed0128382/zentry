@@ -67,7 +67,7 @@ class _EisenHowerMatrixViewState extends ConsumerState<EisenHowerMatrixView>
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: palette.secondary,
+        backgroundColor: palette.primary.withValues(alpha: 0.8),
         heroTag: 'add_task_eisenhower',
         onPressed: () => controller.openSheet(vsync: this),
         child: Icon(

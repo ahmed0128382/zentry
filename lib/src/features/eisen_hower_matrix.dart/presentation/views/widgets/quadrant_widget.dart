@@ -39,7 +39,7 @@ class QuadrantWidget extends ConsumerWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: palette.secondary.withValues(alpha: 0.1),
+            color: palette.primary.withValues(alpha: 0.4),
             blurRadius: 6,
             offset: const Offset(0, 3),
           ),
@@ -73,7 +73,7 @@ class QuadrantWidget extends ConsumerWidget {
               child: Center(
                 child: Text('No Tasks',
                     style: TextStyle(
-                        color: Colors.grey[400], fontStyle: FontStyle.italic)),
+                        color: palette.text, fontStyle: FontStyle.italic)),
               ),
             )
           else

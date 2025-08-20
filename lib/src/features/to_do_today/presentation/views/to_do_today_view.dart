@@ -71,7 +71,7 @@ class _ToDoTodayViewState extends ConsumerState<ToDoTodayView>
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: palette.secondary,
+        backgroundColor: palette.primary.withValues(alpha: 0.8),
         heroTag: 'add_task_to_do_today',
         onPressed: () => controller.openSheet(vsync: this),
         child: Icon(
