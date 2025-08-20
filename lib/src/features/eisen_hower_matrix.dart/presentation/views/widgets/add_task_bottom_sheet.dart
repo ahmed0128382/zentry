@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zentry/src/core/application/providers/app_palette_provider.dart';
-import 'package:zentry/src/features/to_do_today/application/providers/priority_overlay_controller_provider.dart';
+import 'package:zentry/src/features/eisen_hower_matrix.dart/application/providers/eisenhower_matrix_controller_provider.dart';
+import 'package:zentry/src/features/eisen_hower_matrix.dart/application/providers/quadrant_overlay_controller_provider.dart';
+import 'package:zentry/src/features/eisen_hower_matrix.dart/domain/enums/quadrant_type_enum.dart';
+import 'package:zentry/src/features/eisen_hower_matrix.dart/presentation/views/widgets/quadrant_overlay.dart';
 import 'package:zentry/src/features/to_do_today/application/providers/task_list_controller_provider.dart';
-import 'package:zentry/src/features/to_do_today/application/providers/to_do_today_controller_provider.dart';
 import 'package:zentry/src/shared/domain/entities/task.dart';
-import 'package:zentry/src/features/to_do_today/presentation/views/widgets/priority_overlay.dart';
+import 'package:zentry/src/shared/enums/tasks_priority.dart';
 
 class AddTaskBottomSheet extends ConsumerStatefulWidget {
   final FocusNode titleFocusNode;
@@ -61,6 +63,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                // Drag handle
                 Container(
                   width: 36,
                   height: 4,
@@ -70,6 +73,8 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
+
+                // Title
                 TextField(
                   focusNode: widget.titleFocusNode,
                   controller: titleController,
@@ -84,7 +89,10 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                   minLines: 1,
                   maxLines: null,
                 ),
+
                 const SizedBox(height: 6),
+
+                // Description
                 TextField(
                   focusNode: widget.descriptionFocusNode,
                   controller: descriptionController,
@@ -98,29 +106,13 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                   minLines: 1,
                   maxLines: null,
                 ),
+
                 const SizedBox(height: 8),
+
+                // Actions row
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    IconButton(
-                      color: palette.primary.withOpacity(0.6),
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                      onPressed: () {},
-                      icon: Icon(
-                        Icons.calendar_today_outlined,
-                        color: palette.text,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    PriorityOverlay(),
-                    const SizedBox(width: 12),
-                    IconButton(
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                      onPressed: () {},
-                      icon: Icon(Icons.label_outline, color: palette.text),
-                    ),
+                    const QuadrantOverlay(),
                     const SizedBox(width: 12),
                     IconButton(
                       padding: EdgeInsets.zero,
@@ -128,34 +120,35 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                       onPressed: () {},
                       icon: Icon(Icons.more_horiz, color: palette.text),
                     ),
+                    const SizedBox(
+                      width: 8,
+                    ),
                     ElevatedButton(
                       onPressed: () {
                         final title = titleController.text.trim();
                         if (title.isEmpty) return;
-                        final selectedPriority = ref.read(
-                          priorityOverlayControllerProvider,
-                        );
+
+                        final selectedPriority =
+                            ref.read(quadrantOverlayControllerProvider);
 
                         final newTask = Task(
                           id: DateTime.now().millisecondsSinceEpoch.toString(),
                           title: title,
                           description: descriptionController.text.trim(),
-                          priority: selectedPriority,
+                          priority: selectedPriority.toPriority(),
                         );
 
                         ref
                             .read(taskListControllerProvider.notifier)
                             .addTask(newTask);
                         ref
-                            .read(toDoTodayControllerProvider.notifier)
+                            .read(eisenhowerMatrixControllerProvider.notifier)
                             .closeSheet();
 
-                        // Reset selected priority
+                        // Reset state
                         ref
-                            .read(priorityOverlayControllerProvider.notifier)
+                            .read(quadrantOverlayControllerProvider.notifier)
                             .clearPriority();
-
-                        // Clear fields
                         titleController.clear();
                         descriptionController.clear();
                       },
