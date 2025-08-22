@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import '../repos/habits_repo.dart';
+import '../../../../shared/domain/repos/habits_repo.dart';
 
 class ReorderHabitsWithinSection {
   final HabitsRepo repo;

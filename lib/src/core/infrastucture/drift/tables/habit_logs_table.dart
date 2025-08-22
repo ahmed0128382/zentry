@@ -1,17 +1,24 @@
 import 'package:drift/drift.dart';
+import 'habits_table.dart';
 
+@DataClassName('HabitLogRow')
 class HabitLogsTable extends Table {
-  TextColumn get id => text()(); // UUID
-  TextColumn get habitId => text()(); // FK -> HabitsTable.id
+  TextColumn get id => text()();
 
-  /// Store only date part (UTC midnight) for easy queries
+  TextColumn get habitId => text().customConstraint(
+      'NOT NULL REFERENCES habits_table(id) ON DELETE CASCADE')();
+
+  /// store date as UTC midnight (date-only)
   DateTimeColumn get date => dateTime()();
 
-  /// For now we reuse HabitStatus.name as you started; can split later.
+  /// log status as string (use your enum names)
   TextColumn get status => text()();
 
-  /// Optional: if you later support partial amounts (e.g., 2/3 cups)
+  /// optional numeric amount for "reachAmount" goals
   IntColumn get amount => integer().nullable()();
+
+  DateTimeColumn get createdAt =>
+      dateTime().clientDefault(() => DateTime.now())();
 
   @override
   Set<Column> get primaryKey => {id};

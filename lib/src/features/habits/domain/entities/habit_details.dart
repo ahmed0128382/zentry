@@ -1,7 +1,7 @@
 // lib/src/features/habits/domain/entities/habit_details.dart
 import 'package:equatable/equatable.dart';
 
-import 'habit.dart';
+import '../../../../shared/domain/entities/habit.dart';
 import 'habit_log.dart';
 
 /// Aggregate for read-models where you need a habit plus today's state/logs.

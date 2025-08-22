@@ -4,7 +4,7 @@ import '../enums/habit_goal_period.dart';
 import '../enums/habit_goal_record_mode.dart';
 
 class HabitGoal {
-  final GoalType type;
+  final HabitGoalType type;
   final HabitGoalUnit unit;
   final HabitGoalPeriod period;
   final HabitGoalRecordMode recordMode;

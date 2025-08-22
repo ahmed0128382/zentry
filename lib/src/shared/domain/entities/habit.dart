@@ -1,18 +1,18 @@
 import 'package:equatable/equatable.dart';
 
-import '../enums/habit_goal_type.dart';
-import '../enums/habit_status.dart';
-import '../enums/habit_frequency.dart';
-import '../enums/weekday.dart';
-import '../value_objects/weekday_mask.dart';
-import 'habit_goal.dart';
-import 'habit_log.dart';
+import '../../../features/habits/domain/enums/habit_goal_type.dart';
+import '../../../features/habits/domain/enums/habit_status.dart';
+import '../../../features/habits/domain/enums/habit_frequency.dart';
+import '../../../features/habits/domain/enums/weekday.dart';
+import '../../../features/habits/domain/value_objects/weekday_mask.dart';
+import '../../../features/habits/domain/entities/habit_goal.dart';
+import '../../../features/habits/domain/entities/habit_log.dart';
 
 class Habit extends Equatable {
   final String id; // UUID
   final String title;
   final String? description;
-  final String sectionId; // FK -> Section
+  final String? sectionId; // FK -> Section
   final HabitStatus status;
   final HabitFrequency frequency;
 
@@ -104,9 +104,9 @@ class Habit extends Equatable {
   /// ✅ Check if goal was reached for a given day, based on logs
   bool isGoalReachedForDay(List<HabitLog> logsForThatDay) {
     switch (goal.type) {
-      case GoalType.achieveAll:
+      case HabitGoalType.achieveAll:
         return logsForThatDay.any((l) => l.status.isCompleted);
-      case GoalType.reachAmount:
+      case HabitGoalType.reachAmount:
         final target = goal.targetAmount ?? 1;
         final count = logsForThatDay.where((l) => l.status.isCompleted).length;
         return count >= target;

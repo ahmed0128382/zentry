@@ -1,3 +1,4 @@
+// lib/src/shared/domain/value_objects/weekday_mask.dart
 import 'package:equatable/equatable.dart';
 import '../enums/weekday.dart';
 
@@ -8,11 +9,18 @@ class WeekdayMask extends Equatable {
 
   const WeekdayMask.none() : bits = 0;
 
+  /// Creates WeekdayMask from a set of Weekdays
   factory WeekdayMask.fromDays(Iterable<Weekday> days) {
     var mask = 0;
     for (final d in days) mask |= d.bit;
     return WeekdayMask(mask);
   }
+
+  /// Creates WeekdayMask from an int mask (0..127)
+  factory WeekdayMask.fromInt(int mask) => WeekdayMask(mask);
+
+  /// Returns the int representation of this mask
+  int toInt() => bits;
 
   bool includes(Weekday d) => (bits & d.bit) != 0;
 

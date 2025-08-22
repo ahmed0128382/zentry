@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import '../entities/habit.dart';
-import '../entities/habit_details.dart';
+import '../../../features/habits/domain/entities/habit_details.dart';
 
 abstract class HabitsRepo {
   Future<Either<Exception, Habit>> create(Habit habit);

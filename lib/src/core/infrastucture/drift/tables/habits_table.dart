@@ -1,11 +1,15 @@
 import 'package:drift/drift.dart';
+import 'sections_table.dart';
 
+@DataClassName('HabitRow')
 class HabitsTable extends Table {
   TextColumn get id => text()(); // UUID
   TextColumn get title => text()();
   TextColumn get description => text().nullable()();
 
-  TextColumn get sectionId => text()(); // FK -> SectionsTable.id
+  /// FK -> SectionsTable.id (nullable so a habit can be "unspecified" section)
+  TextColumn get sectionId =>
+      text().nullable().references(SectionsTable, #id)();
 
   TextColumn get status => text()(); // HabitStatus.name
   TextColumn get frequency => text()(); // HabitFrequency.name
