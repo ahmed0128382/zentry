@@ -1,0 +1,4 @@
+enum HabitGoalRecordMode {
+  auto,
+  manual,
+}

@@ -7,7 +7,7 @@ import 'package:zentry/src/features/eisen_hower_matrix.dart/domain/enums/quadran
 import 'package:zentry/src/features/eisen_hower_matrix.dart/presentation/views/widgets/quadrant_overlay.dart';
 import 'package:zentry/src/features/to_do_today/application/providers/task_list_controller_provider.dart';
 import 'package:zentry/src/shared/domain/entities/task.dart';
-import 'package:zentry/src/shared/enums/tasks_priority.dart';
+
 
 class AddTaskBottomSheet extends ConsumerStatefulWidget {
   final FocusNode titleFocusNode;
@@ -77,6 +77,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                 // Title
                 TextField(
                   focusNode: widget.titleFocusNode,
+                  
                   controller: titleController,
                   decoration: InputDecoration(
                     fillColor: Colors.transparent,
