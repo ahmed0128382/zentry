@@ -26,6 +26,7 @@ class HabitsTable extends Table {
   DateTimeColumn get goalStartDate => dateTime().nullable()();
   DateTimeColumn get goalEndDate => dateTime().nullable()();
 
+  IntColumn get orderInSection => integer().withDefault(const Constant(0))();
   // Behavior flags
   BoolColumn get autoPopup => boolean().withDefault(const Constant(true))();
 

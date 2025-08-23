@@ -1,9 +1,12 @@
-import 'package:dartz/dartz.dart';
+// File: src/features/habits/domain/repos/habit_reminders_repo.dart
+
+import 'package:zentry/src/shared/infrastructure/utils/guard.dart';
+
 import '../entities/habit_reminder.dart';
 
 abstract class HabitRemindersRepo {
-  Future<Either<Exception, List<HabitReminder>>> getForHabit(String habitId);
-  Future<Either<Exception, HabitReminder>> add(HabitReminder reminder);
-  Future<Either<Exception, HabitReminder>> update(HabitReminder reminder);
-  Future<Either<Exception, void>> delete(String reminderId);
+  Future<Result<List<HabitReminder>>> getForHabit(String habitId);
+  Future<Result<HabitReminder>> add(HabitReminder reminder);
+  Future<Result<HabitReminder>> update(HabitReminder reminder);
+  Future<Result<void>> delete(String reminderId);
 }
