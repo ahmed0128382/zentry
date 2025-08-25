@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:zentry/src/config/app_routes.dart';
 import 'package:zentry/src/features/appearance/presentation/views/them_settings_view.dart';
+import 'package:zentry/src/features/habits/presentation/views/add_habit_view.dart';
 import 'package:zentry/src/features/main/presentation/views/main_view.dart';
 import 'package:zentry/src/features/main/presentation/views/widgets/main_view_pages.dart';
 import 'package:zentry/src/features/profile/presentation/views/profile_view.dart';
@@ -91,6 +92,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.profile,
         builder: (_, __) => const ProfileView(),
+      ),
+      GoRoute(
+        path: AddHabitView.routeName,
+        builder: (_, __) => const AddHabitView(),
       ),
     ],
     errorBuilder: (_, state) => const Scaffold(

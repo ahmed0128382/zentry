@@ -18,7 +18,7 @@ final Map<MainViewPageIndex, Widget> mainViewPagesMap = {
   MainViewPageIndex.eisenhowerMatrix: const EisenHowerMatrixView(),
   MainViewPageIndex.focus: const FocusView(),
   MainViewPageIndex.search: const SearchView(),
-  MainViewPageIndex.habits: const HabitsView(),
+  MainViewPageIndex.habits: HabitsView(),
   MainViewPageIndex.countdown: const CountdownView(),
   MainViewPageIndex.settings: const SettingsView(),
   //MainViewPageIndex.profile: const ProfileView(),

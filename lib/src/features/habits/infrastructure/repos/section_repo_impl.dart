@@ -1,5 +1,7 @@
 // File: src/features/sections/infrastructure/repositories/sections_repo_impl.dart
 
+import 'dart:developer';
+
 import 'package:zentry/src/core/infrastucture/drift/app_database.dart';
 import 'package:zentry/src/features/habits/domain/entities/section.dart';
 import 'package:zentry/src/features/habits/domain/repos/sections_repo.dart';
@@ -15,6 +17,7 @@ class SectionsRepoImpl implements SectionsRepo {
   Future<Result<List<Section>>> getAll() async {
     return guard(() async {
       final rows = await _db.getAllSections();
+      log('Repo: fetched sections -> $rows');
       return rows.map(sectionFromRow).toList();
     });
   }

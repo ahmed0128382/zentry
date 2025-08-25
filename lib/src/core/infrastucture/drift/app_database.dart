@@ -1,5 +1,6 @@
 // File: lib/src/core/data/app_database.dart
 
+import 'dart:developer';
 import 'dart:io';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
@@ -41,7 +42,9 @@ class AppDatabase extends _$AppDatabase {
         },
         onUpgrade: (Migrator m, int from, int to) async {
           if (from == 1) {
-            await m.addColumn(tasksTable, tasksTable.priority);
+            await m.alterTable(
+              TableMigration(tasksTable, newColumns: [tasksTable.priority]),
+            );
           }
           if (from <= 2) {
             await m.createTable(habitsTable);
@@ -50,7 +53,10 @@ class AppDatabase extends _$AppDatabase {
             await m.createTable(sectionsTable);
           }
           if (from <= 3) {
-            await m.addColumn(habitsTable, habitsTable.orderInSection);
+            await m.alterTable(
+              TableMigration(habitsTable,
+                  newColumns: [habitsTable.orderInSection]),
+            );
             await customStatement(
                 'UPDATE habits_table SET order_in_section = 0');
           }
@@ -80,8 +86,9 @@ class AppDatabase extends _$AppDatabase {
       into(tasksTable).insert(task);
 
   Future<void> updateTaskCompletion(String id, bool isCompleted) =>
-      (update(tasksTable)..where((t) => t.id.equals(id)))
-          .write(TasksTableCompanion(isCompleted: Value(isCompleted)));
+      (update(tasksTable)..where((t) => t.id.equals(id))).write(
+        TasksTableCompanion(isCompleted: Value(isCompleted)),
+      );
 
   Future<void> updateTask(TasksTableCompanion updatedTask) =>
       update(tasksTable).replace(updatedTask);
@@ -90,19 +97,28 @@ class AppDatabase extends _$AppDatabase {
       (delete(tasksTable)..where((t) => t.id.equals(id))).go();
 
   // ----------------- APPEARANCE -----------------
-  Future<AppearanceTableData?> getAppearanceSettings() =>
-      (select(appearanceTable)..where((t) => t.id.equals(kRowAppearanceId)))
+  Future<AppearanceTableData?> getAppearanceSettings() => (select(
+        appearanceTable,
+      )..where((t) => t.id.equals(kRowAppearanceId)))
           .getSingleOrNull();
 
-  Stream<AppearanceTableData?> watchAppearanceSettings() =>
-      (select(appearanceTable)..where((t) => t.id.equals(kRowAppearanceId)))
+  Stream<AppearanceTableData?> watchAppearanceSettings() => (select(
+        appearanceTable,
+      )..where((t) => t.id.equals(kRowAppearanceId)))
           .watchSingleOrNull();
 
   // ----------------- HABITS -----------------
-  Future<void> insertHabit(HabitsTableCompanion habit) =>
-      into(habitsTable).insert(habit);
+  Future<void> insertHabit(HabitsTableCompanion habit) {
+    log('DB: inserting habit $habit');
+    return into(habitsTable).insert(habit);
+  }
 
-  Stream<List<HabitRow>> watchAllHabits() => select(habitsTable).watch();
+  Stream<List<HabitRow>> watchAllHabits() {
+    log('DB: watching all habits');
+    return (select(habitsTable)
+          ..orderBy([(t) => OrderingTerm(expression: t.createdAt)]))
+        .watch();
+  }
 
   Future<HabitRow?> getHabitById(String id) =>
       (select(habitsTable)..where((h) => h.id.equals(id))).getSingleOrNull();
@@ -121,21 +137,24 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<void> reorderHabitsInSection(
-      String sectionId, List<String> orderedHabitIds) async {
+    String sectionId,
+    List<String> orderedHabitIds,
+  ) async {
     for (var i = 0; i < orderedHabitIds.length; i++) {
       final habitId = orderedHabitIds[i];
-      await (update(habitsTable)..where((t) => t.id.equals(habitId)))
-          .write(HabitsTableCompanion(orderInSection: Value(i)));
+      await (update(habitsTable)..where((t) => t.id.equals(habitId))).write(
+        HabitsTableCompanion(orderInSection: Value(i)),
+      );
     }
   }
 
   // ----------------- HABIT LOGS -----------------
   Future<HabitLogRow> insertOrUpdateHabitLog(
-      HabitLogsTableCompanion log) async {
-    return into(habitLogsTable).insertReturning(
-      log,
-      onConflict: DoUpdate((old) => log),
-    );
+    HabitLogsTableCompanion log,
+  ) async {
+    return into(
+      habitLogsTable,
+    ).insertReturning(log, onConflict: DoUpdate((old) => log));
   }
 
   Future<int> deleteHabitLog(String logId) {
@@ -159,35 +178,42 @@ class AppDatabase extends _$AppDatabase {
 
   // ----------------- HABIT REMINDERS -----------------
   Future<List<HabitRemindersTableData>> getRemindersForHabit(String habitId) {
-    return (select(habitRemindersTable)
-          ..where((r) => r.habitId.equals(habitId)))
+    return (select(
+      habitRemindersTable,
+    )..where((r) => r.habitId.equals(habitId)))
         .get();
   }
 
   Future<HabitRemindersTableData> insertReminder(
-      HabitRemindersTableCompanion reminder) {
+    HabitRemindersTableCompanion reminder,
+  ) {
     return into(habitRemindersTable).insertReturning(reminder);
   }
 
   /// Update by id, then return the updated row.
   Future<HabitRemindersTableData?> updateReminder(
-      HabitRemindersTableCompanion reminder) async {
-    // Expect reminder.id to be present
+    HabitRemindersTableCompanion reminder,
+  ) async {
     if (reminder.id.present == false) {
-      // No id to match on -> can't update. You can throw or return null.
       return null;
     }
     final id = reminder.id.value;
 
-    await (update(habitRemindersTable)..where((t) => t.id.equals(id)))
+    await (update(
+      habitRemindersTable,
+    )..where((t) => t.id.equals(id)))
         .write(reminder);
 
-    return (select(habitRemindersTable)..where((t) => t.id.equals(id)))
+    return (select(
+      habitRemindersTable,
+    )..where((t) => t.id.equals(id)))
         .getSingleOrNull();
   }
 
   Future<int> deleteReminder(String reminderId) {
-    return (delete(habitRemindersTable)..where((r) => r.id.equals(reminderId)))
+    return (delete(
+      habitRemindersTable,
+    )..where((r) => r.id.equals(reminderId)))
         .go();
   }
 
@@ -201,17 +227,19 @@ class AppDatabase extends _$AppDatabase {
     return into(sectionsTable).insertReturning(section);
   }
 
-  /// Update by id, then return the updated row (or null if not found).
   Future<SectionRow?> updateSection(SectionsTableCompanion section) async {
     if (!section.id.present) return null;
     final id = section.id.value;
 
-    final ok = await (update(sectionsTable)..where((t) => t.id.equals(id)))
+    final ok = await (update(
+      sectionsTable,
+    )..where((t) => t.id.equals(id)))
         .write(section);
 
-    // ok is number of rows affected (int). Fetch updated row if > 0
     if (ok > 0) {
-      return (select(sectionsTable)..where((t) => t.id.equals(id)))
+      return (select(
+        sectionsTable,
+      )..where((t) => t.id.equals(id)))
           .getSingleOrNull();
     }
     return null;
@@ -224,8 +252,9 @@ class AppDatabase extends _$AppDatabase {
   Future<void> reorderSections(List<String> orderedSectionIds) async {
     for (var i = 0; i < orderedSectionIds.length; i++) {
       final sectionId = orderedSectionIds[i];
-      await (update(sectionsTable)..where((s) => s.id.equals(sectionId)))
-          .write(SectionsTableCompanion(orderIndex: Value(i)));
+      await (update(sectionsTable)..where((s) => s.id.equals(sectionId))).write(
+        SectionsTableCompanion(orderIndex: Value(i)),
+      );
     }
   }
 }
@@ -233,7 +262,17 @@ class AppDatabase extends _$AppDatabase {
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final dbFolder = await getApplicationDocumentsDirectory();
-    final file = File(p.join(dbFolder.path, 'app_database.sqlite'));
-    return NativeDatabase(file);
+    final dbPath = p.join(dbFolder.path, 'app_database.sqlite');
+    final file = File(dbPath);
+
+    // 🛠️ Development only: reset DB on startup
+    // const resetDbOnStartup = false; // ✅ خليها false قبل الإنتاج
+
+    // if (resetDbOnStartup && file.existsSync()) {
+    //   print('⚠️ Deleting existing DB at $dbPath for clean start (DEV only)');
+    //   await file.delete();
+    // }
+
+    return NativeDatabase(File(dbPath));
   });
 }
