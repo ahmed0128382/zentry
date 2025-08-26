@@ -1,7 +1,9 @@
 // import 'package:flutter/material.dart';
 // import 'package:flutter_riverpod/flutter_riverpod.dart';
+// import 'package:zentry/src/features/habits/application/providers/habit_reminders_controller_provider.dart';
 // import 'package:zentry/src/features/habits/application/providers/habits_controller_provider.dart';
 // import 'package:zentry/src/features/habits/domain/entities/habit_goal.dart';
+// import 'package:zentry/src/features/habits/domain/entities/habit_reminder.dart';
 // import 'package:zentry/src/features/habits/domain/enums/habit_frequency.dart';
 // import 'package:zentry/src/features/habits/domain/enums/habit_goal_period.dart';
 // import 'package:zentry/src/features/habits/domain/enums/habit_goal_record_mode.dart';
@@ -10,7 +12,6 @@
 // import 'package:zentry/src/features/habits/domain/enums/section_type.dart';
 // import 'package:zentry/src/features/habits/domain/enums/weekday.dart';
 // import 'package:zentry/src/features/habits/domain/enums/habit_status.dart';
-
 // import 'package:zentry/src/features/habits/domain/value_objects/weekday_mask.dart';
 // import 'package:zentry/src/shared/domain/entities/habit.dart';
 
@@ -23,10 +24,8 @@
 // }
 
 // class _AddHabitViewState extends ConsumerState<AddHabitView> {
-//   // Basic state
 //   final TextEditingController _nameCtrl = TextEditingController();
 
-//   // Enums
 //   HabitFrequency _frequency = HabitFrequency.daily;
 //   HabitGoalType _goalType = HabitGoalType.reachAmount;
 //   HabitGoalUnit _goalUnit = HabitGoalUnit.times;
@@ -35,12 +34,11 @@
 //   SectionType _sectionType = SectionType.anytime;
 //   HabitStatus _status = HabitStatus.active;
 
-//   // Other fields
 //   final Set<Weekday> _selectedDays = {};
 //   int? _targetAmount;
 //   DateTime? _startDate;
 //   DateTime? _endDate;
-//   final List<TimeOfDay> _reminders = [];
+//   final List<TimeOfDay> _reminders = []; // reserved for later
 
 //   @override
 //   Widget build(BuildContext context) {
@@ -68,64 +66,16 @@
 //             ),
 //             if (_frequency == HabitFrequency.weekly) _buildWeekdaySelector(),
 //             const SizedBox(height: 16),
-//             _buildDropdown<HabitGoalType>(
-//               'Goal Type',
-//               _goalType,
-//               HabitGoalType.values,
-//               (val) => setState(() => _goalType = val),
-//             ),
-//             _buildDropdown<HabitGoalUnit>(
-//               'Goal Unit',
-//               _goalUnit,
-//               HabitGoalUnit.values,
-//               (val) => setState(() => _goalUnit = val),
-//             ),
-//             _buildDropdown<HabitGoalPeriod>(
-//               'Goal Period',
-//               _goalPeriod,
-//               HabitGoalPeriod.values,
-//               (val) => setState(() => _goalPeriod = val),
-//             ),
-//             _buildDropdown<HabitGoalRecordMode>(
-//               'Record Mode',
-//               _goalRecordMode,
-//               HabitGoalRecordMode.values,
-//               (val) => setState(() => _goalRecordMode = val),
-//             ),
-//             const SizedBox(height: 16),
 //             _buildNumberField('Target Amount', (val) {
 //               _targetAmount = int.tryParse(val);
 //             }),
 //             const SizedBox(height: 16),
-//             _buildDatePicker('Start Date', _startDate, (d) {
-//               setState(() => _startDate = d);
-//             }),
-//             _buildDatePicker('End Date', _endDate, (d) {
-//               setState(() => _endDate = d);
-//             }),
-//             const SizedBox(height: 16),
-//             _buildDropdown<SectionType>(
-//               'Section',
-//               _sectionType,
-//               SectionType.values,
-//               (val) => setState(() => _sectionType = val),
-//             ),
-//             const SizedBox(height: 16),
-//             _buildDropdown<HabitStatus>(
-//               'Status',
-//               _status,
-//               HabitStatus.values,
-//               (val) => setState(() => _status = val),
-//             ),
-//             const SizedBox(height: 24),
-//             _buildReminders(),
+//             _buildRemindersSection(),
 //           ],
 //         ),
 //       ),
 //     );
 //   }
-
-//   // ------------------- UI HELPERS -------------------
 
 //   Widget _buildTextField(String label, TextEditingController ctrl) {
 //     return TextField(
@@ -144,8 +94,10 @@
 //     void Function(T) onChanged,
 //   ) {
 //     return DropdownButtonFormField<T>(
-//       decoration:
-//           InputDecoration(labelText: label, border: const OutlineInputBorder()),
+//       decoration: InputDecoration(
+//         labelText: label,
+//         border: const OutlineInputBorder(),
+//       ),
 //       value: value,
 //       items: values
 //           .map((v) => DropdownMenuItem<T>(
@@ -189,62 +141,90 @@
 //       onChanged: onChanged,
 //     );
 //   }
+//   // inside _AddHabitViewState
 
-//   Widget _buildDatePicker(
-//       String label, DateTime? date, Function(DateTime) onPicked) {
-//     return ListTile(
-//       title: Text(
-//           date == null ? label : '$label: ${date.toLocal()}'.split(' ')[0]),
-//       trailing: const Icon(Icons.calendar_today),
-//       onTap: () async {
-//         final picked = await showDatePicker(
-//           context: context,
-//           initialDate: date ?? DateTime.now(),
-//           firstDate: DateTime(2000),
-//           lastDate: DateTime(2100),
-//         );
-//         if (picked != null) {
-//           setState(() => label = '$label: ${picked.toLocal()}'.split(' ')[0]);
-//           onPicked(picked);
-//         }
-//       },
-//     );
-//   }
-
-//   Widget _buildReminders() {
+//   Widget _buildRemindersSection() {
 //     return Column(
 //       crossAxisAlignment: CrossAxisAlignment.start,
 //       children: [
-//         const Text('Reminders', style: TextStyle(fontWeight: FontWeight.bold)),
+//         Row(
+//           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//           children: [
+//             const Text('Reminders',
+//                 style: TextStyle(fontWeight: FontWeight.bold)),
+//             IconButton(
+//               icon: const Icon(Icons.add_alarm),
+//               onPressed: _pickReminder,
+//             ),
+//           ],
+//         ),
 //         Wrap(
 //           spacing: 8,
-//           children: _reminders.map((t) {
+//           children: _reminders.map((time) {
 //             return Chip(
-//               label: Text(t.format(context)),
+//               label: Text('${time.format(context)}'),
 //               onDeleted: () {
-//                 setState(() => _reminders.remove(t));
+//                 setState(() => _reminders.remove(time));
 //               },
 //             );
 //           }).toList(),
-//         ),
-//         TextButton.icon(
-//           onPressed: () async {
-//             final picked = await showTimePicker(
-//               context: context,
-//               initialTime: const TimeOfDay(hour: 9, minute: 0),
-//             );
-//             if (picked != null) {
-//               setState(() => _reminders.add(picked));
-//             }
-//           },
-//           icon: const Icon(Icons.add),
-//           label: const Text('Add Reminder'),
 //         ),
 //       ],
 //     );
 //   }
 
-//   // ------------------- SAVE -------------------
+//   Future<void> _pickReminder() async {
+//     final picked = await showTimePicker(
+//       context: context,
+//       initialTime: TimeOfDay.now(),
+//     );
+//     if (picked != null) {
+//       setState(() => _reminders.add(picked));
+//     }
+//   }
+
+//   // void _saveHabit() {
+//   //   final name = _nameCtrl.text.trim();
+//   //   if (name.isEmpty) {
+//   //     ScaffoldMessenger.of(context).showSnackBar(
+//   //       const SnackBar(content: Text('Please enter a habit name')),
+//   //     );
+//   //     return;
+//   //   }
+
+//   //   final now = DateTime.now();
+
+//   //   final habit = Habit(
+//   //     id: now.millisecondsSinceEpoch.toString(),
+//   //     title: name,
+//   //     description: null,
+//   //     sectionId: _sectionType.name, // keep as enum name for now
+//   //     status: _status,
+//   //     frequency: _frequency,
+//   //     weeklyDays: _frequency == HabitFrequency.weekly
+//   //         ? WeekdayMask.fromDays(_selectedDays)
+//   //         : null,
+//   //     // for quick test, reuse targetAmount as interval if not daily
+//   //     intervalDays: _frequency == HabitFrequency.daily ? null : _targetAmount,
+//   //     goal: HabitGoal(
+//   //       type: _goalType,
+//   //       unit: _goalUnit,
+//   //       period: _goalPeriod,
+//   //       recordMode: _goalRecordMode,
+//   //       targetAmount: _targetAmount,
+//   //       startDate: _startDate,
+//   //       endDate: _endDate,
+//   //     ),
+//   //     createdAt: now,
+//   //     updatedAt: now,
+//   //     autoPopup: true,
+//   //   );
+
+//   //   // ✅ use controller.add(...)
+//   //   ref.read(habitsControllerProvider.notifier).add(habit);
+
+//   //   if (mounted) Navigator.pop(context, true);
+//   // }
 //   void _saveHabit() async {
 //     final name = _nameCtrl.text.trim();
 //     if (name.isEmpty) {
@@ -254,11 +234,14 @@
 //       return;
 //     }
 
+//     final now = DateTime.now();
+//     final habitId = now.millisecondsSinceEpoch.toString();
+
 //     final habit = Habit(
-//       id: DateTime.now().millisecondsSinceEpoch.toString(),
+//       id: habitId,
 //       title: name,
-//       description: null, // or use another text field if you have one
-//       sectionId: _sectionType.name, // Map SectionType enum -> String id
+//       description: null,
+//       sectionId: _sectionType.name,
 //       status: _status,
 //       frequency: _frequency,
 //       weeklyDays: _frequency == HabitFrequency.weekly
@@ -274,19 +257,37 @@
 //         startDate: _startDate,
 //         endDate: _endDate,
 //       ),
-//       createdAt: DateTime.now(),
-//       updatedAt: DateTime.now(),
+//       createdAt: now,
+//       updatedAt: now,
+//       autoPopup: true,
 //     );
 
 //     await ref.read(habitsControllerProvider.notifier).add(habit);
 
-//     if (mounted) Navigator.pop(context);
+//     // Save reminders
+//     for (final time in _reminders) {
+//       final minutes = time.hour * 60 + time.minute;
+//       final reminder = HabitReminder(
+//         id: '${habitId}_${minutes}', // simple ID scheme
+//         habitId: habitId,
+//         minutesSinceMidnight: minutes,
+//         enabled: true,
+//       );
+//       await ref
+//           .read(habitRemindersControllerProvider.notifier)
+//           .addReminder(reminder);
+//     }
+
+//     if (mounted) Navigator.pop(context, true);
 //   }
 // }
+// File: lib/src/features/habits/presentation/views/add_habit_view.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zentry/src/features/habits/application/providers/habit_reminders_controller_provider.dart';
 import 'package:zentry/src/features/habits/application/providers/habits_controller_provider.dart';
 import 'package:zentry/src/features/habits/domain/entities/habit_goal.dart';
+import 'package:zentry/src/features/habits/domain/entities/habit_reminder.dart';
 import 'package:zentry/src/features/habits/domain/enums/habit_frequency.dart';
 import 'package:zentry/src/features/habits/domain/enums/habit_goal_period.dart';
 import 'package:zentry/src/features/habits/domain/enums/habit_goal_record_mode.dart';
@@ -309,6 +310,7 @@ class AddHabitView extends ConsumerStatefulWidget {
 class _AddHabitViewState extends ConsumerState<AddHabitView> {
   final TextEditingController _nameCtrl = TextEditingController();
 
+  // enums
   HabitFrequency _frequency = HabitFrequency.daily;
   HabitGoalType _goalType = HabitGoalType.reachAmount;
   HabitGoalUnit _goalUnit = HabitGoalUnit.times;
@@ -317,11 +319,12 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
   SectionType _sectionType = SectionType.anytime;
   HabitStatus _status = HabitStatus.active;
 
+  // fields
   final Set<Weekday> _selectedDays = {};
   int? _targetAmount;
   DateTime? _startDate;
   DateTime? _endDate;
-  final List<TimeOfDay> _reminders = []; // reserved for later
+  final List<TimeOfDay> _reminders = [];
 
   @override
   Widget build(BuildContext context) {
@@ -349,15 +352,64 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
             ),
             if (_frequency == HabitFrequency.weekly) _buildWeekdaySelector(),
             const SizedBox(height: 16),
+            _buildDropdown<HabitGoalType>(
+              'Goal Type',
+              _goalType,
+              HabitGoalType.values,
+              (val) => setState(() => _goalType = val),
+            ),
+            _buildDropdown<HabitGoalUnit>(
+              'Goal Unit',
+              _goalUnit,
+              HabitGoalUnit.values,
+              (val) => setState(() => _goalUnit = val),
+            ),
+            _buildDropdown<HabitGoalPeriod>(
+              'Goal Period',
+              _goalPeriod,
+              HabitGoalPeriod.values,
+              (val) => setState(() => _goalPeriod = val),
+            ),
+            _buildDropdown<HabitGoalRecordMode>(
+              'Record Mode',
+              _goalRecordMode,
+              HabitGoalRecordMode.values,
+              (val) => setState(() => _goalRecordMode = val),
+            ),
+            const SizedBox(height: 16),
             _buildNumberField('Target Amount', (val) {
               _targetAmount = int.tryParse(val);
             }),
+            const SizedBox(height: 16),
+            _buildDatePicker('Start Date', _startDate, (d) {
+              setState(() => _startDate = d);
+            }),
+            _buildDatePicker('End Date', _endDate, (d) {
+              setState(() => _endDate = d);
+            }),
+            const SizedBox(height: 16),
+            _buildDropdown<SectionType>(
+              'Section',
+              _sectionType,
+              SectionType.values,
+              (val) => setState(() => _sectionType = val),
+            ),
+            const SizedBox(height: 16),
+            _buildDropdown<HabitStatus>(
+              'Status',
+              _status,
+              HabitStatus.values,
+              (val) => setState(() => _status = val),
+            ),
+            const SizedBox(height: 16),
+            _buildRemindersSection(),
           ],
         ),
       ),
     );
   }
 
+  // ---------------- UI HELPERS ----------------
   Widget _buildTextField(String label, TextEditingController ctrl) {
     return TextField(
       controller: ctrl,
@@ -375,10 +427,8 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
     void Function(T) onChanged,
   ) {
     return DropdownButtonFormField<T>(
-      decoration: InputDecoration(
-        labelText: label,
-        border: const OutlineInputBorder(),
-      ),
+      decoration:
+          InputDecoration(labelText: label, border: const OutlineInputBorder()),
       value: value,
       items: values
           .map((v) => DropdownMenuItem<T>(
@@ -423,7 +473,102 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
     );
   }
 
-  void _saveHabit() {
+  Widget _buildDatePicker(
+      String label, DateTime? date, Function(DateTime) onPicked) {
+    return ListTile(
+      title: Text(
+          date == null ? label : '$label: ${date.toLocal()}'.split(' ')[0]),
+      trailing: const Icon(Icons.calendar_today),
+      onTap: () async {
+        final picked = await showDatePicker(
+          context: context,
+          initialDate: date ?? DateTime.now(),
+          firstDate: DateTime(2000),
+          lastDate: DateTime(2100),
+        );
+        if (picked != null) {
+          onPicked(picked);
+        }
+      },
+    );
+  }
+
+  // Widget _buildReminders() {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       const Text('Reminders', style: TextStyle(fontWeight: FontWeight.bold)),
+  //       Wrap(
+  //         spacing: 8,
+  //         children: _reminders.map((t) {
+  //           return Chip(
+  //             label: Text(t.format(context)),
+  //             onDeleted: () {
+  //               setState(() => _reminders.remove(t));
+  //             },
+  //           );
+  //         }).toList(),
+  //       ),
+  //       TextButton.icon(
+  //         onPressed: () async {
+  //           final picked = await showTimePicker(
+  //             context: context,
+  //             initialTime: const TimeOfDay(hour: 9, minute: 0),
+  //           );
+  //           if (picked != null) {
+  //             setState(() => _reminders.add(picked));
+  //           }
+  //         },
+  //         icon: const Icon(Icons.add),
+  //         label: const Text('Add Reminder'),
+  //       ),
+  //     ],
+  //   );
+  // }
+  // inside _AddHabitViewState
+
+  Widget _buildRemindersSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text('Reminders',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            IconButton(
+              icon: const Icon(Icons.add_alarm),
+              onPressed: _pickReminder,
+            ),
+          ],
+        ),
+        Wrap(
+          spacing: 8,
+          children: _reminders.map((time) {
+            return Chip(
+              label: Text('${time.format(context)}'),
+              onDeleted: () {
+                setState(() => _reminders.remove(time));
+              },
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _pickReminder() async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+    if (picked != null) {
+      setState(() => _reminders.add(picked));
+    }
+  }
+
+  // ---------------- SAVE ----------------
+  void _saveHabit() async {
     final name = _nameCtrl.text.trim();
     if (name.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -433,18 +578,18 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
     }
 
     final now = DateTime.now();
+    final habitId = now.millisecondsSinceEpoch.toString();
 
     final habit = Habit(
-      id: now.millisecondsSinceEpoch.toString(),
+      id: habitId,
       title: name,
       description: null,
-      sectionId: _sectionType.name, // keep as enum name for now
+      sectionId: _sectionType.name,
       status: _status,
       frequency: _frequency,
       weeklyDays: _frequency == HabitFrequency.weekly
           ? WeekdayMask.fromDays(_selectedDays)
           : null,
-      // for quick test, reuse targetAmount as interval if not daily
       intervalDays: _frequency == HabitFrequency.daily ? null : _targetAmount,
       goal: HabitGoal(
         type: _goalType,
@@ -460,8 +605,21 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
       autoPopup: true,
     );
 
-    // ✅ use controller.add(...)
-    ref.read(habitsControllerProvider.notifier).add(habit);
+    await ref.read(habitsControllerProvider.notifier).add(habit);
+
+    // Save reminders
+    for (final time in _reminders) {
+      final minutes = time.hour * 60 + time.minute;
+      final reminder = HabitReminder(
+        id: '${habitId}_$minutes', // simple ID scheme
+        habitId: habitId,
+        minutesSinceMidnight: minutes,
+        enabled: true,
+      );
+      await ref
+          .read(habitRemindersControllerProvider.notifier)
+          .addReminder(reminder);
+    }
 
     if (mounted) Navigator.pop(context, true);
   }

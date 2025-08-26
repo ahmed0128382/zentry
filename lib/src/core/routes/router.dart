@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:zentry/src/config/app_routes.dart';
 import 'package:zentry/src/features/appearance/presentation/views/them_settings_view.dart';
 import 'package:zentry/src/features/habits/presentation/views/add_habit_view.dart';
+import 'package:zentry/src/features/habits/presentation/views/edit_habit_view.dart';
 import 'package:zentry/src/features/main/presentation/views/main_view.dart';
 import 'package:zentry/src/features/main/presentation/views/widgets/main_view_pages.dart';
 import 'package:zentry/src/features/profile/presentation/views/profile_view.dart';
@@ -11,6 +12,7 @@ import 'package:zentry/src/features/splash/presentation/views/splash_view.dart';
 import 'package:zentry/src/features/on_boarding/presentation/views/on_boarding_view.dart';
 import 'package:zentry/src/features/edit_bottom_nav_bar/presentation/views/edit_bottom_nav_bar_view.dart';
 import 'package:zentry/src/features/to_do_today/presentation/views/task_details_view.dart';
+import 'package:zentry/src/shared/domain/entities/habit.dart';
 import 'package:zentry/src/shared/enums/main_view_pages_index.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
@@ -96,6 +98,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AddHabitView.routeName,
         builder: (_, __) => const AddHabitView(),
+      ),
+      GoRoute(
+        path: EditHabitView.routeName,
+        builder: (ctx, state) => EditHabitView(habit: state.extra! as Habit),
       ),
     ],
     errorBuilder: (_, state) => const Scaffold(
