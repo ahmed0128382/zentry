@@ -227,6 +227,11 @@ class AppDatabase extends _$AppDatabase {
     return into(sectionsTable).insertReturning(section);
   }
 
+  Future<List<SectionRow>> getSectionsByIds(List<String> ids) {
+    if (ids.isEmpty) return Future.value([]);
+    return (select(sectionsTable)..where((s) => s.id.isIn(ids))).get();
+  }
+
   Future<SectionRow?> updateSection(SectionsTableCompanion section) async {
     if (!section.id.present) return null;
     final id = section.id.value;
@@ -247,6 +252,23 @@ class AppDatabase extends _$AppDatabase {
 
   Future<int> deleteSection(String id) {
     return (delete(sectionsTable)..where((s) => s.id.equals(id))).go();
+  }
+  // ----------------- QUERIES -----------------
+
+  Stream<List<SectionRow>> watchAllSections() {
+    return (select(sectionsTable)
+          ..orderBy([(s) => OrderingTerm(expression: s.orderIndex)]))
+        .watch();
+  }
+
+  Future<List<HabitLogRow>> getLogsForHabitOnDay(String habitId, DateTime day) {
+    final startOfDay = DateTime(day.year, day.month, day.day);
+    final endOfDay = startOfDay.add(const Duration(days: 1));
+
+    return (select(habitLogsTable)
+          ..where((l) => l.habitId.equals(habitId))
+          ..where((l) => l.date.isBetweenValues(startOfDay, endOfDay)))
+        .get();
   }
 
   Future<void> reorderSections(List<String> orderedSectionIds) async {

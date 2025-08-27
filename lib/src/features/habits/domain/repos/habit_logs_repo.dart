@@ -1,6 +1,6 @@
 // File: src/features/habits/domain/repos/habit_logs_repo.dart
 
-import 'package:zentry/src/shared/infrastructure/utils/guard.dart';
+import 'package:zentry/src/shared/domain/errors/result.dart';
 import '../entities/habit_log.dart';
 
 abstract class HabitLogsRepo {

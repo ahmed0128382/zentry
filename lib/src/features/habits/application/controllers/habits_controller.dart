@@ -1,9 +1,9 @@
-// // File: src/features/habits/presentation/controllers/habits_controller.dart
-
 // import 'dart:developer' as developer;
 // import 'dart:developer';
 // import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import 'package:zentry/src/features/habits/domain/entities/habit_details.dart';
+// import 'package:zentry/src/features/habits/domain/entities/habit_log.dart';
+// import 'package:zentry/src/features/habits/domain/enums/habit_status.dart';
 // import 'package:zentry/src/features/habits/domain/usecases/add_habit.dart';
 // import 'package:zentry/src/features/habits/domain/usecases/delete_habit.dart';
 // import 'package:zentry/src/features/habits/domain/usecases/get_habits_for_day.dart';
@@ -47,7 +47,6 @@
 //   final ReorderHabitsWithinSection reorderHabitsWithinSection;
 //   final LogHabitCompletion logHabitCompletion;
 
-//   // Keep track of the currently selected day
 //   Stream<Result<List<HabitDetails>>>? _currentStream;
 //   DateTime currentDay = DateTime.now();
 
@@ -61,32 +60,10 @@
 //     required this.logHabitCompletion,
 //   }) : super(HabitsState(habits: []));
 
-//   // Watch habits for a specific day
-//   // void watchHabits(DateTime day, {String? sectionId}) {
-//   //   currentDay = day;
-//   //   state = state.copyWith(isLoading: true, error: null);
-
-//   //   getHabitsForDay(day: day, sectionId: sectionId).listen((result) {
-//   //     result.fold(
-//   //       (failure) {
-//   //         developer.log('Failed to load habits: ${failure.toString()}',
-//   //             name: 'HabitsController');
-//   //         state = state.copyWith(error: failure.toString(), isLoading: false);
-//   //       },
-//   //       (habits) {
-//   //         developer.log(
-//   //             'Loaded habits for ${day.toIso8601String()}: ${habits.length} items',
-//   //             name: 'HabitsController');
-//   //         state = state.copyWith(habits: habits, isLoading: false);
-//   //       },
-//   //     );
-//   //   });
-//   // }
 //   void watchHabits(DateTime day) {
 //     currentDay = day;
 //     state = state.copyWith(isLoading: true, error: null);
 
-//     // Cancel previous stream subscription by starting a new listener
 //     _currentStream = getHabitsForDay(day: day);
 //     _currentStream!.listen((result) {
 //       result.fold(
@@ -112,7 +89,7 @@
 //       },
 //       (_) {
 //         log('[Controller] Habit added: ${habit.id}');
-//         watchHabits(currentDay); // refresh current day
+//         watchHabits(currentDay);
 //       },
 //     );
 //   }
@@ -142,6 +119,33 @@
 //       },
 //       (_) {
 //         developer.log('Habit deleted: $habitId', name: 'HabitsController');
+//         watchHabits(currentDay);
+//       },
+//     );
+//   }
+
+//   Future<void> addOrUpdateLog({
+//     required String habitId,
+//     required HabitStatus status,
+//   }) async {
+//     final today = DateTime.now();
+//     final log = HabitLog(
+//       id: '${habitId}_${today.toIso8601String()}',
+//       habitId: habitId,
+//       date: today,
+//       status: status,
+//     );
+
+//     final result = await logHabitCompletion(log); // ✅ use the use case
+//     result.fold(
+//       (failure) {
+//         developer.log('Failed to add/update log: ${failure.toString()}',
+//             name: 'HabitsController');
+//         state = state.copyWith(error: failure.toString());
+//       },
+//       (_) {
+//         developer.log('Log added/updated for habit: $habitId',
+//             name: 'HabitsController');
 //         watchHabits(currentDay);
 //       },
 //     );
@@ -200,33 +204,15 @@
 //       },
 //     );
 //   }
-
-//   void watchAllHabitsDebug() {
-//     log('[Controller] Debug watch all habits');
-//     state = state.copyWith(isLoading: true);
-
-//     getHabitsForDay.repo
-//         .watchHabitsForDay(day: DateTime.now())
-//         .listen((result) {
-//       result.fold(
-//         (failure) {
-//           log('[Debug] Failed to load habits: $failure');
-//           state = state.copyWith(error: failure.toString(), isLoading: false);
-//         },
-//         (habits) {
-//           log('[Debug] Loaded ${habits.length} habits: ${habits.map((h) => h.habit.title).join(', ')}');
-//           state = state.copyWith(habits: habits, isLoading: false);
-//         },
-//       );
-//     });
-//   }
 // }
-// File: lib/src/features/habits/presentation/controllers/habits_controller.dart
+// File: src/features/habits/application/controllers/habits_controller.dart
 
 import 'dart:developer' as developer;
 import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zentry/src/features/habits/domain/entities/habit_details.dart';
+import 'package:zentry/src/features/habits/domain/entities/habit_log.dart';
+import 'package:zentry/src/features/habits/domain/enums/habit_status.dart';
 import 'package:zentry/src/features/habits/domain/usecases/add_habit.dart';
 import 'package:zentry/src/features/habits/domain/usecases/delete_habit.dart';
 import 'package:zentry/src/features/habits/domain/usecases/get_habits_for_day.dart';
@@ -347,6 +333,59 @@ class HabitsController extends StateNotifier<HabitsState> {
     );
   }
 
+  Future<void> toggleCompletion(HabitDetails hd) async {
+    final current = hd.isCompletedForDay; // you already compute this
+    final newStatus = current ? HabitStatus.active : HabitStatus.completed;
+
+    final logEntry = HabitLog(
+      id: '${hd.habit.id}_${DateTime.now().toIso8601String()}',
+      habitId: hd.habit.id,
+      date: DateTime.now(),
+      status: newStatus,
+    );
+
+    final result = await logHabitCompletion(logEntry);
+    result.fold(
+      (failure) {
+        developer.log('Failed to toggle completion: $failure',
+            name: 'HabitsController');
+        state = state.copyWith(error: failure.toString());
+      },
+      (_) {
+        developer.log('Toggled ${hd.habit.title} -> $newStatus',
+            name: 'HabitsController');
+        watchHabits(currentDay);
+      },
+    );
+  }
+
+  /// Set or update today's log for a habit to the provided [status].
+  /// Uses the LogHabitCompletion usecase (which upserts the log).
+  Future<void> setTodayStatus(String habitId, HabitStatus status) async {
+    final today = DateTime.now();
+    final logEntry = HabitLog(
+      id: '${habitId}_${today.toIso8601String()}',
+      habitId: habitId,
+      date: today,
+      status: status,
+    );
+
+    final result = await logHabitCompletion(logEntry);
+    result.fold(
+      (failure) {
+        developer.log('Failed to set today status: ${failure.toString()}',
+            name: 'HabitsController');
+        state = state.copyWith(error: failure.toString());
+      },
+      (_) {
+        developer.log('Set today status for $habitId -> $status',
+            name: 'HabitsController');
+        watchHabits(currentDay);
+      },
+    );
+  }
+
+  /// Convenience: the old "logCompletion" behavior — marks completed using HabitDetails.toHabitLog()
   Future<void> logCompletion(HabitDetails habit) async {
     final result = await logHabitCompletion(habit.toHabitLog());
     result.fold(

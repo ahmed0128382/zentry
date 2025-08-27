@@ -1,3 +1,4 @@
+import 'package:zentry/src/features/habits/domain/entities/section_with_habits.dart';
 import 'package:zentry/src/shared/domain/errors/result.dart';
 
 import '../entities/habit.dart';
@@ -15,6 +16,9 @@ abstract class HabitsRepo {
     required DateTime day,
     String? sectionId,
   });
+
+  Stream<Result<List<SectionWithHabits>>> watchSectionsWithHabitsForDay(
+      DateTime day);
 
   /// Drag & drop between sections / reorder
   Future<Result<void>> moveToSection({

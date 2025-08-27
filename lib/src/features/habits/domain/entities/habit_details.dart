@@ -1,11 +1,8 @@
-// File: src/features/habits/domain/entities/habit_details.dart
-
 import 'package:equatable/equatable.dart';
+import 'package:zentry/src/features/habits/domain/entities/habit_log.dart';
+import 'package:zentry/src/features/habits/domain/entities/habit_reminder.dart';
 import 'package:zentry/src/features/habits/domain/enums/habit_status.dart';
-
-import '../../../../shared/domain/entities/habit.dart';
-import 'habit_log.dart';
-import 'habit_reminder.dart';
+import 'package:zentry/src/shared/domain/entities/habit.dart';
 
 class HabitDetails extends Equatable {
   final Habit habit;
@@ -19,6 +16,16 @@ class HabitDetails extends Equatable {
     required this.reminders,
     required this.isCompletedForDay,
   });
+
+  // ← ADD THIS
+  factory HabitDetails.fromHabit(Habit habit) {
+    return HabitDetails(
+      habit: habit,
+      logs: const [],
+      reminders: const [],
+      isCompletedForDay: false,
+    );
+  }
 
   HabitDetails copyWith({
     Habit? habit,
@@ -34,10 +41,8 @@ class HabitDetails extends Equatable {
     );
   }
 
-  /// Convert HabitDetails to a HabitLog for marking completion
   HabitLog toHabitLog({HabitStatus status = HabitStatus.completed}) {
-    final logId =
-        DateTime.now().microsecondsSinceEpoch.toString(); // simple unique ID
+    final logId = DateTime.now().microsecondsSinceEpoch.toString();
     return HabitLog(
       id: logId,
       habitId: habit.id,
