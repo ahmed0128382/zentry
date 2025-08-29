@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zentry/src/core/application/providers/app_palette_provider.dart';
 
-class CalendarDay extends StatelessWidget {
+class CalendarDay extends ConsumerWidget {
   final String day;
   final int date;
   final bool isToday; // kept for future use if you want a subtle marker
@@ -17,7 +19,8 @@ class CalendarDay extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final palette = ref.watch(appPaletteProvider);
     // Highlight ONLY when selected
     final bool highlight = isSelected;
 
@@ -31,7 +34,7 @@ class CalendarDay extends StatelessWidget {
             Text(
               day,
               style: TextStyle(
-                color: highlight ? Colors.blue : Colors.grey,
+                color: highlight ? palette.primary : palette.icon,
                 fontWeight: highlight ? FontWeight.bold : FontWeight.normal,
               ),
             ),
@@ -39,13 +42,13 @@ class CalendarDay extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: highlight ? Colors.blue : Colors.transparent,
+                color: highlight ? palette.primary : Colors.transparent,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
                 date.toString(),
                 style: TextStyle(
-                  color: highlight ? Colors.white : Colors.black,
+                  color: palette.icon,
                   fontWeight: highlight ? FontWeight.bold : FontWeight.normal,
                 ),
               ),

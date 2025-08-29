@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zentry/src/core/application/providers/app_palette_provider.dart';
 import 'package:zentry/src/features/habits/application/providers/habits_controller_provider.dart';
 import 'package:zentry/src/features/habits/application/providers/habit_reminders_controller_provider.dart';
 import 'package:zentry/src/features/habits/domain/entities/habit_details.dart';
@@ -91,7 +92,9 @@ class _EditHabitViewState extends ConsumerState<EditHabitView> {
 
   @override
   Widget build(BuildContext context) {
+    final palette = ref.watch(appPaletteProvider);
     return Scaffold(
+      backgroundColor: palette.background,
       appBar: AppBar(
         title: const Text('Edit Habit'),
         actions: [

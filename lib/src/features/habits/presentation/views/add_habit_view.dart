@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zentry/src/core/application/providers/app_palette_provider.dart';
+import 'package:zentry/src/core/utils/palette.dart';
 import 'package:zentry/src/features/habits/application/providers/habit_reminders_controller_provider.dart';
 import 'package:zentry/src/features/habits/application/providers/habits_controller_provider.dart';
 import 'package:zentry/src/features/habits/domain/entities/habit_goal.dart';
@@ -54,7 +56,9 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
 
   @override
   Widget build(BuildContext context) {
+    final palette = ref.watch(appPaletteProvider);
     return Scaffold(
+      backgroundColor: palette.background,
       appBar: AppBar(
         title: const Text('Add Habit'),
         actions: [
@@ -101,18 +105,21 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
               items: HabitGoalType.values,
               onChanged: (val) => setState(() => _goalType = val),
             ),
+            const SizedBox(height: 16),
             DropdownWidget<HabitGoalUnit>(
               label: 'Goal Unit',
               value: _goalUnit,
               items: HabitGoalUnit.values,
               onChanged: (val) => setState(() => _goalUnit = val),
             ),
+            const SizedBox(height: 16),
             DropdownWidget<HabitGoalPeriod>(
               label: 'Goal Period',
               value: _goalPeriod,
               items: HabitGoalPeriod.values,
               onChanged: (val) => setState(() => _goalPeriod = val),
             ),
+            const SizedBox(height: 16),
             DropdownWidget<HabitGoalRecordMode>(
               label: 'Record Mode',
               value: _goalRecordMode,
