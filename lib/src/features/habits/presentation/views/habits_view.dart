@@ -21,6 +21,7 @@ class _HabitsViewState extends ConsumerState<HabitsView> {
   @override
   void initState() {
     super.initState();
+    // Fetch sections for today immediately
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref
           .read(sectionsWithHabitsControllerProvider.notifier)
