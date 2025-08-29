@@ -1,5 +1,3 @@
-// File: src/features/habits/presentation/views/edit_habit_view.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zentry/src/features/habits/application/providers/habits_controller_provider.dart';
@@ -16,6 +14,12 @@ import 'package:zentry/src/features/habits/domain/enums/section_type.dart';
 import 'package:zentry/src/features/habits/domain/enums/weekday.dart';
 import 'package:zentry/src/features/habits/domain/enums/habit_status.dart';
 import 'package:zentry/src/features/habits/domain/value_objects/weekday_mask.dart';
+import 'package:zentry/src/features/habits/presentation/views/widgets/date_button.dart';
+import 'package:zentry/src/features/habits/presentation/views/widgets/drop_down_widget.dart';
+import 'package:zentry/src/features/habits/presentation/views/widgets/number_field.dart';
+import 'package:zentry/src/features/habits/presentation/views/widgets/reminders_section.dart';
+import 'package:zentry/src/features/habits/presentation/views/widgets/text_field_widget.dart';
+import 'package:zentry/src/features/habits/presentation/views/widgets/week_days_selector.dart';
 
 class EditHabitView extends ConsumerStatefulWidget {
   const EditHabitView({super.key, required this.habitDetails});
@@ -45,7 +49,6 @@ class _EditHabitViewState extends ConsumerState<EditHabitView> {
   int? _intervalDays;
   DateTime? _startDate;
   DateTime? _endDate;
-
   final List<TimeOfDay> _reminders = [];
 
   @override
@@ -64,9 +67,7 @@ class _EditHabitViewState extends ConsumerState<EditHabitView> {
         orElse: () => SectionType.anytime);
     _status = h.status;
 
-    if (h.weeklyDays != null) {
-      _selectedDays.addAll(h.weeklyDays!.days);
-    }
+    if (h.weeklyDays != null) _selectedDays.addAll(h.weeklyDays!.days);
     _targetAmount = h.goal.targetAmount;
     _intervalDays = h.intervalDays;
     _startDate = h.goal.startDate;
@@ -111,109 +112,108 @@ class _EditHabitViewState extends ConsumerState<EditHabitView> {
           key: _formKey,
           child: Column(
             children: [
-              _buildTextField('Habit Name', _nameCtrl, requiredField: true),
+              TextFieldWidget(
+                  controller: _nameCtrl,
+                  label: 'Habit Name',
+                  requiredField: true),
               const SizedBox(height: 12),
-              _buildTextField('Description (optional)', _descCtrl),
+              TextFieldWidget(
+                  controller: _descCtrl, label: 'Description (optional)'),
               const SizedBox(height: 12),
-              _buildDropdown<SectionType>(
-                'Section',
-                _sectionType,
-                SectionType.values,
-                (v) => setState(() => _sectionType = v),
-              ),
+              DropdownWidget<SectionType>(
+                  label: 'Section',
+                  value: _sectionType,
+                  items: SectionType.values,
+                  onChanged: (v) => setState(() => _sectionType = v)),
               const SizedBox(height: 12),
-              _buildDropdown<HabitStatus>(
-                'Status',
-                _status,
-                HabitStatus.values,
-                (v) => setState(() => _status = v),
-              ),
+              DropdownWidget<HabitStatus>(
+                  label: 'Status',
+                  value: _status,
+                  items: HabitStatus.values,
+                  onChanged: (v) => setState(() => _status = v)),
               const SizedBox(height: 12),
-              _buildDropdown<HabitFrequency>(
-                'Frequency',
-                _frequency,
-                HabitFrequency.values,
-                (v) => setState(() => _frequency = v),
-              ),
+              DropdownWidget<HabitFrequency>(
+                  label: 'Frequency',
+                  value: _frequency,
+                  items: HabitFrequency.values,
+                  onChanged: (v) => setState(() => _frequency = v)),
               if (_frequency == HabitFrequency.weekly) ...[
                 const SizedBox(height: 8),
-                _buildWeekdaySelector(),
+                WeekdaySelector(
+                  selectedDays: _selectedDays,
+                  onChanged: (newSet) => setState(() {
+                    _selectedDays.clear();
+                    _selectedDays.addAll(newSet);
+                  }),
+                ),
               ],
               if (_frequency != HabitFrequency.daily &&
                   _frequency != HabitFrequency.weekly) ...[
                 const SizedBox(height: 12),
-                _buildNumberField(
-                  'Interval (days)',
-                  (val) => _intervalDays = int.tryParse(val),
+                NumberField(
+                  label: 'Interval (days)',
                   initial: _intervalDays?.toString() ?? '',
-                  validator: (val) {
-                    if (val == null || val.trim().isEmpty) return 'Required';
-                    final n = int.tryParse(val);
-                    if (n == null || n <= 0) return 'Enter a positive number';
-                    return null;
-                  },
+                  onChanged: (val) => _intervalDays = int.tryParse(val),
                 ),
               ],
               const SizedBox(height: 16),
               Row(
                 children: [
                   Expanded(
-                    child: _buildDateButton(
-                      context: context,
-                      label: _startDate == null
-                          ? 'Start date'
-                          : 'Start: ${_startDate!.toLocal().toString().split(' ').first}',
-                      onPick: (d) => setState(() => _startDate = d),
-                    ),
+                    child: DateButton(
+                        label: _startDate == null
+                            ? 'Start date'
+                            : 'Start: ${_startDate!.toLocal().toString().split(' ').first}',
+                        initialDate: _startDate,
+                        onPick: (d) => setState(() => _startDate = d)),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: _buildDateButton(
-                      context: context,
-                      label: _endDate == null
-                          ? 'End date (optional)'
-                          : 'End: ${_endDate!.toLocal().toString().split(' ').first}',
-                      onPick: (d) => setState(() => _endDate = d),
-                    ),
+                    child: DateButton(
+                        label: _endDate == null
+                            ? 'End date (optional)'
+                            : 'End: ${_endDate!.toLocal().toString().split(' ').first}',
+                        initialDate: _endDate,
+                        onPick: (d) => setState(() => _endDate = d)),
                   ),
                 ],
               ),
               const SizedBox(height: 16),
-              _buildDropdown<HabitGoalType>(
-                'Goal type',
-                _goalType,
-                HabitGoalType.values,
-                (v) => setState(() => _goalType = v),
-              ),
+              DropdownWidget<HabitGoalType>(
+                  label: 'Goal type',
+                  value: _goalType,
+                  items: HabitGoalType.values,
+                  onChanged: (v) => setState(() => _goalType = v)),
               const SizedBox(height: 12),
-              _buildDropdown<HabitGoalUnit>(
-                'Goal unit',
-                _goalUnit,
-                HabitGoalUnit.values,
-                (v) => setState(() => _goalUnit = v),
-              ),
+              DropdownWidget<HabitGoalUnit>(
+                  label: 'Goal unit',
+                  value: _goalUnit,
+                  items: HabitGoalUnit.values,
+                  onChanged: (v) => setState(() => _goalUnit = v)),
               const SizedBox(height: 12),
-              _buildDropdown<HabitGoalPeriod>(
-                'Goal period',
-                _goalPeriod,
-                HabitGoalPeriod.values,
-                (v) => setState(() => _goalPeriod = v),
-              ),
+              DropdownWidget<HabitGoalPeriod>(
+                  label: 'Goal period',
+                  value: _goalPeriod,
+                  items: HabitGoalPeriod.values,
+                  onChanged: (v) => setState(() => _goalPeriod = v)),
               const SizedBox(height: 12),
-              _buildDropdown<HabitGoalRecordMode>(
-                'Record mode',
-                _goalRecordMode,
-                HabitGoalRecordMode.values,
-                (v) => setState(() => _goalRecordMode = v),
-              ),
+              DropdownWidget<HabitGoalRecordMode>(
+                  label: 'Record mode',
+                  value: _goalRecordMode,
+                  items: HabitGoalRecordMode.values,
+                  onChanged: (v) => setState(() => _goalRecordMode = v)),
               const SizedBox(height: 12),
-              _buildNumberField(
-                'Target amount',
-                (val) => _targetAmount = int.tryParse(val),
-                initial: _targetAmount?.toString() ?? '',
-              ),
+              NumberField(
+                  label: 'Target amount',
+                  initial: _targetAmount?.toString() ?? '',
+                  onChanged: (val) => _targetAmount = int.tryParse(val)),
               const SizedBox(height: 24),
-              _buildRemindersSection(),
+              RemindersSection(
+                reminders: _reminders,
+                onPickReminder: (time) => setState(() => _reminders.add(time)),
+                onRemoveReminder: (time) =>
+                    setState(() => _reminders.remove(time)),
+              ),
               const SizedBox(height: 24),
               FilledButton.icon(
                 onPressed: _saveHabit,
@@ -227,147 +227,11 @@ class _EditHabitViewState extends ConsumerState<EditHabitView> {
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController ctrl,
-      {bool requiredField = false}) {
-    return TextFormField(
-      controller: ctrl,
-      decoration: InputDecoration(
-        labelText: label,
-        border: const OutlineInputBorder(),
-      ),
-      validator: requiredField
-          ? (v) => (v == null || v.trim().isEmpty) ? 'Required' : null
-          : null,
-    );
-  }
-
-  Widget _buildDropdown<T>(
-    String label,
-    T value,
-    List<T> values,
-    void Function(T) onChanged,
-  ) {
-    return DropdownButtonFormField<T>(
-      decoration: InputDecoration(
-        labelText: label,
-        border: const OutlineInputBorder(),
-      ),
-      value: value,
-      items: values
-          .map((v) => DropdownMenuItem<T>(
-                value: v,
-                child: Text(v.toString().split('.').last),
-              ))
-          .toList(),
-      onChanged: (v) => v != null ? onChanged(v) : null,
-    );
-  }
-
-  Widget _buildWeekdaySelector() {
-    return Wrap(
-      spacing: 8,
-      children: Weekday.values.map((day) {
-        final selected = _selectedDays.contains(day);
-        return ChoiceChip(
-          label: Text(day.toString().split('.').last.substring(0, 3)),
-          selected: selected,
-          onSelected: (val) {
-            setState(() {
-              if (val) {
-                _selectedDays.add(day);
-              } else {
-                _selectedDays.remove(day);
-              }
-            });
-          },
-        );
-      }).toList(),
-    );
-  }
-
-  Widget _buildNumberField(
-    String label,
-    Function(String) onChanged, {
-    String? initial,
-    String? Function(String?)? validator,
-  }) {
-    return TextFormField(
-      initialValue: initial,
-      keyboardType: TextInputType.number,
-      decoration: InputDecoration(
-        labelText: label,
-        border: const OutlineInputBorder(),
-      ),
-      onChanged: onChanged,
-      validator: validator,
-    );
-  }
-
-  Widget _buildDateButton({
-    required BuildContext context,
-    required String label,
-    required void Function(DateTime) onPick,
-  }) {
-    return OutlinedButton.icon(
-      onPressed: () async {
-        final base = _startDate ?? DateTime.now();
-        final picked = await showDatePicker(
-          context: context,
-          firstDate: DateTime(base.year - 2),
-          lastDate: DateTime(base.year + 5),
-          initialDate: base,
-        );
-        if (picked != null) onPick(picked);
-      },
-      icon: const Icon(Icons.event),
-      label: Text(label),
-    );
-  }
-
-  Widget _buildRemindersSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text('Reminders',
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            IconButton(
-              icon: const Icon(Icons.add_alarm),
-              onPressed: _pickReminder,
-            ),
-          ],
-        ),
-        Wrap(
-          spacing: 8,
-          children: _reminders.map((time) {
-            return Chip(
-              label: Text(time.format(context)),
-              onDeleted: () => setState(() => _reminders.remove(time)),
-            );
-          }).toList(),
-        ),
-      ],
-    );
-  }
-
-  Future<void> _pickReminder() async {
-    final picked = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
-    if (picked != null) {
-      setState(() => _reminders.add(picked));
-    }
-  }
-
   void _saveHabit() async {
     if (!_formKey.currentState!.validate()) return;
     if (_frequency == HabitFrequency.weekly && _selectedDays.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Pick at least one weekday')),
-      );
+          const SnackBar(content: Text('Pick at least one weekday')));
       return;
     }
 
@@ -399,11 +263,8 @@ class _EditHabitViewState extends ConsumerState<EditHabitView> {
 
     final habitsCtrl = ref.read(habitsControllerProvider.notifier);
     await habitsCtrl.update(updated);
-
-    // 🔑 Ensure today's log reflects the chosen HabitStatus
     await habitsCtrl.setTodayStatus(updated.id, _status);
 
-    // replace reminders
     final reminderCtrl = ref.read(habitRemindersControllerProvider.notifier);
     await reminderCtrl.clearForHabit(updated.id);
     for (final time in _reminders) {

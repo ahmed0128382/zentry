@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 class RemindersSection extends StatelessWidget {
   final List<TimeOfDay> reminders;
-  final void Function(TimeOfDay) onPickReminder;
-  final void Function(TimeOfDay) onRemoveReminder;
+  final Function(TimeOfDay) onPickReminder;
+  final Function(TimeOfDay) onRemoveReminder;
+
   const RemindersSection({
     super.key,
     required this.reminders,
@@ -16,26 +17,31 @@ class RemindersSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          const Text('Reminders',
-              style: TextStyle(fontWeight: FontWeight.bold)),
-          IconButton(
-            icon: const Icon(Icons.add_alarm),
-            onPressed: () async {
-              final picked = await showTimePicker(
-                  context: context, initialTime: TimeOfDay.now());
-              if (picked != null) onPickReminder(picked);
-            },
-          ),
-        ]),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text('Reminders',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            IconButton(
+              icon: const Icon(Icons.add_alarm),
+              onPressed: () async {
+                final picked = await showTimePicker(
+                  context: context,
+                  initialTime: TimeOfDay.now(),
+                );
+                if (picked != null) onPickReminder(picked);
+              },
+            ),
+          ],
+        ),
         Wrap(
           spacing: 8,
-          children: reminders.map((time) {
-            return Chip(
-              label: Text(time.format(context)),
-              onDeleted: () => onRemoveReminder(time),
-            );
-          }).toList(),
+          children: reminders
+              .map((time) => Chip(
+                    label: Text(time.format(context)),
+                    onDeleted: () => onRemoveReminder(time),
+                  ))
+              .toList(),
         ),
       ],
     );

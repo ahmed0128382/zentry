@@ -3,7 +3,14 @@ import 'package:zentry/src/features/habits/domain/enums/weekday.dart';
 
 class WeekdaySelector extends StatelessWidget {
   final Set<Weekday> selectedDays;
-  const WeekdaySelector({super.key, required this.selectedDays});
+  final Function(Set<Weekday>)? onChanged;
+
+  const WeekdaySelector({
+    super.key,
+    required this.selectedDays,
+    this.onChanged,
+  });
+
   @override
   Widget build(BuildContext context) {
     return Wrap(
@@ -14,11 +21,14 @@ class WeekdaySelector extends StatelessWidget {
           label: Text(day.toString().split('.').last.substring(0, 3)),
           selected: selected,
           onSelected: (val) {
+            final newSet = Set<Weekday>.from(selectedDays);
             if (val) {
-              selectedDays.add(day);
+              newSet.add(day);
             } else {
-              selectedDays.remove(day);
+              newSet.remove(day);
             }
+
+            onChanged?.call(newSet);
           },
         );
       }).toList(),

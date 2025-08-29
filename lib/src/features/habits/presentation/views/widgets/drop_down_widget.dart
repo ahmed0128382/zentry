@@ -4,7 +4,8 @@ class DropdownWidget<T> extends StatelessWidget {
   final String label;
   final T value;
   final List<T> items;
-  final void Function(T) onChanged;
+  final Function(T) onChanged;
+
   const DropdownWidget({
     super.key,
     required this.label,
@@ -12,15 +13,20 @@ class DropdownWidget<T> extends StatelessWidget {
     required this.items,
     required this.onChanged,
   });
+
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<T>(
-      decoration:
-          InputDecoration(labelText: label, border: const OutlineInputBorder()),
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(),
+      ),
       value: value,
       items: items
-          .map((v) => DropdownMenuItem<T>(
-              value: v, child: Text(v.toString().split('.').last)))
+          .map((v) => DropdownMenuItem(
+                value: v,
+                child: Text(v.toString().split('.').last),
+              ))
           .toList(),
       onChanged: (v) => v != null ? onChanged(v) : null,
     );
