@@ -38,7 +38,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
   HabitGoalRecordMode _goalRecordMode = HabitGoalRecordMode.auto;
   HabitStatus _status = HabitStatus.active;
 
-  final Set<Weekday> _selectedDays = {};
+  final Set<Weekday> _selectedDays = {}; // keep final, mutate it
   int? _targetAmount;
   DateTime? _startDate;
   DateTime? _endDate;
@@ -74,10 +74,26 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
               label: 'Frequency',
               value: _frequency,
               items: HabitFrequency.values,
-              onChanged: (val) => setState(() => _frequency = val),
+              onChanged: (val) {
+                setState(() {
+                  _frequency = val;
+                  if (_frequency != HabitFrequency.weekly) {
+                    _selectedDays.clear(); // safe mutation
+                  }
+                });
+              },
             ),
             if (_frequency == HabitFrequency.weekly)
-              WeekdaySelector(selectedDays: _selectedDays),
+              WeekdaySelector(
+                selectedDays: _selectedDays,
+                onChanged: (newSet) {
+                  setState(() {
+                    _selectedDays
+                      ..clear()
+                      ..addAll(newSet); // mutate final set
+                  });
+                },
+              ),
             const SizedBox(height: 16),
             DropdownWidget<HabitGoalType>(
               label: 'Goal Type',
@@ -105,10 +121,9 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
             ),
             const SizedBox(height: 16),
             NumberField(
-                label: 'Target Amount',
-                onChanged: (val) {
-                  _targetAmount = int.tryParse(val);
-                }),
+              label: 'Target Amount',
+              onChanged: (val) => _targetAmount = int.tryParse(val),
+            ),
             const SizedBox(height: 16),
             Row(
               children: [
