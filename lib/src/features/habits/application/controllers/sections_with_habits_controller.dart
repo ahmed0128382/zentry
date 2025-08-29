@@ -89,12 +89,11 @@
 //     super.dispose();
 //   }
 // }
-
-// File: src/features/habits/application/controllers/sections_with_habits_controller.dart
-
 import 'dart:async';
-import 'dart:developer';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zentry/src/features/habits/application/controllers/habits_controller.dart';
+import 'package:zentry/src/features/habits/application/providers/habits_controller_provider.dart';
 import 'package:zentry/src/features/habits/application/states/sections_with_habits_state.dart';
 import 'package:zentry/src/features/habits/domain/entities/habit_details.dart';
 import 'package:zentry/src/features/habits/domain/entities/section.dart';
@@ -106,91 +105,68 @@ import 'package:zentry/src/shared/domain/errors/result.dart';
 class SectionsWithHabitsController
     extends StateNotifier<SectionsWithHabitsState> {
   final GetSectionsWithHabitsForDay getSectionsWithHabitsForDay;
+  final Ref ref; // we need this to listen to habits state
 
   StreamSubscription<Result<List<SectionWithHabits>>>? _subscription;
+  late final ProviderSubscription _habitsSubscription;
+
   DateTime currentDay = DateTime.now();
 
   SectionsWithHabitsController({
     required this.getSectionsWithHabitsForDay,
-  }) : super(SectionsWithHabitsState(sections: []));
+    required this.ref,
+  }) : super(SectionsWithHabitsState(sections: [])) {
+    // Listen to habits changes
+    _habitsSubscription = ref.listen<HabitsState>(
+      habitsControllerProvider,
+      (previous, next) {
+        // Rebuild sections whenever habits change
+        watchSections(currentDay);
+      },
+      fireImmediately: true,
+    );
+  }
 
   void watchSections(DateTime day) {
     currentDay = day;
-    log('[SectionsWithHabitsController] Watching sections for day: $day');
-    state = state.copyWith(isLoading: true, error: null);
+    final habitsState = ref.read(habitsControllerProvider);
+    final habits = habitsState.habits;
 
-    _subscription?.cancel();
+    // Group habits by section
+    final Map<String, List<HabitDetails>> sectionsMap = {};
+    for (final hd in habits) {
+      final key = hd.habit.sectionId ?? 'anytime';
+      sectionsMap.putIfAbsent(key, () => []).add(hd);
+    }
 
-    _subscription = getSectionsWithHabitsForDay(day).listen((result) {
-      result.fold(
-        (failure) {
-          log('[SectionsWithHabitsController] Failed to load sections: $failure');
-          state = state.copyWith(error: failure.toString(), isLoading: false);
-        },
-        (sectionsWithHabits) {
-          log('[SectionsWithHabitsController] Retrieved ${sectionsWithHabits.length} sections from usecase');
+    // Build SectionWithHabits
+    final List<SectionWithHabits> organizedSections = sectionsMap.entries
+        .map((entry) {
+          final sectionType = sectionIds.entries
+              .firstWhere((e) => e.value == entry.key,
+                  orElse: () => MapEntry(SectionType.anytime, 'anytime'))
+              .key;
+          return SectionWithHabits(
+            section: Section(
+              id: entry.key,
+              type: sectionType,
+              orderIndex: sectionType.index,
+            ),
+            habits: entry.value
+              ..sort((a, b) =>
+                  a.habit.orderInSection.compareTo(b.habit.orderInSection)),
+          );
+        })
+        .where((swh) => swh.habits.isNotEmpty)
+        .toList();
 
-          // Map to group habits by sectionId
-          final Map<String, List<HabitDetails>> sectionsMap = {};
-
-          for (final sectionWithHabits in sectionsWithHabits) {
-            for (final habitDetail in sectionWithHabits.habits) {
-              final key = habitDetail.habit.sectionId;
-              if (key == null) {
-                log('[SectionsWithHabitsController] Habit ${habitDetail.habit.title} has no sectionId, skipping');
-                continue;
-              }
-              sectionsMap.putIfAbsent(key, () => []).add(habitDetail);
-            }
-          }
-
-          log('[SectionsWithHabitsController] Grouped habits into ${sectionsMap.length} section keys');
-
-          // Convert map to SectionWithHabits objects
-          final List<SectionWithHabits> organizedSections =
-              sectionsMap.entries.map((entry) {
-            // find original section or create one with proper SectionType
-            final originalSection =
-                sectionsWithHabits.map((s) => s.section).firstWhere(
-              (s) => s.id == entry.key,
-              orElse: () {
-                // try to find SectionType from the key
-                SectionType type = sectionIds.entries
-                    .firstWhere((e) => e.value == entry.key,
-                        orElse: () => MapEntry(SectionType.anytime, 'anytime'))
-                    .key;
-
-                return Section(
-                  id: entry.key,
-                  type: type,
-                  orderIndex: type.index,
-                );
-              },
-            );
-
-            // sort habits inside section
-            entry.value.sort((a, b) =>
-                a.habit.orderInSection.compareTo(b.habit.orderInSection));
-
-            log('[SectionsWithHabitsController] Section "${originalSection.type.name}" has ${entry.value.length} habits');
-
-            return SectionWithHabits(
-              section: originalSection,
-              habits: entry.value,
-            );
-          }).toList();
-
-          log('[SectionsWithHabitsController] Loaded ${organizedSections.length} organized sections for $day');
-          state = state.copyWith(sections: organizedSections, isLoading: false);
-        },
-      );
-    });
+    state = state.copyWith(sections: organizedSections);
   }
 
   @override
   void dispose() {
-    log('[SectionsWithHabitsController] Disposing controller and cancelling subscription');
     _subscription?.cancel();
+    _habitsSubscription.close();
     super.dispose();
   }
 }

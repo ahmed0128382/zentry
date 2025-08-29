@@ -313,21 +313,6 @@ class HabitsController extends StateNotifier<HabitsState> {
     );
   }
 
-  // Future<void> add(Habit habit) async {
-  //   log('[Controller] Adding habit: ${habit.title}');
-  //   final result = await addHabit(habit);
-  //   result.fold(
-  //     (failure) {
-  //       log('[Controller] Failed to add habit: $failure');
-  //       state = state.copyWith(error: failure.toString());
-  //     },
-  //     (_) {
-  //       log('[Controller] Habit added: ${habit.id}');
-  //       watchHabits(currentDay);
-  //     },
-  //   );
-  // }
-
   Future<void> update(Habit habit) async {
     final result = await updateHabit(habit);
     result.fold(
@@ -343,6 +328,7 @@ class HabitsController extends StateNotifier<HabitsState> {
     );
   }
 
+  // Inside delete method
   Future<void> delete(String habitId) async {
     final result = await deleteHabit(habitId);
     result.fold(
@@ -353,6 +339,13 @@ class HabitsController extends StateNotifier<HabitsState> {
       },
       (_) {
         developer.log('Habit deleted: $habitId', name: 'HabitsController');
+
+        // Remove the habit from state immediately
+        final updatedHabits =
+            state.habits.where((h) => h.habit.id != habitId).toList();
+        state = state.copyWith(habits: updatedHabits);
+
+        // Watch habits again if you still want fresh data from backend
         watchHabits(currentDay);
       },
     );
