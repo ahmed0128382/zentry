@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zentry/src/core/application/providers/app_palette_provider.dart';
 
 import 'package:zentry/src/features/habits/presentation/views/widgets/calender_day.dart';
 
-class CalendarHeader extends StatelessWidget {
+class CalendarHeader extends ConsumerWidget {
   final DateTime selectedDate;
   final ValueChanged<DateTime> onDateSelected;
 
@@ -13,7 +15,8 @@ class CalendarHeader extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final palette = ref.watch(appPaletteProvider);
     final now = DateTime.now();
 
     // Start of week = Monday
@@ -22,7 +25,7 @@ class CalendarHeader extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
-      color: Theme.of(context).cardColor,
+      color: palette.primary.withValues(alpha: 0.05),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: days.map((date) {

@@ -212,7 +212,9 @@ import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zentry/src/features/habits/domain/entities/habit_details.dart';
 import 'package:zentry/src/features/habits/domain/entities/habit_log.dart';
+import 'package:zentry/src/features/habits/domain/entities/section.dart';
 import 'package:zentry/src/features/habits/domain/enums/habit_status.dart';
+import 'package:zentry/src/features/habits/domain/enums/section_type.dart';
 import 'package:zentry/src/features/habits/domain/usecases/add_habit.dart';
 import 'package:zentry/src/features/habits/domain/usecases/delete_habit.dart';
 import 'package:zentry/src/features/habits/domain/usecases/get_habits_for_day.dart';
@@ -290,18 +292,41 @@ class HabitsController extends StateNotifier<HabitsState> {
 
   Future<void> add(Habit habit) async {
     log('[Controller] Adding habit: ${habit.title}');
-    final result = await addHabit(habit);
+
+    // إذا لم يتم تحديد sectionId، نستخدم 'anytime' افتراضي
+    final sectionId = habit.sectionId ?? 'anytime';
+
+    final habitWithSection = habit.copyWith(
+      sectionId: sectionId,
+    );
+
+    final result = await addHabit(habitWithSection);
     result.fold(
       (failure) {
         log('[Controller] Failed to add habit: $failure');
         state = state.copyWith(error: failure.toString());
       },
       (_) {
-        log('[Controller] Habit added: ${habit.id}');
-        watchHabits(currentDay);
+        log('[Controller] Habit added: ${habitWithSection.id}');
+        watchHabits(currentDay); // إعادة تحميل habits
       },
     );
   }
+
+  // Future<void> add(Habit habit) async {
+  //   log('[Controller] Adding habit: ${habit.title}');
+  //   final result = await addHabit(habit);
+  //   result.fold(
+  //     (failure) {
+  //       log('[Controller] Failed to add habit: $failure');
+  //       state = state.copyWith(error: failure.toString());
+  //     },
+  //     (_) {
+  //       log('[Controller] Habit added: ${habit.id}');
+  //       watchHabits(currentDay);
+  //     },
+  //   );
+  // }
 
   Future<void> update(Habit habit) async {
     final result = await updateHabit(habit);
@@ -400,6 +425,28 @@ class HabitsController extends StateNotifier<HabitsState> {
         watchHabits(currentDay);
       },
     );
+  }
+
+  /// ✅ Get all sections: 4 main sections + any user-created sections from habits
+  Future<List<Section>> getAllSections() async {
+    // نستخرج كل الـ sectionIds اللي موجودة في الـ habits الحالية
+    final habitSectionIds = state.habits.map((h) => h.habit.sectionId).toSet();
+
+    // نضيف الـ main sections (موجودة في const sectionIds)
+    final List allIds = {
+      ...sectionIds.values, // morning, afternoon, evening, anytime
+      ...habitSectionIds, // أي ids مستخدم ضافها
+    }.toList();
+
+    // نرجعهم كـ List<Section>
+    return allIds.map((id) {
+      return Section(
+        id: id,
+        type: SectionType
+            .anytime, // لو عايز تحدد الـ type بدقة ممكن تبني logic أكتر
+        orderIndex: 0,
+      );
+    }).toList();
   }
 
   Future<void> moveToSection(

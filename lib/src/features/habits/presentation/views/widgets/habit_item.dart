@@ -1,10 +1,14 @@
 // import 'package:flutter/material.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zentry/src/core/application/providers/app_palette_provider.dart';
+//import 'package:zentry/src/core/utils/palette.dart';
 
 enum HabitItemMenu { edit, complete, delete }
 
-class HabitItem extends StatelessWidget {
+class HabitItem extends ConsumerWidget {
+  //final Palette palette;
   final IconData icon;
   final Color iconColor;
   final Color backgroundColor;
@@ -30,7 +34,8 @@ class HabitItem extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final palette = ref.watch(appPaletteProvider);
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -40,11 +45,11 @@ class HabitItem extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           margin: const EdgeInsets.symmetric(vertical: 8.0),
           decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
+            color: palette.secondary.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withValues(alpha: 0.2),
+                color: palette.primary.withValues(alpha: 0.1),
                 spreadRadius: 1,
                 blurRadius: 3,
                 offset: const Offset(0, 2),

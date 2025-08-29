@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:zentry/src/features/habits/domain/entities/habit_goal.dart';
 import 'package:zentry/src/features/habits/domain/enums/habit_frequency.dart';
 import 'package:zentry/src/features/habits/domain/enums/habit_status.dart';
+import 'package:zentry/src/features/habits/domain/enums/section_type.dart';
 import 'package:zentry/src/features/habits/domain/value_objects/weekday_mask.dart';
 
 class Habit extends Equatable {
@@ -83,4 +84,23 @@ class Habit extends Equatable {
         createdAt,
         updatedAt,
       ];
+}
+
+extension HabitX on Habit {
+  SectionType? get sectionType {
+    switch (sectionId) {
+      case 'morning':
+        return SectionType.morning;
+      case 'afternoon':
+        return SectionType.afternoon;
+      case 'evening':
+        return SectionType.evening;
+      case 'anytime':
+        return SectionType.anytime;
+      default:
+        return null; // ✅ للأقسام المخصصة من المستخدم
+    }
+  }
+
+  bool get isCustomSection => sectionType == null && sectionId != null;
 }

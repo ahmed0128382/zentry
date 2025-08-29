@@ -17,7 +17,7 @@ extension SectionTypeX on SectionType {
       case SectionType.evening:
         return "Evening";
       case SectionType.anytime:
-        return "Custom";
+        return "AnyTime";
     }
   }
 

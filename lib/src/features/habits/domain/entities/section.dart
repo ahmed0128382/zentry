@@ -11,3 +11,10 @@ class Section {
     required this.orderIndex,
   });
 }
+
+const sectionIds = {
+  SectionType.morning: 'morning',
+  SectionType.afternoon: 'afternoon',
+  SectionType.evening: 'evening',
+  SectionType.anytime: 'anytime',
+};
