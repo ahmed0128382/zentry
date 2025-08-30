@@ -11,6 +11,7 @@ class HabitGoal {
   final int? targetAmount; // e.g., 30 minutes, 10 pages
   final DateTime? startDate;
   final DateTime? endDate;
+  final List<int> repeatDays; // 1 = Monday, 7 = Sunday
 
   const HabitGoal({
     required this.type,
@@ -20,5 +21,6 @@ class HabitGoal {
     this.targetAmount,
     this.startDate,
     this.endDate,
+    this.repeatDays = const [], // default empty = every day
   });
 }

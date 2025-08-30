@@ -1,3 +1,4 @@
+// File: src/features/habits/domain/entities/habit_log.dart
 import 'package:equatable/equatable.dart';
 import '../enums/habit_status.dart';
 
@@ -11,8 +12,13 @@ class HabitLog extends Equatable {
     required this.id,
     required this.habitId,
     required this.date,
-    required this.status,
+    this.status = HabitStatus.active, // default to active
   });
+
+  /// Create a new log with the completed status
+  HabitLog markCompleted() {
+    return copyWith(status: HabitStatus.completed);
+  }
 
   HabitLog copyWith({
     String? id,

@@ -3,6 +3,7 @@ import 'package:zentry/src/features/habits/domain/entities/habit_goal.dart';
 import 'package:zentry/src/features/habits/domain/enums/habit_frequency.dart';
 import 'package:zentry/src/features/habits/domain/enums/habit_status.dart';
 import 'package:zentry/src/features/habits/domain/enums/section_type.dart';
+import 'package:zentry/src/features/habits/domain/enums/weekday.dart';
 import 'package:zentry/src/features/habits/domain/value_objects/weekday_mask.dart';
 
 class Habit extends Equatable {
@@ -103,4 +104,51 @@ extension HabitX on Habit {
   }
 
   bool get isCustomSection => sectionType == null && sectionId != null;
+}
+
+/// Helper to normalize a DateTime to local midnight (date-only)
+DateTime _atMidnight(DateTime dt) => DateTime(dt.year, dt.month, dt.day);
+
+/// Extension on Habit to check if it’s scheduled for a given day.
+extension HabitScheduleX on Habit {
+  bool isScheduledForDay(DateTime day) {
+    final target = _atMidnight(day.toLocal());
+
+    // Skip non-active habits
+    if (status != HabitStatus.active) return false;
+
+    // Respect goal start/end dates if provided
+    if (goal.startDate != null) {
+      final start = _atMidnight(goal.startDate!.toLocal());
+      if (target.isBefore(start)) return false;
+    }
+    if (goal.endDate != null) {
+      final end = _atMidnight(goal.endDate!.toLocal());
+      if (target.isAfter(end)) return false;
+    }
+
+    switch (frequency) {
+      case HabitFrequency.daily:
+        return true; // every day inside goal window
+
+      case HabitFrequency.weekly:
+        if (weeklyDays == null) return false;
+        final weekday = Weekday.values[target.weekday - 1]; // 1=Mon..7=Sun
+        return weeklyDays!.includes(weekday);
+
+      case HabitFrequency.monthly:
+        final anchorDay = goal.startDate?.day ?? createdAt.toLocal().day;
+        final lastDayOfMonth = DateTime(target.year, target.month + 1, 0).day;
+        final effectiveDay =
+            (anchorDay <= lastDayOfMonth) ? anchorDay : lastDayOfMonth;
+        return target.day == effectiveDay;
+
+      case HabitFrequency.interval:
+        if (intervalDays == null || intervalDays! <= 0) return false;
+        final anchor = _atMidnight((goal.startDate ?? createdAt).toLocal());
+        final daysSince = target.difference(anchor).inDays;
+        if (daysSince < 0) return false;
+        return daysSince % intervalDays! == 0;
+    }
+  }
 }

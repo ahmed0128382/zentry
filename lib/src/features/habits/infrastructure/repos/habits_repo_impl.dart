@@ -78,7 +78,6 @@ class HabitsRepoImpl implements HabitsRepo {
 
     return db.watchAllHabits().asyncMap((habitRows) async {
       return await guard(() async {
-        // we still read reminders & logs
         final reminders = await db.select(db.habitRemindersTable).get();
         final logs = await (db.select(db.habitLogsTable)
               ..where((t) => t.date.isBetweenValues(startOfDay, endOfDay)))
@@ -95,6 +94,11 @@ class HabitsRepoImpl implements HabitsRepo {
         for (final r in habitRows) {
           if (sectionId != null && r.sectionId != sectionId) continue;
 
+          final habit = habitMapper.habitFromRow(r);
+
+          // ✅ skip if not scheduled for this day
+          if (!habit.isScheduledForDay(day)) continue;
+
           final habitLogs = habitLogsMap[r.id] ?? [];
           final completed =
               habitLogs.any((l) => l.status == HabitStatus.completed);
@@ -105,7 +109,7 @@ class HabitsRepoImpl implements HabitsRepo {
               .toList();
 
           details.add(HabitDetails(
-            habit: habitMapper.habitFromRow(r),
+            habit: habit,
             logs: habitLogs,
             reminders: habitRemindersList,
             isCompletedForDay: completed,
@@ -131,7 +135,6 @@ class HabitsRepoImpl implements HabitsRepo {
               ..where((t) => t.date.isBetweenValues(startOfDay, endOfDay)))
             .get();
 
-        // Build domain sections up front (sorted by orderIndex)
         final domainSections = sectionRows.map(sectionFromRow).toList()
           ..sort((a, b) => a.orderIndex.compareTo(b.orderIndex));
 
@@ -141,7 +144,6 @@ class HabitsRepoImpl implements HabitsRepo {
             .cast<Section>()
             .fold<Section?>(null, (prev, s) => prev ?? s);
 
-        // Map logs
         final habitLogsMap = <String, List<HabitLog>>{};
         for (final logRow in logs) {
           habitLogsMap
@@ -149,17 +151,19 @@ class HabitsRepoImpl implements HabitsRepo {
               .add(habitLogMapper.habitLogFromRow(logRow));
         }
 
-        // Prepare buckets for each known section
         final sectionMap = <String, List<HabitDetails>>{
           for (final s in domainSections) s.id: <HabitDetails>[],
         };
 
-        // Fallback key if there's no Anytime section in DB
         const fallbackAnytimeKey = '__anytime_fallback__';
         sectionMap[fallbackAnytimeKey] = <HabitDetails>[];
 
-        // Group habits
         for (final r in habitRows) {
+          final habit = habitMapper.habitFromRow(r);
+
+          // ✅ skip if not scheduled for this day
+          if (!habit.isScheduledForDay(day)) continue;
+
           final habitLogs = habitLogsMap[r.id] ?? [];
           final completed =
               habitLogs.any((l) => l.status == HabitStatus.completed);
@@ -170,13 +174,12 @@ class HabitsRepoImpl implements HabitsRepo {
               .toList();
 
           final details = HabitDetails(
-            habit: habitMapper.habitFromRow(r),
+            habit: habit,
             logs: habitLogs,
             reminders: habitRemindersList,
             isCompletedForDay: completed,
           );
 
-          // ✅ choose the correct bucket
           final sectionId = r.sectionId;
           final bucketId =
               (sectionId != null && existingSectionIds.contains(sectionId))
@@ -186,19 +189,16 @@ class HabitsRepoImpl implements HabitsRepo {
           sectionMap.putIfAbsent(bucketId, () => <HabitDetails>[]).add(details);
         }
 
-        // Build results
         final result = <SectionWithHabits>[];
 
         for (final s in domainSections) {
           final habits = sectionMap[s.id] ?? const <HabitDetails>[];
 
-          // Sort by title (since Habit lacks orderInSection)
           habits.sort((a, b) => a.habit.title.compareTo(b.habit.title));
 
           result.add(SectionWithHabits(section: s, habits: habits));
         }
 
-        // If we had to use a fallback "Anytime" (no real section row existed)
         if (anytimeSection == null &&
             (sectionMap[fallbackAnytimeKey]?.isNotEmpty ?? false)) {
           final habits = sectionMap[fallbackAnytimeKey]!

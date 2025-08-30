@@ -1,5 +1,1 @@
-enum HabitFrequency {
-  daily,
-  weekly,
-  monthly,
-}
+enum HabitFrequency { daily, weekly, monthly, interval }
