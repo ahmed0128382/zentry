@@ -15,9 +15,14 @@ class HabitLog extends Equatable {
     this.status = HabitStatus.active, // default to active
   });
 
-  /// Create a new log with the completed status
-  HabitLog markCompleted() {
-    return copyWith(status: HabitStatus.completed);
+  /// Marks this specific day's log as completed
+  HabitLog markCompletedForDay(DateTime targetDate) {
+    final normalizedDate =
+        DateTime(targetDate.year, targetDate.month, targetDate.day);
+    if (date == normalizedDate) {
+      return copyWith(status: HabitStatus.completed);
+    }
+    return this; // no change for other days
   }
 
   HabitLog copyWith({
