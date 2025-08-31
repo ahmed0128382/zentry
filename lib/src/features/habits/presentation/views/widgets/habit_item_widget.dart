@@ -1,8 +1,11 @@
+// File: src/features/habits/presentation/views/widgets/habit_item_widget.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:zentry/src/features/habits/application/providers/sections_with_habits_controller_provider.dart';
 import 'package:zentry/src/features/habits/domain/entities/habit_details.dart';
+import 'package:zentry/src/features/habits/domain/entities/habit_log.dart';
 import 'package:zentry/src/features/habits/domain/enums/habit_status.dart';
 import 'package:zentry/src/features/habits/presentation/views/widgets/habit_item.dart';
 import 'package:zentry/src/features/habits/application/providers/habits_controller_provider.dart';
@@ -24,6 +27,23 @@ class HabitItemWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final completedToday = hd.isCompletedOn(selectedDate);
+
+    // Get the log for the selected day, fallback to default log if missing
+    final logForSelectedDay = hd.logs.firstWhere(
+      (log) =>
+          log.date.year == selectedDate.year &&
+          log.date.month == selectedDate.month &&
+          log.date.day == selectedDate.day,
+      orElse: () => HabitLog(
+        id: '', // placeholder id
+        habitId: hd.habit.id,
+        date: selectedDate,
+        amount: 0, // default amount
+      ),
+    );
+
+    final currentAmount = logForSelectedDay.amount;
+    final targetAmount = hd.habit.goal.targetAmount ?? 0;
 
     return Dismissible(
       key: ValueKey(hd.habit.id),
@@ -61,9 +81,10 @@ class HabitItemWidget extends ConsumerWidget {
           }
           return ok ?? false;
         } else {
+          // Toggle completion for the selected date, not just today
           await ref
               .read(habitsControllerProvider.notifier)
-              .toggleCompletion(hd);
+              .toggleCompletion(logForSelectedDay);
           return false;
         }
       },
@@ -73,10 +94,10 @@ class HabitItemWidget extends ConsumerWidget {
         backgroundColor:
             (completedToday ? Colors.green : Colors.blue).withOpacity(0.08),
         title: hd.habit.title,
-        progressText: hd.habit.goal.targetAmount != null
-            ? 'Target: ${hd.habit.goal.targetAmount}'
+        progressText: targetAmount > 0
+            ? 'Progress: $currentAmount / $targetAmount'
             : null,
-        totalDays: hd.habit.goal.targetAmount ?? 0,
+        totalDays: targetAmount,
         completed: hd.habit.status.isCompleted || completedToday,
         onTap: () async {
           final edited = await context.push<bool>(
