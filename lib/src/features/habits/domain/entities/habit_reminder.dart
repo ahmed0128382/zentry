@@ -14,6 +14,21 @@ class HabitReminder extends Equatable {
     required this.enabled,
   });
 
+  /// Creates a copy of this HabitReminder with optional new values
+  HabitReminder copyWith({
+    String? id,
+    String? habitId,
+    int? minutesSinceMidnight,
+    bool? enabled,
+  }) {
+    return HabitReminder(
+      id: id ?? this.id,
+      habitId: habitId ?? this.habitId,
+      minutesSinceMidnight: minutesSinceMidnight ?? this.minutesSinceMidnight,
+      enabled: enabled ?? this.enabled,
+    );
+  }
+
   @override
   List<Object?> get props => [id, habitId, minutesSinceMidnight, enabled];
 }

@@ -5,6 +5,7 @@ import 'package:zentry/src/features/habits/application/providers/habits_controll
 import 'package:zentry/src/features/habits/application/providers/habit_reminders_controller_provider.dart';
 import 'package:zentry/src/features/habits/domain/entities/habit_details.dart';
 import 'package:zentry/src/features/habits/domain/entities/habit_goal.dart';
+import 'package:zentry/src/features/habits/domain/entities/habit_log.dart';
 import 'package:zentry/src/features/habits/domain/entities/habit_reminder.dart';
 import 'package:zentry/src/features/habits/domain/enums/habit_frequency.dart';
 import 'package:zentry/src/features/habits/domain/enums/habit_goal_period.dart';
@@ -89,6 +90,9 @@ class _EditHabitViewState extends ConsumerState<EditHabitView> {
       });
     });
   }
+
+  // --- Helper to normalize DateTime to date only ---
+  DateTime _dayOnly(DateTime dt) => DateTime(dt.year, dt.month, dt.day);
 
   @override
   Widget build(BuildContext context) {
@@ -238,8 +242,9 @@ class _EditHabitViewState extends ConsumerState<EditHabitView> {
       return;
     }
 
-    final old = widget.habitDetails.habit;
-    final updated = old.copyWith(
+    final oldHd = widget.habitDetails;
+
+    final updatedHabit = oldHd.habit.copyWith(
       title: _nameCtrl.text.trim(),
       description: _descCtrl.text.trim().isEmpty ? null : _descCtrl.text.trim(),
       sectionId: _sectionType.name,
@@ -264,17 +269,45 @@ class _EditHabitViewState extends ConsumerState<EditHabitView> {
       updatedAt: DateTime.now(),
     );
 
+    final updatedHd = HabitDetails(
+      habit: updatedHabit,
+      logs: oldHd.logs,
+      reminders: oldHd.reminders,
+    );
+
     final habitsCtrl = ref.read(habitsControllerProvider.notifier);
-    await habitsCtrl.update(updated);
-    await habitsCtrl.setTodayStatus(updated.id, _status);
+    await habitsCtrl.update(
+      updatedHd.habit,
+      reminders: updatedHd.reminders,
+    );
+
+    // --- Safely update today's log ---
+    final today = _dayOnly(DateTime.now());
+    final todayLog = updatedHd.logs.firstWhere(
+      (log) => _dayOnly(log.date) == today,
+      orElse: () => HabitLog(
+        id: '${updatedHabit.id}_${today.toIso8601String()}',
+        habitId: updatedHabit.id,
+        date: today,
+        status: HabitStatus.active,
+        amount: 0,
+      ),
+    );
+
+    if (todayLog != null) {
+      final updatedTodayLog = todayLog.copyWith(status: _status);
+      await habitsCtrl.updateLog(updatedTodayLog);
+    } else {
+      await habitsCtrl.setTodayStatus(updatedHabit.id, _status);
+    }
 
     final reminderCtrl = ref.read(habitRemindersControllerProvider.notifier);
-    await reminderCtrl.clearForHabit(updated.id);
+    await reminderCtrl.clearForHabit(updatedHabit.id);
     for (final time in _reminders) {
       final minutes = time.hour * 60 + time.minute;
       final reminder = HabitReminder(
-        id: '${updated.id}_$minutes',
-        habitId: updated.id,
+        id: '${updatedHabit.id}_$minutes',
+        habitId: updatedHabit.id,
         minutesSinceMidnight: minutes,
         enabled: true,
       );

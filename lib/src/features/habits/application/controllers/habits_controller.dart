@@ -687,12 +687,13 @@
 //     );
 //   }
 // }
-// File: src/features/habits/application/habits_controller.dart
+// // File: src/features/habits/application/habits_controller.dart
 import 'dart:developer' as developer;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zentry/src/features/habits/domain/entities/habit_details.dart';
 import 'package:zentry/src/features/habits/domain/entities/habit_log.dart';
+import 'package:zentry/src/features/habits/domain/entities/habit_reminder.dart';
 import 'package:zentry/src/features/habits/domain/entities/section.dart';
 import 'package:zentry/src/features/habits/domain/enums/habit_status.dart';
 import 'package:zentry/src/features/habits/domain/enums/section_type.dart';
@@ -756,7 +757,6 @@ class HabitsController extends StateNotifier<HabitsState> {
     });
   }
 
-  // --- helpers for per-day logic ---
   DateTime _dayOnly(DateTime dt) => DateTime(dt.year, dt.month, dt.day);
 
   bool _isCompletedOn(HabitDetails hd, DateTime day) {
@@ -765,7 +765,6 @@ class HabitsController extends StateNotifier<HabitsState> {
       (log) => _dayOnly(log.date) == d && log.status == HabitStatus.completed,
     );
   }
-  // ----------------------------------
 
   void watchHabits(DateTime day) {
     currentDay = day;
@@ -779,8 +778,27 @@ class HabitsController extends StateNotifier<HabitsState> {
           state = state.copyWith(error: failure.toString(), isLoading: false);
         },
         (habits) {
-          final scheduledHabits =
-              habits.where((hd) => hd.habit.isScheduledForDay(day)).toList();
+          // Merge old logs to avoid resetting
+          final mergedHabits = habits.map((newHd) {
+            final existingHd = state.habits.firstWhere(
+              (hd) => hd.habit.id == newHd.habit.id,
+              orElse: () => newHd,
+            );
+
+            final mergedLogs = [
+              ...existingHd.logs,
+              for (final log in newHd.logs)
+                if (!existingHd.logs
+                    .any((l) => _dayOnly(l.date) == _dayOnly(log.date)))
+                  log,
+            ];
+
+            return newHd.copyWith(logs: mergedLogs);
+          }).toList();
+
+          final scheduledHabits = mergedHabits
+              .where((hd) => hd.habit.isScheduledForDay(day))
+              .toList();
 
           developer.log(
               '[Controller] Loaded ${scheduledHabits.length} habits for $day');
@@ -790,22 +808,79 @@ class HabitsController extends StateNotifier<HabitsState> {
     });
   }
 
-  Future<void> add(Habit habit) async {
+  /// --- ADD habit, preserving logs for other habits ---
+  Future<void> add(Habit habit,
+      {List<HabitReminder> reminders = const []}) async {
     final sectionId = habit.sectionId ?? 'anytime';
     final habitWithSection = habit.copyWith(sectionId: sectionId);
 
-    final result = await addHabit(habitWithSection);
+    final today = _dayOnly(DateTime.now());
+    final initialLog = HabitLog(
+      id: '${habitWithSection.id}_${today.toIso8601String()}',
+      habitId: habitWithSection.id,
+      date: today,
+      status: HabitStatus.active,
+      amount: 0,
+    );
+
+    final newHabitDetails = HabitDetails(
+      habit: habitWithSection,
+      logs: [initialLog],
+      reminders: reminders,
+    );
+
+    final result = await addHabit(newHabitDetails.habit);
     result.fold(
       (failure) => state = state.copyWith(error: failure.toString()),
-      (_) => watchHabits(currentDay),
+      (_) {
+        // merge into existing habits without overwriting logs
+        state = state.copyWith(
+          habits: [...state.habits, newHabitDetails],
+        );
+      },
     );
   }
 
-  Future<void> update(Habit habit) async {
-    final result = await updateHabit(habit);
+  /// --- UPDATE habit, preserving logs ---
+  Future<void> update(Habit habit,
+      {List<HabitReminder> reminders = const []}) async {
+    final existingHd = state.habits.firstWhere(
+      (hd) => hd.habit.id == habit.id,
+      orElse: () => HabitDetails(habit: habit, logs: [], reminders: reminders),
+    );
+
+    final habitDetailsWithLogs = existingHd.copyWith(
+      habit: habit,
+      reminders: reminders,
+    );
+
+    final result = await updateHabit(habitDetailsWithLogs.habit);
     result.fold(
       (failure) => state = state.copyWith(error: failure.toString()),
-      (_) => watchHabits(currentDay),
+      (_) {
+        // replace in-state habit but preserve logs
+        state = state.copyWith(
+          habits: state.habits.map((hd) {
+            return hd.habit.id == habit.id ? habitDetailsWithLogs : hd;
+          }).toList(),
+        );
+      },
+    );
+  }
+
+  /// --- Update HabitDetails directly, preserving logs ---
+  Future<void> updateDetails(HabitDetails updatedHd) async {
+    state = state.copyWith(
+      habits: [
+        for (final hd in state.habits)
+          if (hd.habit.id == updatedHd.habit.id) updatedHd else hd
+      ],
+    );
+
+    final result = await updateHabit(updatedHd.habit);
+    result.fold(
+      (failure) => state = state.copyWith(error: failure.toString()),
+      (_) {},
     );
   }
 
@@ -817,18 +892,15 @@ class HabitsController extends StateNotifier<HabitsState> {
         final updatedHabits =
             state.habits.where((h) => h.habit.id != habitId).toList();
         state = state.copyWith(habits: updatedHabits);
-        watchHabits(currentDay);
       },
     );
   }
 
-  /// --- New method for incrementing log amount until goal ---
   Future<void> updateLog(HabitLog log) async {
     final habitDetails =
         state.habits.firstWhere((hd) => hd.habit.id == log.habitId);
     final targetAmount = habitDetails.habit.goal.targetAmount ?? 0;
 
-    // Increase amount by 1, cap at targetAmount
     int newAmount = (log.amount ?? 0) + 1;
     if (newAmount > targetAmount) newAmount = targetAmount;
 
@@ -866,7 +938,7 @@ class HabitsController extends StateNotifier<HabitsState> {
   }
 
   Future<void> toggleCompletion(HabitLog log) async {
-    await updateLog(log); // now reuse the new method
+    await updateLog(log);
   }
 
   Future<void> setTodayStatus(String habitId, HabitStatus status) async {
@@ -882,8 +954,26 @@ class HabitsController extends StateNotifier<HabitsState> {
     final result = await logHabitCompletion(logEntry);
     result.fold(
       (failure) => state = state.copyWith(error: failure.toString()),
-      (_) => watchHabits(currentDay),
+      (_) {},
     );
+
+    // Update in-state logs
+    final updatedHabits = state.habits.map((hd) {
+      if (hd.habit.id != habitId) return hd;
+
+      final logs = List<HabitLog>.from(hd.logs);
+      final index = logs.indexWhere((l) => _dayOnly(l.date) == _dayOnly(day));
+
+      if (index >= 0) {
+        logs[index] = logEntry;
+      } else {
+        logs.add(logEntry);
+      }
+
+      return hd.copyWith(logs: logs);
+    }).toList();
+
+    state = state.copyWith(habits: updatedHabits);
   }
 
   Future<void> logCompletion(HabitDetails habit) async {
@@ -910,8 +1000,26 @@ class HabitsController extends StateNotifier<HabitsState> {
     final result = await logHabitCompletion(entry);
     result.fold(
       (failure) => state = state.copyWith(error: failure.toString()),
-      (_) => watchHabits(currentDay),
+      (_) {},
     );
+
+    // Update in-state logs
+    final updatedHabits = state.habits.map((hd) {
+      if (hd.habit.id != habit.habit.id) return hd;
+
+      final logs = List<HabitLog>.from(hd.logs);
+      final index = logs.indexWhere((l) => _dayOnly(l.date) == _dayOnly(day));
+
+      if (index >= 0) {
+        logs[index] = entry;
+      } else {
+        logs.add(entry);
+      }
+
+      return hd.copyWith(logs: logs);
+    }).toList();
+
+    state = state.copyWith(habits: updatedHabits);
   }
 
   Future<List<Section>> getAllSections() async {
@@ -932,8 +1040,10 @@ class HabitsController extends StateNotifier<HabitsState> {
     );
     result.fold(
       (failure) => state = state.copyWith(error: failure.toString()),
-      (_) => watchHabits(currentDay),
+      (_) {},
     );
+
+    watchHabits(currentDay);
   }
 
   Future<void> reorder(String sectionId, List<String> orderedIds) async {
@@ -941,7 +1051,9 @@ class HabitsController extends StateNotifier<HabitsState> {
         sectionId: sectionId, orderedHabitIds: orderedIds);
     result.fold(
       (failure) => state = state.copyWith(error: failure.toString()),
-      (_) => watchHabits(currentDay),
+      (_) {},
     );
+
+    watchHabits(currentDay);
   }
 }
