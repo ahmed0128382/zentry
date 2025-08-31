@@ -14,7 +14,6 @@ import 'package:zentry/src/shared/domain/repos/habits_repo.dart';
 import 'package:zentry/src/shared/infrastructure/utils/guard.dart';
 
 import '../../domain/entities/habit_details.dart';
-import '../../domain/enums/habit_status.dart';
 import '../mappers/habit_mapper.dart' as habitMapper;
 import '../mappers/habit_log_mapper.dart' as habitLogMapper;
 import '../mappers/habit_reminder_mapper.dart';
@@ -100,20 +99,23 @@ class HabitsRepoImpl implements HabitsRepo {
           if (!habit.isScheduledForDay(day)) continue;
 
           final habitLogs = habitLogsMap[r.id] ?? [];
-          final completed =
-              habitLogs.any((l) => l.status == HabitStatus.completed);
-
           final habitRemindersList = reminders
               .where((m) => m.habitId == r.id)
               .map(habitReminderFromRow)
               .toList();
 
-          details.add(HabitDetails(
+          final detailsItem = HabitDetails(
             habit: habit,
             logs: habitLogs,
             reminders: habitRemindersList,
-            isCompletedForDay: completed,
-          ));
+          );
+
+          // ✅ completion now checked per specific day
+          if (detailsItem.isCompletedOn(day)) {
+            // can be used in UI directly
+          }
+
+          details.add(detailsItem);
         }
 
         return details;
@@ -165,9 +167,6 @@ class HabitsRepoImpl implements HabitsRepo {
           if (!habit.isScheduledForDay(day)) continue;
 
           final habitLogs = habitLogsMap[r.id] ?? [];
-          final completed =
-              habitLogs.any((l) => l.status == HabitStatus.completed);
-
           final habitRemindersList = reminders
               .where((m) => m.habitId == r.id)
               .map(habitReminderFromRow)
@@ -177,7 +176,6 @@ class HabitsRepoImpl implements HabitsRepo {
             habit: habit,
             logs: habitLogs,
             reminders: habitRemindersList,
-            isCompletedForDay: completed,
           );
 
           final sectionId = r.sectionId;

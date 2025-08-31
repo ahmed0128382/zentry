@@ -23,6 +23,8 @@ class HabitItemWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final completedToday = hd.isCompletedOn(selectedDate);
+
     return Dismissible(
       key: ValueKey(hd.habit.id),
       background: Container(
@@ -67,15 +69,15 @@ class HabitItemWidget extends ConsumerWidget {
       },
       child: HabitItem(
         icon: Icons.check_circle_outline,
-        iconColor: hd.isCompletedForDay ? Colors.green : Colors.blue,
-        backgroundColor: (hd.isCompletedForDay ? Colors.green : Colors.blue)
-            .withOpacity(0.08),
+        iconColor: completedToday ? Colors.green : Colors.blue,
+        backgroundColor:
+            (completedToday ? Colors.green : Colors.blue).withOpacity(0.08),
         title: hd.habit.title,
         progressText: hd.habit.goal.targetAmount != null
             ? 'Target: ${hd.habit.goal.targetAmount}'
             : null,
         totalDays: hd.habit.goal.targetAmount ?? 0,
-        completed: hd.habit.status.isCompleted || hd.isCompletedForDay,
+        completed: hd.habit.status.isCompleted || completedToday,
         onTap: () async {
           final edited = await context.push<bool>(
             EditHabitView.routeName,
