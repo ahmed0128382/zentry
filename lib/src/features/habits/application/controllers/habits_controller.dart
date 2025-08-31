@@ -822,13 +822,23 @@ class HabitsController extends StateNotifier<HabitsState> {
     );
   }
 
-  /// ✅ Updated toggleCompletion to preserve all logs except the toggled one
-  Future<void> toggleCompletion(HabitLog log) async {
-    final newStatus = log.status == HabitStatus.completed
-        ? HabitStatus.active
-        : HabitStatus.completed;
+  /// --- New method for incrementing log amount until goal ---
+  Future<void> updateLog(HabitLog log) async {
+    final habitDetails =
+        state.habits.firstWhere((hd) => hd.habit.id == log.habitId);
+    final targetAmount = habitDetails.habit.goal.targetAmount ?? 0;
 
-    final updatedLog = log.copyWith(status: newStatus);
+    // Increase amount by 1, cap at targetAmount
+    int newAmount = (log.amount ?? 0) + 1;
+    if (newAmount > targetAmount) newAmount = targetAmount;
+
+    final newStatus =
+        newAmount >= targetAmount ? HabitStatus.completed : HabitStatus.active;
+
+    final updatedLog = log.copyWith(
+      amount: newAmount,
+      status: newStatus,
+    );
 
     final result = await logHabitCompletion(updatedLog);
     result.fold(
@@ -838,8 +848,6 @@ class HabitsController extends StateNotifier<HabitsState> {
           if (hd.habit.id != log.habitId) return hd;
 
           final logs = List<HabitLog>.from(hd.logs);
-
-          // Match log by date instead of ID to preserve other days
           final index =
               logs.indexWhere((l) => _dayOnly(l.date) == _dayOnly(log.date));
 
@@ -855,6 +863,10 @@ class HabitsController extends StateNotifier<HabitsState> {
         state = state.copyWith(habits: updatedHabits);
       },
     );
+  }
+
+  Future<void> toggleCompletion(HabitLog log) async {
+    await updateLog(log); // now reuse the new method
   }
 
   Future<void> setTodayStatus(String habitId, HabitStatus status) async {
