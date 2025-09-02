@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zentry/src/core/application/providers/app_palette_provider.dart';
+import 'package:zentry/src/core/services/local_notification_service.dart';
 import 'package:zentry/src/features/to_do_today/application/providers/to_do_today_controller_provider.dart';
 import 'package:zentry/src/features/to_do_today/presentation/views/widgets/add_task_bottom_sheet.dart';
 import 'package:zentry/src/features/to_do_today/presentation/views/widgets/custom_app_bar.dart';
@@ -57,6 +58,18 @@ class _ToDoTodayViewState extends ConsumerState<ToDoTodayView>
         //color: palette.background,
         child: Stack(
           children: [
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  LocalNotificationService().showNotification(
+                    id: 0,
+                    title: "Habit Reminder",
+                    body: "Don’t forget to log your exercise habit 💪",
+                  );
+                },
+                child: const Text("Show Test Notification"),
+              ),
+            ),
             const TaskContent(),
             if (showSheet) const OverlayDismiss(),
             if (showSheet)

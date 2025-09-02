@@ -1,5 +1,4 @@
 import 'package:drift/drift.dart';
-import 'habits_table.dart';
 
 class HabitRemindersTable extends Table {
   TextColumn get id => text()(); // UUID

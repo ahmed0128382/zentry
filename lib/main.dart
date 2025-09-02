@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zentry/src/core/routes/router.dart';
+import 'package:zentry/src/core/services/local_notification_service.dart';
 
 import 'package:zentry/src/core/theme/app_theme.dart';
 import 'package:zentry/src/core/utils/app_colors.dart';
@@ -12,7 +13,7 @@ import 'package:zentry/src/shared/enums/app_theme_mode.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  await LocalNotificationService().init();
   // TODO: أي تهيئة مبكرة مثل Hive أو Drift أو SharedPreferences
 
   runApp(
