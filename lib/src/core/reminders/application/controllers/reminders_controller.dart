@@ -4,9 +4,9 @@ import 'package:zentry/src/core/reminders/domain/entities/reminder.dart';
 import 'package:zentry/src/core/reminders/domain/usecases/schedule_reminder.dart';
 import 'package:zentry/src/core/reminders/domain/usecases/cancel_reminder.dart';
 import 'package:zentry/src/core/reminders/domain/usecases/get_reminders_for_habit.dart';
-import 'package:zentry/src/shared/domain/errors/failure.dart';
+import 'package:zentry/src/core/reminders/application/states/reminders_state.dart';
 
-class RemindersController extends StateNotifier<AsyncValue<List<Reminder>>> {
+class RemindersController extends StateNotifier<RemindersState> {
   final ScheduleReminder _scheduleReminder;
   final CancelReminder _cancelReminder;
   final GetRemindersForHabit _getRemindersForHabit;
@@ -15,20 +15,16 @@ class RemindersController extends StateNotifier<AsyncValue<List<Reminder>>> {
     this._scheduleReminder,
     this._cancelReminder,
     this._getRemindersForHabit,
-  ) : super(const AsyncValue.loading());
+  ) : super(RemindersInitial());
 
   Future<void> loadReminders(String habitId) async {
-    state = const AsyncValue.loading();
+    state = RemindersLoading();
+
     final result = await _getRemindersForHabit(habitId);
 
     result.fold(
-      (Failure failure) {
-        state =
-            AsyncValue.error(failure, failure.stackTrace ?? StackTrace.current);
-      },
-      (List<Reminder> reminders) {
-        state = AsyncValue.data(reminders);
-      },
+      (failure) => state = RemindersError(failure.message),
+      (List<Reminder> reminders) => state = RemindersLoaded(reminders),
     );
   }
 
@@ -36,11 +32,12 @@ class RemindersController extends StateNotifier<AsyncValue<List<Reminder>>> {
     final result = await _scheduleReminder(reminder);
 
     result.fold(
-      (_) {
-        // failure: do nothing (or log/show snackbar)
+      (failure) {
+        state = RemindersError(failure.message);
       },
       (_) async {
-        await loadReminders(reminder.ownerId); // refresh list
+        // Refresh reminders after successfully adding
+        await loadReminders(reminder.ownerId);
       },
     );
   }
@@ -49,11 +46,12 @@ class RemindersController extends StateNotifier<AsyncValue<List<Reminder>>> {
     final result = await _cancelReminder(reminderId);
 
     result.fold(
-      (_) {
-        // failure: do nothing
+      (failure) {
+        state = RemindersError(failure.message);
       },
       (_) async {
-        await loadReminders(habitId); // refresh list
+        // Refresh reminders after successfully removing
+        await loadReminders(habitId);
       },
     );
   }
