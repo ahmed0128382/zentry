@@ -1,5 +1,4 @@
 import 'package:drift/drift.dart';
-import 'habits_table.dart';
 
 @DataClassName('HabitLogRow')
 class HabitLogsTable extends Table {
