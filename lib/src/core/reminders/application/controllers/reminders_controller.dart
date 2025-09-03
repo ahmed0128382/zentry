@@ -1,4 +1,3 @@
-// File: src/core/reminders/application/reminders_controller.dart
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zentry/src/core/reminders/domain/entities/reminder.dart';
 import 'package:zentry/src/core/reminders/domain/usecases/schedule_reminder.dart';
@@ -17,6 +16,7 @@ class RemindersController extends StateNotifier<RemindersState> {
     this._getRemindersForHabit,
   ) : super(RemindersInitial());
 
+  /// Load all reminders for a given habit
   Future<void> loadReminders(String habitId) async {
     state = RemindersLoading();
 
@@ -28,31 +28,25 @@ class RemindersController extends StateNotifier<RemindersState> {
     );
   }
 
-  Future<void> addReminder(Reminder reminder) async {
-    final result = await _scheduleReminder(reminder);
+  /// Add a new reminder
+  Future<void> addReminder(Reminder reminder,
+      {bool repeatWeekly = false}) async {
+    final result =
+        await _scheduleReminder(reminder, repeatWeekly: repeatWeekly);
 
     result.fold(
-      (failure) {
-        state = RemindersError(failure.message);
-      },
-      (_) async {
-        // Refresh reminders after successfully adding
-        await loadReminders(reminder.ownerId);
-      },
+      (failure) => state = RemindersError(failure.message),
+      (_) async => await loadReminders(reminder.ownerId),
     );
   }
 
-  Future<void> removeReminder(String reminderId, String habitId) async {
-    final result = await _cancelReminder(reminderId);
+  /// Remove a reminder
+  Future<void> removeReminder(Reminder reminder) async {
+    final result = await _cancelReminder(reminder);
 
     result.fold(
-      (failure) {
-        state = RemindersError(failure.message);
-      },
-      (_) async {
-        // Refresh reminders after successfully removing
-        await loadReminders(habitId);
-      },
+      (failure) => state = RemindersError(failure.message),
+      (_) async => await loadReminders(reminder.ownerId),
     );
   }
 }
