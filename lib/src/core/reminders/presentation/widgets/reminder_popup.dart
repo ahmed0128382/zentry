@@ -24,11 +24,32 @@ class ReminderPopup extends ConsumerWidget {
       backgroundColor: palette.background,
       title: Text(
         reminder.title ?? 'Reminder',
-        style: TextStyle(color: palette.text, fontWeight: FontWeight.bold),
+        style: TextStyle(color: palette.icon, fontWeight: FontWeight.bold),
       ),
-      content: Text(
-        reminder.body ?? 'It\'s time!',
-        style: TextStyle(color: palette.text),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (reminder.body != null)
+            Text(
+              reminder.body!,
+              style: TextStyle(color: palette.icon),
+            ),
+          const SizedBox(height: 8),
+          Text(
+            '⏰ ${reminder.time.toString()}', // ✅ "HH:mm"
+            style:
+                TextStyle(color: palette.icon.withOpacity(0.7), fontSize: 12),
+          ),
+          if (reminder.weekdays.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            Text(
+              'Repeats on: ${_formatWeekdays(reminder.weekdays)}',
+              style:
+                  TextStyle(color: palette.icon.withOpacity(0.7), fontSize: 12),
+            ),
+          ],
+        ],
       ),
       actions: [
         if (onSnooze != null)
@@ -44,4 +65,17 @@ class ReminderPopup extends ConsumerWidget {
       ],
     );
   }
+}
+
+String _formatWeekdays(List<int> days) {
+  const names = {
+    DateTime.monday: 'Mon',
+    DateTime.tuesday: 'Tue',
+    DateTime.wednesday: 'Wed',
+    DateTime.thursday: 'Thu',
+    DateTime.friday: 'Fri',
+    DateTime.saturday: 'Sat',
+    DateTime.sunday: 'Sun',
+  };
+  return days.map((d) => names[d] ?? d.toString()).join(', ');
 }

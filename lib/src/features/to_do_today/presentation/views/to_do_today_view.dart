@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:zentry/src/core/application/providers/app_palette_provider.dart';
-import 'package:zentry/src/core/services/local_notification_service.dart';
+import 'package:zentry/src/core/reminders/infrastructure/repos/local_notification_service_impl.dart';
+import 'package:zentry/src/core/reminders/presentation/views/test_reminder_screen.dart';
 import 'package:zentry/src/features/to_do_today/application/providers/to_do_today_controller_provider.dart';
 import 'package:zentry/src/features/to_do_today/presentation/views/widgets/add_task_bottom_sheet.dart';
 import 'package:zentry/src/features/to_do_today/presentation/views/widgets/custom_app_bar.dart';
@@ -60,14 +62,10 @@ class _ToDoTodayViewState extends ConsumerState<ToDoTodayView>
           children: [
             Center(
               child: ElevatedButton(
-                onPressed: () {
-                  LocalNotificationService().showNotification(
-                    id: 0,
-                    title: "Habit Reminder",
-                    body: "Don’t forget to log your exercise habit 💪",
-                  );
+                onPressed: () async {
+                  context.push(ReminderTestPage.routeName);
                 },
-                child: const Text("Show Test Notification"),
+                child: const Text("Schedule Test Notification (+1 min)"),
               ),
             ),
             const TaskContent(),

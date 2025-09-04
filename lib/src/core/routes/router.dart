@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:zentry/src/config/app_routes.dart';
+import 'package:zentry/src/core/reminders/presentation/views/test_reminder_screen.dart';
 import 'package:zentry/src/features/appearance/presentation/views/them_settings_view.dart';
 import 'package:zentry/src/features/habits/domain/entities/habit_details.dart';
 import 'package:zentry/src/features/habits/presentation/views/add_habit_view.dart';
@@ -13,7 +14,6 @@ import 'package:zentry/src/features/splash/presentation/views/splash_view.dart';
 import 'package:zentry/src/features/on_boarding/presentation/views/on_boarding_view.dart';
 import 'package:zentry/src/features/edit_bottom_nav_bar/presentation/views/edit_bottom_nav_bar_view.dart';
 import 'package:zentry/src/features/to_do_today/presentation/views/task_details_view.dart';
-import 'package:zentry/src/shared/domain/entities/habit.dart';
 import 'package:zentry/src/shared/enums/main_view_pages_index.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
@@ -104,6 +104,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: EditHabitView.routeName,
         builder: (ctx, state) =>
             EditHabitView(habitDetails: state.extra! as HabitDetails),
+      ),
+      GoRoute(
+        path: ReminderTestPage.routeName,
+        builder: (_, __) => const ReminderTestPage(),
       ),
     ],
     errorBuilder: (_, state) => const Scaffold(

@@ -15,8 +15,12 @@ class ScheduleReminder {
       // Save in repo
       await _repo.scheduleReminder(reminder);
       // Schedule notification
-      await _notificationService.scheduleNotification(reminder,
-          repeatWeekly: repeatWeekly);
+      await _notificationService.scheduleNotification(
+          id: 2,
+          title: reminder.title ?? "REMINDER ",
+          body: reminder.body ?? "",
+          hour: reminder.time.hour,
+          minute: reminder.time.minute);
       return;
     });
   }

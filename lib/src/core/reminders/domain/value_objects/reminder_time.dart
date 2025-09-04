@@ -16,6 +16,9 @@ class ReminderTime {
     assert(minute >= 0 && minute < 60, 'minute must be in range 0..59');
     return ReminderTime(hour * 60 + minute);
   }
+  factory ReminderTime.fromDateTime(DateTime dt) {
+    return ReminderTime.fromHMS(dt.hour, dt.minute);
+  }
 
   /// Parse from string "HH:mm" (24h). Throws FormatException if invalid.
   factory ReminderTime.parse(String hhmm) {

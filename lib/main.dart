@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zentry/src/core/reminders/infrastructure/repos/local_notification_service_impl.dart';
 import 'package:zentry/src/core/routes/router.dart';
-import 'package:zentry/src/core/services/local_notification_service.dart';
+
+//import 'package:timezone/timezone.dart' as tz;
 
 import 'package:zentry/src/core/theme/app_theme.dart';
 import 'package:zentry/src/core/utils/app_colors.dart';
@@ -9,15 +11,15 @@ import 'package:zentry/src/core/utils/app_fonts.dart';
 import 'package:zentry/src/features/appearance/application/providers/appearance_controller_provider.dart';
 import 'package:zentry/src/shared/enums/app_theme_mode.dart';
 
-///remake the heirarchy to be apply to satisfy this beside Clean architecture + DDD and RiverPod with Drift but maybe i switch drift later and use something else so keep it clean with with SOLID principles///
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await LocalNotificationService().init();
-  // TODO: أي تهيئة مبكرة مثل Hive أو Drift أو SharedPreferences
+
+  await LocalNotificationServiceImpl().init();
 
   runApp(
-    const ProviderScope(child: ZentryApp()),
+    const ProviderScope(
+      child: ZentryApp(),
+    ),
   );
 }
 

@@ -37,14 +37,14 @@ class ReminderCard extends ConsumerWidget {
                 Icon(Icons.notifications, color: palette.icon),
                 const SizedBox(width: 8),
                 Text(
-                  '${reminder.hour.toString().padLeft(2, '0')}:${reminder.minute.toString().padLeft(2, '0')}',
-                  style: TextStyle(color: palette.text),
+                  reminder.time.toString(), // ✅ Use ReminderTime
+                  style: TextStyle(color: palette.icon),
                 ),
                 if (reminder.title != null) ...[
                   const SizedBox(width: 8),
                   Text(
                     reminder.title!,
-                    style: TextStyle(color: palette.text),
+                    style: TextStyle(color: palette.icon),
                   ),
                 ]
               ],
@@ -54,9 +54,9 @@ class ReminderCard extends ConsumerWidget {
             Row(
               children: [
                 if (onMarkDone != null)
-                  IconButton(
-                    icon: Icon(Icons.check, color: Colors.green.shade700),
-                    onPressed: onMarkDone,
+                  GestureDetector(
+                    onTap: onMarkDone,
+                    child: Icon(Icons.check, color: Colors.green.shade700),
                   ),
                 if (onSnooze != null)
                   IconButton(
