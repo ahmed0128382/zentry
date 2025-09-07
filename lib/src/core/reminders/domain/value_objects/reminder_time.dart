@@ -1,117 +1,97 @@
-// File: lib/src/core/reminders/domain/value_objects/reminder_time.dart
-/// Value object representing a time of day as minutes since midnight.
+/// Value object representing a time of day as hours, minutes, and seconds.
 /// Kept free of Flutter imports so it can live in the domain layer.
 class ReminderTime {
-  /// Minutes since midnight (0..1439)
-  final int minutesSinceMidnight;
+  final int hour;
+  final int minute;
+  final int second;
 
-  /// Create from minutes; validates range.
-  ReminderTime(this.minutesSinceMidnight)
-      : assert(minutesSinceMidnight >= 0 && minutesSinceMidnight < 24 * 60,
-            'minutesSinceMidnight must be in range [0, 1439]');
+  /// Total seconds since midnight
+  int get totalSecondsSinceMidnight => hour * 3600 + minute * 60 + second;
 
-  /// Create from hour (0..23) and minute (0..59)
-  factory ReminderTime.fromHMS(int hour, int minute) {
-    assert(hour >= 0 && hour < 24, 'hour must be in range 0..23');
-    assert(minute >= 0 && minute < 60, 'minute must be in range 0..59');
-    return ReminderTime(hour * 60 + minute);
+  /// Create from H:M:S with validation
+  ReminderTime(this.hour, this.minute, [this.second = 0])
+      : assert(hour >= 0 && hour < 24, 'hour must be in range 0..23'),
+        assert(minute >= 0 && minute < 60, 'minute must be in range 0..59'),
+        assert(second >= 0 && second < 60, 'second must be in range 0..59');
+
+  /// Factory from hour, minute, optional second
+  factory ReminderTime.fromHMS(int hour, int minute, [int second = 0]) {
+    return ReminderTime(hour, minute, second);
   }
+
   factory ReminderTime.fromDateTime(DateTime dt) {
-    return ReminderTime.fromHMS(dt.hour, dt.minute);
+    return ReminderTime(dt.hour, dt.minute, dt.second);
   }
 
-  /// Parse from string "HH:mm" (24h). Throws FormatException if invalid.
-  factory ReminderTime.parse(String hhmm) {
-    final parts = hhmm.split(':');
-    if (parts.length != 2) {
-      throw FormatException('Invalid time format, expected "HH:mm"');
+  /// Parse from string "HH:mm:ss" or "HH:mm"
+  factory ReminderTime.parse(String hhmmss) {
+    final parts = hhmmss.split(':');
+    if (parts.length < 2 || parts.length > 3) {
+      throw FormatException(
+          'Invalid time format, expected "HH:mm" or "HH:mm:ss"');
     }
     final h = int.tryParse(parts[0]);
     final m = int.tryParse(parts[1]);
-    if (h == null || m == null) {
-      throw FormatException('Invalid hour/minute parts');
+    final s = parts.length == 3 ? int.tryParse(parts[2]) : 0;
+    if (h == null || m == null || s == null) {
+      throw FormatException('Invalid hour/minute/second parts');
     }
-    return ReminderTime.fromHMS(h, m);
+    return ReminderTime.fromHMS(h, m, s);
   }
 
-  /// Hour component (0..23)
-  int get hour => minutesSinceMidnight ~/ 60;
-
-  /// Minute component (0..59)
-  int get minute => minutesSinceMidnight % 60;
-
-  /// Convert to a DateTime on given [date] (local).
-  /// Result uses the same date's year/month/day and this time's hour/minute.
+  /// Convert to DateTime on given date (local)
   DateTime toDateTimeOn(DateTime date) {
-    final local = DateTime(
-      date.year,
-      date.month,
-      date.day,
-      hour,
-      minute,
-    );
-    return local;
+    return DateTime(date.year, date.month, date.day, hour, minute, second);
   }
 
-  /// Returns the next occurrence >= [from] (local) of this time on the same day
-  /// or the following day when the time has already passed.
+  /// Convert to DateTime for scheduling notifications
+  /// Ensures it's in the future (next day if necessary)
+  DateTime toNextScheduledDateTime() {
+    final now = DateTime.now();
+    final candidate = toDateTimeOn(now);
+    if (!candidate.isBefore(now)) {
+      return candidate;
+    } else {
+      return candidate.add(const Duration(days: 1));
+    }
+  }
+
+  /// Next occurrence from [from] (local)
   DateTime nextOccurrenceFrom(DateTime from) {
     final candidate = toDateTimeOn(from);
-    if (!candidate.isBefore(from)) {
-      return candidate;
-    }
+    if (!candidate.isBefore(from)) return candidate;
     return candidate.add(const Duration(days: 1));
   }
 
-  /// Returns the next occurrence >= [from] (local) of this time on the specified weekday.
-  ///
-  /// [weekday] follows Dart DateTime convention: 1 = Monday, ... 7 = Sunday.
-  /// If [from]'s weekday matches and today's time is >= [from], returns today at this time.
-  /// Otherwise jumps forward until the next matching weekday.
-  DateTime nextOccurrenceOnWeekdayFrom(int weekday, DateTime from) {
-    assert(weekday >= DateTime.monday && weekday <= DateTime.sunday,
-        'weekday must be between 1 and 7');
-
-    // Start candidate at `from`'s date with this time
-    var candidate = toDateTimeOn(from);
-
-    // If same weekday:
-    if (candidate.weekday == weekday) {
-      if (!candidate.isBefore(from)) {
-        return candidate;
-      }
-      // today matched but time passed -> schedule next week
-      candidate = candidate.add(const Duration(days: 7));
-      return candidate;
-    }
-
-    // Find days until next target weekday
-    int daysToAdd = (weekday - candidate.weekday) % 7;
-    if (daysToAdd <= 0) daysToAdd += 7;
-    return candidate.add(Duration(days: daysToAdd));
-  }
-
-  /// Simple formatting "HH:mm" with leading zeros.
   @override
   String toString() {
     final hh = hour.toString().padLeft(2, '0');
     final mm = minute.toString().padLeft(2, '0');
-    return '$hh:$mm';
+    final ss = second.toString().padLeft(2, '0');
+    return '$hh:$mm:$ss';
   }
 
-  Map<String, dynamic> toJson() =>
-      {'minutesSinceMidnight': minutesSinceMidnight};
+  Map<String, dynamic> toJson() => {
+        'hour': hour,
+        'minute': minute,
+        'second': second,
+      };
 
-  factory ReminderTime.fromJson(Map<String, dynamic> json) =>
-      ReminderTime(json['minutesSinceMidnight'] as int);
+  factory ReminderTime.fromJson(Map<String, dynamic> json) => ReminderTime(
+        json['hour'] as int,
+        json['minute'] as int,
+        json['second'] as int? ?? 0,
+      );
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is ReminderTime &&
           runtimeType == other.runtimeType &&
-          minutesSinceMidnight == other.minutesSinceMidnight;
+          hour == other.hour &&
+          minute == other.minute &&
+          second == other.second;
 
   @override
-  int get hashCode => minutesSinceMidnight.hashCode;
+  int get hashCode => hour.hashCode ^ minute.hashCode ^ second.hashCode;
 }

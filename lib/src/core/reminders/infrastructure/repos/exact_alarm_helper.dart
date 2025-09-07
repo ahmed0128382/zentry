@@ -7,25 +7,26 @@ import 'package:flutter/services.dart';
 class ExactAlarmHelper {
   /// ✅ Returns true if exact alarms can be scheduled
   static Future<bool> canScheduleExactAlarms() async {
-    if (!Platform.isAndroid) {
-      log("[ExactAlarmHelper] Not Android, returning true");
-      return true;
-    }
+    return true;
+    // if (!Platform.isAndroid) {
+    //   log("[ExactAlarmHelper] Not Android, returning true");
+    //   return true;
+    // }
 
-    try {
-      // On Android 12+ (API 31), exact alarm permission must be granted
-      final sdkInt = await _getAndroidSdkInt();
-      if (sdkInt >= 31) {
-        // This method only opens settings, we assume user will allow manually
-        log("[ExactAlarmHelper] Android SDK $sdkInt detected, exact alarm permission may be needed");
-        return true; // for now, assume user has granted
-      }
-      log("[ExactAlarmHelper] Android SDK $sdkInt < 31, no permission needed");
-      return true;
-    } catch (e) {
-      log("[ExactAlarmHelper] Error checking exact alarm permission: $e");
-      return false;
-    }
+    // try {
+    //   // On Android 12+ (API 31), exact alarm permission must be granted
+    //   final sdkInt = await _getAndroidSdkInt();
+    //   if (sdkInt >= 31) {
+    //     // This method only opens settings, we assume user will allow manually
+    //     log("[ExactAlarmHelper] Android SDK $sdkInt detected, exact alarm permission may be needed");
+    //     return true; // for now, assume user has granted
+    //   }
+    //   log("[ExactAlarmHelper] Android SDK $sdkInt < 31, no permission needed");
+    //   return true;
+    // } catch (e) {
+    //   log("[ExactAlarmHelper] Error checking exact alarm permission: $e");
+    //   return false;
+    // }
   }
 
   /// Requests exact alarm permission on Android 12+

@@ -2,11 +2,6 @@ import 'dart:convert';
 import 'package:equatable/equatable.dart';
 import 'package:zentry/src/core/reminders/domain/value_objects/reminder_time.dart';
 
-/// Generic reminder entity used across features (habits, tasks, etc).
-/// - `ownerId` is the id of the owning domain entity (e.g. habit id, task id).
-/// - `ownerType` is a string like 'habit' or 'task' (optional, helpful for routing).
-/// - `time` is a value object representing the scheduled local time.
-/// - `weekdays` is a list of weekdays (1=Mon .. 7=Sun). Empty = daily.
 class Reminder extends Equatable {
   final String id;
   final String ownerId;
@@ -30,8 +25,6 @@ class Reminder extends Equatable {
     this.metadata,
   });
 
-  /// Convert to a payload string for notifications.
-  /// The consumer (on notification tap) can decode JSON to route the user.
   String toPayloadJson() {
     final map = {
       'reminderId': id,
@@ -47,7 +40,6 @@ class Reminder extends Equatable {
     return jsonEncode(map);
   }
 
-  /// Deserialize from a Map (e.g. from DB mapper)
   factory Reminder.fromMap(Map<String, dynamic> m) {
     return Reminder(
       id: m['id'] as String,
@@ -60,40 +52,34 @@ class Reminder extends Equatable {
               const [],
       title: m['title'] as String?,
       body: m['body'] as String?,
-      metadata: (m['metadata'] == null)
+      metadata: m['metadata'] == null
           ? null
           : Map<String, dynamic>.from(m['metadata'] as Map),
     );
   }
 
-  /// Convert to Map (useful for DB mappers)
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'ownerId': ownerId,
-      'ownerType': ownerType,
-      'time': time.toJson(),
-      'enabled': enabled,
-      'weekdays': weekdays,
-      'title': title,
-      'body': body,
-      'metadata': metadata,
-    };
-  }
+  Map<String, dynamic> toMap() => {
+        'id': id,
+        'ownerId': ownerId,
+        'ownerType': ownerType,
+        'time': time.toJson(),
+        'enabled': enabled,
+        'weekdays': weekdays,
+        'title': title,
+        'body': body,
+        'metadata': metadata,
+      };
 
-  /// Compute a deterministic int id for scheduling notifications.
-  /// We use FNV-1a hash of `id + ownerId + time`.
   int computeNotificationId() {
-    final key = '$id|$ownerId|${time.minutesSinceMidnight}';
-    return _fnv1a32(key) & 0x7FFFFFFF; // ensure non-negative
+    final key = '$id|$ownerId|${time.totalSecondsSinceMidnight}';
+    return _fnv1a32(key) & 0x7FFFFFFF;
   }
 
-  /// Simple FNV-1a 32-bit hash (deterministic across runs).
   static int _fnv1a32(String s) {
-    var hash = 0x811C9DC5; // 2166136261
+    var hash = 0x811C9DC5;
     for (var i = 0; i < s.length; i++) {
       hash ^= s.codeUnitAt(i);
-      hash = (hash * 0x01000193) & 0xFFFFFFFF; // *16777619 mod 2^32
+      hash = (hash * 0x01000193) & 0xFFFFFFFF;
     }
     return hash;
   }
@@ -123,15 +109,6 @@ class Reminder extends Equatable {
   }
 
   @override
-  List<Object?> get props => [
-        id,
-        ownerId,
-        ownerType,
-        time,
-        enabled,
-        weekdays,
-        title,
-        body,
-        metadata,
-      ];
+  List<Object?> get props =>
+      [id, ownerId, ownerType, time, enabled, weekdays, title, body, metadata];
 }

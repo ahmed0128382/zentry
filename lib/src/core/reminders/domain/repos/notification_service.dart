@@ -9,12 +9,7 @@ abstract class NotificationService {
   /// - If [reminder.weekdays] is empty → schedules daily at the given time.
   /// - If [reminder.weekdays] has values → schedules weekly on those weekdays.
   // Future<void> scheduleNotification(Reminder reminder);
-  Future<void> scheduleNotification(
-      {required int id,
-      required String title,
-      required String body,
-      required int hour,
-      required int minute});
+  Future<void> scheduleNotification(Reminder reminder);
 
   /// Cancel a scheduled notification
   Future<void> cancelNotification(Reminder reminder);
