@@ -14,7 +14,7 @@ import 'package:zentry/src/shared/enums/app_theme_mode.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await LocalNotificationServiceImpl().init();
+  await LocalNotificationServiceImpl.initialize();
 
   runApp(
     const ProviderScope(

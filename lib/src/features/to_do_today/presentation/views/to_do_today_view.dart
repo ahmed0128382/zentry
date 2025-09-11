@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:zentry/src/core/application/providers/app_palette_provider.dart';
+import 'package:zentry/src/core/reminders/domain/entities/reminder.dart';
+import 'package:zentry/src/core/reminders/domain/value_objects/reminder_time.dart';
 import 'package:zentry/src/core/reminders/infrastructure/repos/local_notification_service_impl.dart';
 import 'package:zentry/src/core/reminders/presentation/views/test_reminder_screen.dart';
 import 'package:zentry/src/features/to_do_today/application/providers/to_do_today_controller_provider.dart';
@@ -61,11 +63,37 @@ class _ToDoTodayViewState extends ConsumerState<ToDoTodayView>
         child: Stack(
           children: [
             Center(
-              child: ElevatedButton(
-                onPressed: () async {
-                  context.push(ReminderTestPage.routeName);
-                },
-                child: const Text("Schedule Test Notification (+1 min)"),
+              child: Column(
+                children: [
+                  ElevatedButton(
+                    onPressed: () async {
+                      LocalNotificationServiceImpl.senSimpleNotification();
+                      //context.push(ReminderTestPage.routeName);
+                    },
+                    child: const Text("Schedule Test Notification (+1 min)"),
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () async {
+                      LocalNotificationServiceImpl.cancelllNotifications();
+                    },
+                    child: const Text("Cancel All Notifications"),
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () async {
+                      Reminder reminder = Reminder(
+                          ownerId: '2',
+                          title: 'Test Reminder',
+                          id: '3',
+                          ownerType: 'toDoToday',
+                          time: ReminderTime(12, 3));
+                      await LocalNotificationServiceImpl()
+                          .scheduleNotification(reminder);
+                    },
+                    child: const Text("schedule Notification for 20 s"),
+                  ),
+                ],
               ),
             ),
             const TaskContent(),
