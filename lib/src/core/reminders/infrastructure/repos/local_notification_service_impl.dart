@@ -393,6 +393,10 @@ class LocalNotificationServiceImpl implements NotificationService {
     );
   }
 
+  Future<void> stopPeriodicNotification() async {
+    await flutterLocalNotificationsPlugin.cancel(0);
+  }
+
   // void Function(String? payload)? onNotificationTap;
 
   // Future<void> init({void Function(String? payload)? onTap}) async {

@@ -93,6 +93,23 @@ class _ToDoTodayViewState extends ConsumerState<ToDoTodayView>
                     },
                     child: const Text("schedule Notification for 20 s"),
                   ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () async {
+                      LocalNotificationServiceImpl()
+                          .startPeriodicNotification();
+                    },
+                    child: const Text("start Periodic Notifications"),
+                  ),
+                  SizedBox(height: 20),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () async {
+                      LocalNotificationServiceImpl().stopPeriodicNotification();
+                    },
+                    child: const Text("stop Periodic Notifications"),
+                  ),
+                  SizedBox(height: 20),
                 ],
               ),
             ),
