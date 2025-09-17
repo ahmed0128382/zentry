@@ -16,4 +16,8 @@ abstract class NotificationService {
 
   /// Cancel all notifications
   Future<void> cancelAllNotifications();
+
+  Future<void> startPeriodicNotification(Reminder reminder);
+
+  Future<void> stopPeriodicNotification(Reminder reminder);
 }

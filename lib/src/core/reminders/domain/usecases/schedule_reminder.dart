@@ -9,14 +9,14 @@ class ScheduleReminder {
 
   ScheduleReminder(this._repo, this._notificationService);
 
-  Future<Result<void>> call(Reminder reminder,
+  Future<Result<String>> call(Reminder reminder,
       {bool repeatWeekly = false}) async {
     return guard(() async {
       // Save in repo
       await _repo.scheduleReminder(reminder);
       // Schedule notification
       await _notificationService.scheduleNotification(reminder);
-      return;
+      return reminder.id;
     });
   }
 }

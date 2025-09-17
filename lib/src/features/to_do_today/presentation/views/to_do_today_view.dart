@@ -62,57 +62,71 @@ class _ToDoTodayViewState extends ConsumerState<ToDoTodayView>
         //color: palette.background,
         child: Stack(
           children: [
-            Center(
-              child: Column(
-                children: [
-                  ElevatedButton(
-                    onPressed: () async {
-                      LocalNotificationServiceImpl.senSimpleNotification();
-                      //context.push(ReminderTestPage.routeName);
-                    },
-                    child: const Text("Schedule Test Notification (+1 min)"),
-                  ),
-                  SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () async {
-                      LocalNotificationServiceImpl.cancelllNotifications();
-                    },
-                    child: const Text("Cancel All Notifications"),
-                  ),
-                  SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () async {
-                      Reminder reminder = Reminder(
-                          ownerId: '2',
-                          title: 'Test Reminder',
-                          id: '3',
-                          ownerType: 'toDoToday',
-                          time: ReminderTime(12, 3));
-                      await LocalNotificationServiceImpl()
-                          .scheduleNotification(reminder);
-                    },
-                    child: const Text("schedule Notification for 20 s"),
-                  ),
-                  SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () async {
-                      LocalNotificationServiceImpl()
-                          .startPeriodicNotification();
-                    },
-                    child: const Text("start Periodic Notifications"),
-                  ),
-                  SizedBox(height: 20),
-                  SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () async {
-                      LocalNotificationServiceImpl().stopPeriodicNotification();
-                    },
-                    child: const Text("stop Periodic Notifications"),
-                  ),
-                  SizedBox(height: 20),
-                ],
-              ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () async {
+                context.push(ReminderTestPage.routeName);
+              },
+              child: const Text("Reminder Test Screen"),
             ),
+            // Center(
+            //   child: Column(
+            //     children: [
+            //       ElevatedButton(
+            //         onPressed: () async {
+            //           LocalNotificationServiceImpl().showNotification(
+            //             Reminder(
+            //               id: '1',
+            //               ownerId: 'Ahmed',
+            //               ownerType: 'toDoToday',
+            //               time: ReminderTime(3, 15),
+            //             ),
+            //           );
+            //           //context.push(ReminderTestPage.routeName);
+            //         },
+            //         child: const Text("Schedule Test Notification (+1 min)"),
+            //       ),
+            //       SizedBox(height: 20),
+            //       ElevatedButton(
+            //         onPressed: () async {
+            //           LocalNotificationServiceImpl().cancelAllNotifications();
+            //         },
+            //         child: const Text("Cancel All Notifications"),
+            //       ),
+            //       SizedBox(height: 20),
+            //       ElevatedButton(
+            //         onPressed: () async {
+            //           Reminder reminder = Reminder(
+            //               ownerId: '2',
+            //               title: 'Test Reminder',
+            //               id: '3',
+            //               ownerType: 'toDoToday',
+            //               time: ReminderTime(12, 3));
+            //           await LocalNotificationServiceImpl()
+            //               .scheduleNotification(reminder);
+            //         },
+            //         child: const Text("schedule Notification for 20 s"),
+            //       ),
+            //       SizedBox(height: 20),
+            //       ElevatedButton(
+            //         onPressed: () async {
+            //           LocalNotificationServiceImpl()
+            //               .startPeriodicNotification();
+            //         },
+            //         child: const Text("start Periodic Notifications"),
+            //       ),
+            //       SizedBox(height: 20),
+            //       SizedBox(height: 20),
+            //       ElevatedButton(
+            //         onPressed: () async {
+            //           LocalNotificationServiceImpl().stopPeriodicNotification();
+            //         },
+            //         child: const Text("stop Periodic Notifications"),
+            //       ),
+            //       SizedBox(height: 20),
+            //     ],
+            //   ),
+            // ),
             const TaskContent(),
             if (showSheet) const OverlayDismiss(),
             if (showSheet)
